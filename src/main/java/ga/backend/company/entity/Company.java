@@ -1,7 +1,7 @@
 package ga.backend.company.entity;
 
 import ga.backend.auditable.Auditable;
-import ga.backend.employee.Employee;
+import ga.backend.employee.entity.Employee;
 import lombok.Getter;
 import lombok.Setter;
 
