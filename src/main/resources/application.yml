@@ -1,0 +1,13 @@
+spring:
+  datasource: # DATABASE
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://db-i6kte-kr.vpc-pub-cdb.ntruss.com:3306/ga
+    username: ${GA_MYSQL_ID}
+    password: ${GA_MYSQL_PW}
+  jpa: # JPA
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
