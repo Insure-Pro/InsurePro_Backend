@@ -1,12 +1,10 @@
-package ga.backend.company.dto;
+package ga.backend.customerType.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-
-public class CompanyRequestDto {
+public class CustomerTypeRequestDto {
     @AllArgsConstructor
     @Setter
     @Getter
@@ -21,7 +19,9 @@ public class CompanyRequestDto {
     @Getter
     public static class Patch {
         private Long pk;
-        private String name;
-        private boolean delYn;
+        private String type; // 고객 유형
+        private String detail; // 설명
+        private boolean delYn = false; // 고객 유형 삭제 여부
+
     }
 }

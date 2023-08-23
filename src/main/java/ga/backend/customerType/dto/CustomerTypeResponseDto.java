@@ -1,10 +1,10 @@
-package ga.backend.company.dto;
+package ga.backend.customerType.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-public class CompanyResponseDto {
+public class CustomerTypeResponseDto {
     @AllArgsConstructor
     @Setter
     @Getter
