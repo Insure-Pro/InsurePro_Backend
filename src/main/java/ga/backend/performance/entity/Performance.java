@@ -2,6 +2,7 @@ package ga.backend.performance.entity;
 
 import ga.backend.auditable.Auditable;
 import ga.backend.company.entity.Company;
+import ga.backend.employee.entity.Employee;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,12 +11,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
-@Table(name="tbl_performace")
 @Getter
 @Setter
 public class Performance extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "performance_pk")
     private Long pk;
 
     @Column
@@ -41,4 +42,8 @@ public class Performance extends Auditable {
 
     @Column
     private int contractNm;
+
+    @ManyToOne
+    @JoinColumn(name = "employee_pk")
+    private Employee employee;
 }
