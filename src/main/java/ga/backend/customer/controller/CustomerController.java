@@ -15,7 +15,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping("/company")
+@RequestMapping("/customer")
 @Validated
 @AllArgsConstructor
 public class CustomerController {

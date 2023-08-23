@@ -1,7 +1,7 @@
 package ga.backend.customer.entity;
 
 import ga.backend.auditable.Auditable;
-import ga.backend.employee.Employee;
+import ga.backend.dong.entity.Dong;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,13 +9,17 @@ import javax.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "tbl_customer")
 @Getter
 @Setter
 public class Customer extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "customer_pk")
     private Long pk;
+
+    @ManyToOne
+    @JoinColumn(name = "dong_pk")
+    private Dong dong;
 
     @Column
     private String name; // 이름

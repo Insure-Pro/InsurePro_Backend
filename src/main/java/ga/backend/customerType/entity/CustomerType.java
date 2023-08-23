@@ -7,7 +7,6 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tbl_customer_type")
 @Getter
 @Setter
 public class CustomerType extends Auditable {

@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
-@Table(name = "tbl_schedule")
 @Getter
 @Setter
 public class Schedule extends Auditable {
