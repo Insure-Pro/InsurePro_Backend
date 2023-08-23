@@ -43,6 +43,6 @@ public class CustomerTypeService {
     // 검증
     public CustomerType verifiedCustomerType(long customerTypePk) {
         Optional<CustomerType> customerType = customerTypeRespository.findById(customerTypePk);
-        return customerType.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
+        return customerType.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOM_TYPE_NOT_FOUND));
     }
 }

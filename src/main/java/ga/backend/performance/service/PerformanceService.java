@@ -49,6 +49,6 @@ public class PerformanceService {
     // 검증
     public Performance verifiedPerformance(long performancePk) {
         Optional<Performance> performance = performanceRespository.findById(performancePk);
-        return performance.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
+        return performance.orElseThrow(() -> new BusinessLogicException(ExceptionCode.PERFORMANCE_NOT_FOUND));
     }
 }
