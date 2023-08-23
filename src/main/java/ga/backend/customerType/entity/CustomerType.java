@@ -1,10 +1,12 @@
 package ga.backend.customerType.entity;
 
 import ga.backend.auditable.Auditable;
+import ga.backend.customer.entity.Customer;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -12,7 +14,11 @@ import javax.persistence.*;
 public class CustomerType extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "customer_type_pk")
     private Long pk;
+
+    @OneToMany(mappedBy = "customerType")
+    private List<Customer> customers;
 
     @Column
     private String type; // 고객 유형

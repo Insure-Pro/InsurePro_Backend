@@ -1,6 +1,7 @@
 package ga.backend.schedule.entity;
 
 import ga.backend.auditable.Auditable;
+import ga.backend.customer.entity.Customer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,21 +18,34 @@ import java.time.LocalTime;
 public class Schedule extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="schedule_pk")
     private Long pk;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_pk")
+    private Customer customer;
+
     @Column
     private String memo;
+
     @Column
     private LocalDate date;
+
     @Column
     private LocalTime startTm;
+
     @Column
     private LocalTime finishTm;
+
     @Column
     private LocalTime time;
+
     @Column
     private String address;
+
     @Column
     private boolean meetYn = false;
+
     @Column
     private boolean delYn = false;
 }

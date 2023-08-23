@@ -1,7 +1,9 @@
 package ga.backend.customer.entity;
 
 import ga.backend.auditable.Auditable;
+import ga.backend.customerType.entity.CustomerType;
 import ga.backend.dong.entity.Dong;
+import ga.backend.schedule.entity.Schedule;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,6 +22,13 @@ public class Customer extends Auditable {
     @ManyToOne
     @JoinColumn(name = "dong_pk")
     private Dong dong;
+
+    @ManyToOne
+    @JoinColumn(name = "customer_type_pk")
+    private CustomerType customerType;
+
+    @OneToMany(mappedBy = "customer")
+    private List<Schedule> schedules;
 
     @Column
     private String name; // 이름
