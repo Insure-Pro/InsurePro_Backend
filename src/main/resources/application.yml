@@ -11,3 +11,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+mail:
+  address:
+    admin: utest3912@gmail.com # admin mail address
