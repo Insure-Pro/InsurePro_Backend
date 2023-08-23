@@ -23,10 +23,10 @@ public class Company extends Auditable {
     private Long pk;
 
     @Column
-    private String name;
+    private String name; // 회사명
 
     @Column
-    private boolean delYn = false;
+    private boolean delYn = false; // 회사 삭제 여부
 
     @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Employee> employees = new ArrayList<>();

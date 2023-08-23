@@ -8,7 +8,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,7 +22,7 @@ public class Employee extends Auditable {
     private Long pk;
 
     @Column
-    private String loginId;
+    private String id;
 
     @Column
     @Email

@@ -1,17 +1,16 @@
 package ga.backend.progress.entity;
 
 import ga.backend.auditable.Auditable;
-import ga.backend.company.entity.Company;
 import ga.backend.employee.entity.Employee;
 import ga.backend.scheduleprogress.entity.ScheduleProgress;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Progress extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
