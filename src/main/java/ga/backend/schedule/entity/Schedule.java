@@ -2,6 +2,7 @@ package ga.backend.schedule.entity;
 
 import ga.backend.auditable.Auditable;
 import ga.backend.customer.entity.Customer;
+import ga.backend.scheduleprogress.entity.ScheduleProgress;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,6 +25,9 @@ public class Schedule extends Auditable {
     @ManyToOne
     @JoinColumn(name = "customer_pk")
     private Customer customer;
+
+    @OneToOne(mappedBy = "schedule")
+    private ScheduleProgress scheduleProgress;
 
     @Column
     private String memo;

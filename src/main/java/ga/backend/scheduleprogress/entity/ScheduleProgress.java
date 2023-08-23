@@ -2,6 +2,8 @@ package ga.backend.scheduleprogress.entity;
 
 import ga.backend.auditable.Auditable;
 import ga.backend.customer.entity.Customer;
+import ga.backend.progress.entity.Progress;
+import ga.backend.schedule.entity.Schedule;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,4 +19,11 @@ public class ScheduleProgress extends Auditable {
     @Column(name = "schedule_progress_pk")
     private Long pk;
 
+    @OneToOne
+    @JoinColumn(name = "schedule_pk")
+    private Schedule schedule;
+
+    @OneToOne
+    @JoinColumn(name = "progress_pk")
+    private Progress progress;
 }
