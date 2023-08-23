@@ -1,8 +1,8 @@
 package ga.backend.oauth2.handler;
 
-import com.umc.mot.oauth2.filter.JwtVerificationFilter;
-import com.umc.mot.token.entity.Token;
-import com.umc.mot.token.service.TokenService;
+import ga.backend.employee.entity.Employee;
+import ga.backend.employee.service.EmployeeService;
+import ga.backend.oauth2.filter.JwtVerificationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
@@ -15,7 +15,7 @@ import java.util.Map;
 
 @AllArgsConstructor
 public class MemberLogoutSuccessHandler implements LogoutSuccessHandler {
-    private final TokenService tokenService;
+    private final EmployeeService employeeService;
     private final JwtVerificationFilter jwtVerificationFilter;
 
 
@@ -33,9 +33,9 @@ public class MemberLogoutSuccessHandler implements LogoutSuccessHandler {
         jwtVerificationFilter.setAuthenticationToContext(claims);
 
         // 토큰값 초기화
-        Token token = tokenService.getLoginToken();
-        token.setAccessToken("");
-        token.setRefreshToken("");
-        tokenService.patchToken(token);
+        Employee employee = employeeService.getLoginEmployee();
+        employee.setAccessToken("");
+        employee.setRefreshToken("");
+        employeeService.patchEmployee(employee);
     }
 }

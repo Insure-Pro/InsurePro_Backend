@@ -1,6 +1,6 @@
 package ga.backend.oauth2.filter;
 
-import com.umc.mot.utils.CustomCookie;
+import ga.backend.util.CustomCookie;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;

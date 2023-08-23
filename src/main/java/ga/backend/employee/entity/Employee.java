@@ -38,10 +38,13 @@ public class Employee extends Auditable {
     private boolean delYn = false; // 직원 삭제 여부
 
     @Column
-    private String accessToken; // access 토큰
+    private String accessToken = ""; // access 토큰
 
     @Column
-    private String refreshToken; // refresh 토큰
+    private String refreshToken = ""; // refresh 토큰
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles = new ArrayList<>(); // 권한
 
     @ManyToOne
     @JoinColumn(name = "company_pk")

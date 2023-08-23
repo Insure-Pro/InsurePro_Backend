@@ -1,6 +1,6 @@
 package ga.backend.oauth2.response;
 
-import com.umc.mot.exception.ExceptionCode;
+import ga.backend.exception.ExceptionCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;

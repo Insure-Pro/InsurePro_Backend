@@ -1,5 +1,7 @@
 package ga.backend.config;
 
+import ga.backend.employee.entity.Employee;
+import ga.backend.employee.service.EmployeeService;
 import ga.backend.oauth2.filter.JwtAuthenticationFilter;
 import ga.backend.oauth2.filter.JwtVerificationFilter;
 import ga.backend.oauth2.handler.*;
@@ -23,8 +25,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity(debug = true)
 public class SecurityConfiguration {
     private final JwtTokenizer jwtTokenizer;
-    private final TokenService tokenService;
-    private final OAuth2MemberSuccessHandler oAuth2MemberSuccessHandler;
+    private final EmployeeService employeeService;
     private final JwtVerificationFilter jwtVerificationFilter;
 
     @Bean
@@ -49,16 +50,13 @@ public class SecurityConfiguration {
                 .invalidateHttpSession(true) // 로그아웃 성공 시 세션 제거
                 .clearAuthentication(true) // 로그아웃 시 권한 제거
                 .permitAll() // 모두 허용
-                .logoutSuccessHandler(new MemberLogoutSuccessHandler(tokenService, jwtVerificationFilter)) // 로그아웃 성공 후 핸들러
+                .logoutSuccessHandler(new MemberLogoutSuccessHandler(employeeService, jwtVerificationFilter)) // 로그아웃 성공 후 핸들러
                 .and()
                 .authorizeHttpRequests(authorize -> authorize // url authorization 전체 추가
 //                                .antMatchers(HttpMethod.POST, "/*/coffees").hasRole("ADMIN")
 //                                .antMatchers(HttpMethod.GET, "/*/coffees/**").hasAnyRole("USER", "ADMIN")
 //                                .antMatchers(HttpMethod.GET, "/*/coffees").permitAll()
                                 .anyRequest().permitAll()
-                )
-                .oauth2Login(oauth2 -> oauth2
-                        .successHandler(oAuth2MemberSuccessHandler)
                 );
 
         return http.build();
@@ -81,17 +79,15 @@ public class SecurityConfiguration {
             // 로그인
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
-            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer, tokenService);
+            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer, employeeService);
             jwtAuthenticationFilter.setFilterProcessesUrl("/login");          // login url
 
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new MemberAuthenticationSuccessHandler());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new MemberAuthenticationFailureHandler());
 
-//            JwtVerificationFilter jwtVerificationFilter = new JwtVerificationFilter(jwtTokenizer, authorityUtils, tokenService, sellMemberService, purchaseMemberService, cookie); // google OAuth2
-
             builder
                     .addFilter(jwtAuthenticationFilter) // 로그인
-                    .addFilterAfter(jwtVerificationFilter, OAuth2LoginAuthenticationFilter.class); // google OAuth2
+                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class); // google OAuth2
         }
     }
 }

@@ -1,6 +1,6 @@
 package ga.backend.oauth2.handler;
 
-import com.umc.mot.oauth2.response.ErrorResponder;
+import ga.backend.oauth2.response.ErrorResponder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;

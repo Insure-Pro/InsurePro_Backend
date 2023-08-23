@@ -2,7 +2,7 @@ package ga.backend.oauth2.utils;
 
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.repository.EmployeeRepository;
-import ga.backend.exception.BusinessLogicException;
+import ga.backend.exception.*;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,25 +20,28 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final CustomAuthorityUtils authorityUtils;
 
     @Override
-    public UserDetails loadUserByUsername(String loginId) throws UsernameNotFoundException {
-        Optional<Employee> optionalMember = employeeRepository.findByLoginId(loginId);
-        Employee findEmployee = optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.TOKEN_MEMBER_NOT_FOUND));
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<Employee> optionalMember = employeeRepository.findByEmail(email);
+        Employee findEmployee = optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
 
         return new CustomUserDetails(findEmployee);
     }
 
 
-    private final class CustomUserDetails extends Token implements UserDetails {
-        CustomUserDetails(Token token) {
-            setId(token.getId());
-            setAccessToken(token.getAccessToken());
-            setRefreshToken(token.getRefreshToken());
-            setLoginId(token.getLoginId());
-            setLoginPw(token.getPassword());
-            setPurchaseMember(token.getPurchaseMember());
-            setSellMember(token.getSellMember());
-            setRoles(token.getRoles());
-
+    private final class CustomUserDetails extends Employee implements UserDetails {
+        CustomUserDetails(Employee employee) {
+            setPk(getPk());
+            setId(getId());
+            setEmail(getEmail());
+            setPassword(getPassword());
+            setRegiYn(isRegiYn());
+            setDelYn(isDelYn());
+            setAccessToken(getAccessToken());
+            setRefreshToken(getRefreshToken());
+            setRoles(getRoles());
+            setCompany(getCompany());
+            setPerformances(getPerformances());
+            setProgresses(getProgresses());
         }
 
         @Override
@@ -48,7 +51,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         @Override
         public String getUsername() {
-            return getLoginId();
+            return getEmail();
         }
 
         @Override

@@ -1,10 +1,8 @@
 package ga.backend.oauth2.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.umc.mot.oauth2.jwt.JwtTokenizer;
-import com.umc.mot.token.dto.LoginDto;
-import com.umc.mot.token.entity.Token;
-import com.umc.mot.token.service.TokenService;
+import ga.backend.employee.service.EmployeeService;
+import ga.backend.oauth2.jwt.JwtTokenizer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,18 +22,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@AllArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {  // (1)
     private final AuthenticationManager authenticationManager;
     private final JwtTokenizer jwtTokenizer;
-    private final TokenService tokenService;
-
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager,
-                                   JwtTokenizer jwtTokenizer,
-                                   TokenService tokenService) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenizer = jwtTokenizer;
-        this.tokenService = tokenService;
-    }
+    private final EmployeeService employeeService;
 
     @SneakyThrows
     @Override
