@@ -10,7 +10,7 @@ public class ProgressRequestDto {
     @Getter
     public static class Post {
         private Long pk;
-        private String option;
+        private String optionName;
         private boolean delYn;
     }
 
@@ -19,7 +19,7 @@ public class ProgressRequestDto {
     @Getter
     public static class Patch {
         private Long pk;
-        private String option;
+        private String optionName;
         private boolean delYn;
     }
 }

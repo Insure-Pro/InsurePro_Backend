@@ -10,7 +10,7 @@ public class ProgressResponseDto {
     @Getter
     public static class Response {
         private Long pk;
-        private String option;
+        private String optionName;
         private boolean delYn;
     }
 }

@@ -8,12 +8,12 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 
 @Entity
-@Table(name="tbl_customer_type")
 @Getter
 @Setter
 public class CustomerType extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "customer_type_pk")
     private Long pk;
 
     @Column
@@ -24,4 +24,8 @@ public class CustomerType extends Auditable {
 
     @Column
     private boolean delYn = false;
+
+    @ManyToOne
+    @JoinColumn(name = "company_pk")
+    private Company company;
 }

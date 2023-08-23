@@ -28,7 +28,7 @@ public class EmployeeService {
     // UPDATE
     public Employee patchEmployee(Employee employee) {
         Employee findEmployee = verifiedEmployee(employee.getPk());
-        Optional.ofNullable(employee.getId()).ifPresent(findEmployee::setId);
+        Optional.ofNullable(employee.getLoginId()).ifPresent(findEmployee::setLoginId);
         Optional.ofNullable(employee.getEmail()).ifPresent(findEmployee::setEmail);
         Optional.ofNullable(employee.getPassword()).ifPresent(findEmployee::setPassword);
 

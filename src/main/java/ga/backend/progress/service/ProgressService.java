@@ -28,7 +28,7 @@ public class ProgressService {
     // UPDATE
     public Progress patchProgress(Progress progress) {
         Progress findProgress = verifiedProgress(progress.getPk());
-        Optional.ofNullable(progress.getOption()).ifPresent(findProgress::setOption);
+        Optional.ofNullable(progress.getOptionName()).ifPresent(findProgress::setOptionName);
 
         return progressRespository.save(findProgress);
     }
