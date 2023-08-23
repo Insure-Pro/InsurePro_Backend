@@ -42,6 +42,6 @@ public class ProgressService {
     // 검증
     public Progress verifiedProgress(long progressPk) {
         Optional<Progress> progress = progressRespository.findById(progressPk);
-        return progress.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
+        return progress.orElseThrow(() -> new BusinessLogicException(ExceptionCode.PROGRESS_NOT_FOUND));
     }
 }

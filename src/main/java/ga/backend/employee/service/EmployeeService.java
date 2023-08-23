@@ -44,6 +44,6 @@ public class EmployeeService {
     // 검증
     public Employee verifiedEmployee(long employeePk) {
         Optional<Employee> employee = employeeRespository.findById(employeePk);
-        return employee.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
+        return employee.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
     }
 }
