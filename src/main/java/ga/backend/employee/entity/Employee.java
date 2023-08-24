@@ -8,7 +8,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,20 +22,29 @@ public class Employee extends Auditable {
     private Long pk;
 
     @Column
-    private String loginId;
+    private String id; // 사번
 
-    @Column
+    @Column(unique = true)
     @Email
-    private String email;
+    private String email; // 이메일
 
     @Column
-    private String password;
+    private String password; // 비밀번호
 
     @Column
-    private boolean regiYn;
+    private boolean regiYn = false; // 가입 승인 여부
 
     @Column
-    private boolean delYn;
+    private boolean delYn = false; // 직원 삭제 여부
+
+    @Column
+    private String accessToken = ""; // access 토큰
+
+    @Column
+    private String refreshToken = ""; // refresh 토큰
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles = new ArrayList<>(); // 권한
 
     @ManyToOne
     @JoinColumn(name = "company_pk")

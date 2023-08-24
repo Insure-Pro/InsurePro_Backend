@@ -11,7 +11,9 @@ public enum ExceptionCode {
     EMPLOYEE_NOT_FOUND(404, "Employee not found"),
     PROGRESS_NOT_FOUND(404, "Progress not found"),
     PERFORMANCE_NOT_FOUND(404, "Performance not found"),
-    CUSTOM_TYPE_NOT_FOUND(404, "CustomType not found");
+    CUSTOM_TYPE_NOT_FOUND(404, "CustomType not found"),
+    TAMPERED_TOKEN(1004, "Tampered Token"); // 변조된 토큰
+
 
     @Getter
     private double status;

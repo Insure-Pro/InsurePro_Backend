@@ -1,18 +1,17 @@
 package ga.backend.performance.entity;
 
 import ga.backend.auditable.Auditable;
-import ga.backend.company.entity.Company;
 import ga.backend.employee.entity.Employee;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Performance extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
