@@ -36,6 +36,6 @@ public class MemberLogoutSuccessHandler implements LogoutSuccessHandler {
         Employee employee = employeeService.getLoginEmployee();
         employee.setAccessToken("");
         employee.setRefreshToken("");
-        employeeService.patchEmployee(employee);
+        employeeService.patchEmployeeToken(employee);
     }
 }

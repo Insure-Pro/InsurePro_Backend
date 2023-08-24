@@ -1,8 +1,10 @@
 package ga.backend.oauth2.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ga.backend.employee.entity.Employee;
 import ga.backend.employee.service.EmployeeService;
 import ga.backend.oauth2.jwt.JwtTokenizer;
+import ga.backend.oauth2.utils.LoginDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -31,10 +34,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        // employee test
+//        Employee employee = new Employee();
+//        employee.setPassword("1234aAcd!");
+//        employee.setEmail("utest@gmail.com");
+//        employee.setId("testId123");
+//        employee = employeeService.createEmployee(employee);
+//        System.out.println("!! pk : " + employeeService.verifiedEmployeeByPk((long)1).getEmail());
+//        System.out.println("!! id : " + employeeService.verifiedEmployeeById("testId123").getEmail());
+//
         System.out.println("!! attemptAuthentication");
 
         ObjectMapper objectMapper = new ObjectMapper();
         LoginDto loginDto = objectMapper.readValue(request.getInputStream(), LoginDto.class);
+        System.out.println("!! loginDto - email : " + loginDto.getEmail());
+        System.out.println("!! loginDto - password : " + loginDto.getPassword());
 
 //        System.out.println("!! make objectMapper");
 //        System.out.println("!! inputStream : " + request.getInputStream().readAllBytes());
@@ -61,9 +75,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 //        System.out.println("!! email : " + loginDto.getEmail());
 //        System.out.println("!! pw : " + loginDto.getPassword());
 
-
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(loginDto.getLoginId(), loginDto.getLoginPw());
+                new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
 
         return authenticationManager.authenticate(authenticationToken);
     }
@@ -107,29 +120,29 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             HttpServletResponse response,
                                             FilterChain chain,
                                             Authentication authResult) throws ServletException, IOException  {
-        Token token = (Token) authResult.getPrincipal();
+        Employee employee = (Employee) authResult.getPrincipal();
 
-        String accessToken = "Bearer " + delegateAccessToken(token);
-        String refreshToken = delegateRefreshToken(token);
+        String accessToken = "Bearer " + delegateAccessToken(employee);
+        String refreshToken = delegateRefreshToken(employee);
 
         response.setHeader("Authorization", accessToken);
         response.setHeader("Refresh", refreshToken);
 
         // ------------------------------------------------------------
         // response.body에 내용 생성
-        saveResponseBody(response, token);
+        saveResponseBody(response, employee);
 
         // token에 Authorization과 Refresh 토큰값 설정하기
-        token.setAccessToken(accessToken);
-        token.setRefreshToken(refreshToken);
-        tokenService.patchToken(token);
+        employee.setAccessToken(accessToken);
+        employee.setRefreshToken(refreshToken);
+        employee = employeeService.patchEmployeeToken(employee);
         // ------------------------------------------------------------
 
         this.getSuccessHandler().onAuthenticationSuccess(request, response, authResult);
     }
 
     private void saveResponseBody(HttpServletResponse response,
-                                  Token token)  throws IOException {
+                                  Employee employee)  throws IOException {
         System.out.println("!! saveResponseBody");
 
         // response.body 설정
@@ -138,8 +151,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         // Token를 UserResponseDto로 변환
         MemberResopnse userResponse = new MemberResopnse(
-                token.getPurchaseMember() != null ? token.getPurchaseMember().getName() : token.getSellMember().getName(), // 이름
-                token.getLoginId() // 아이디
+                employee.getPk(),
+                employee.getId(),
+                employee.getEmail()
         );
 
         // json 형식으로 변환
@@ -149,11 +163,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     // access token 발급
-    private String delegateAccessToken(Token token) {
+    private String delegateAccessToken(Employee employee) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("roles", token.getRoles());
+        claims.put("id", employee.getId()); // 사번
+        claims.put("roles", employee.getRoles()); // 권한
 
-        String subject = token.getLoginId();
+        String subject = employee.getEmail(); // 이메일
         Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
 
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
@@ -162,8 +177,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     }
 
     // refresh token 발급
-    private String delegateRefreshToken(Token token) {
-        String subject = token.getLoginId();
+    private String delegateRefreshToken(Employee employee) {
+        String subject = employee.getEmail();
         Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getRefreshTokenExpirationMinutes());
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
 
@@ -174,7 +189,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Setter
     @Getter
     public class MemberResopnse {
-        private String name; // 이름
-        private String LoginId; // 로그인 아이디
+        private long pk; // 식별자
+        private String id; // 사번
+        private String email; // 로그인 아이디
     }
 }

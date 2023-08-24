@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -30,18 +31,18 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     private final class CustomUserDetails extends Employee implements UserDetails {
         CustomUserDetails(Employee employee) {
-            setPk(getPk());
-            setId(getId());
-            setEmail(getEmail());
-            setPassword(getPassword());
-            setRegiYn(isRegiYn());
-            setDelYn(isDelYn());
-            setAccessToken(getAccessToken());
-            setRefreshToken(getRefreshToken());
-            setRoles(getRoles());
-            setCompany(getCompany());
-            setPerformances(getPerformances());
-            setProgresses(getProgresses());
+            setPk(employee.getPk());
+            setId(employee.getId());
+            setEmail(employee.getEmail());
+            setPassword(employee.getPassword());
+            setRegiYn(employee.isRegiYn());
+            setDelYn(employee.isDelYn());
+            setAccessToken(employee.getAccessToken());
+            setRefreshToken(employee.getRefreshToken());
+            setRoles(employee.getRoles());
+            setCompany(employee.getCompany());
+            setPerformances(employee.getPerformances());
+            setProgresses(employee.getProgresses());
         }
 
         @Override

@@ -24,7 +24,7 @@ public class Employee extends Auditable {
     @Column
     private String id; // 사번
 
-    @Column
+    @Column(unique = true)
     @Email
     private String email; // 이메일
 
