@@ -5,6 +5,7 @@ import ga.backend.company.dto.CompanyResponseDto;
 import ga.backend.company.entity.Company;
 import ga.backend.company.mapper.CompanyMapper;
 import ga.backend.company.service.CompanyService;
+import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping("/company")
+@RequestMapping(Version.currentUrl + "/company")
 @Validated
 @AllArgsConstructor
 public class CompanyController {

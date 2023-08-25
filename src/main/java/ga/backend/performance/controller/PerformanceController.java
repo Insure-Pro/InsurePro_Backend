@@ -5,6 +5,7 @@ import ga.backend.performance.dto.PerformanceResponseDto;
 import ga.backend.performance.entity.Performance;
 import ga.backend.performance.mapper.PerformanceMapper;
 import ga.backend.performance.service.PerformanceService;
+import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping("/performance")
+@RequestMapping(Version.currentUrl + "/performance")
 @Validated
 @AllArgsConstructor
 public class PerformanceController {

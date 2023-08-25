@@ -12,16 +12,18 @@ public enum ExceptionCode {
     PROGRESS_NOT_FOUND(404, "Progress not found"),
     PERFORMANCE_NOT_FOUND(404, "Performance not found"),
     CUSTOM_TYPE_NOT_FOUND(404, "CustomType not found"),
+    INVALID_EMAIL(401, "Invalid Email"),
+    WRONG_PASSWORD(401, "Wrong Password"),
     TAMPERED_TOKEN(1004, "Tampered Token"); // 변조된 토큰
 
 
     @Getter
-    private double status;
+    private int status;
 
     @Getter
     private String message;
 
-    ExceptionCode(double code, String message) {
+    ExceptionCode(int code, String message) {
         this.status = code;
         this.message = message;
     }

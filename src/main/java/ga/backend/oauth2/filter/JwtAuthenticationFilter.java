@@ -47,8 +47,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         ObjectMapper objectMapper = new ObjectMapper();
         LoginDto loginDto = objectMapper.readValue(request.getInputStream(), LoginDto.class);
-        System.out.println("!! loginDto - email : " + loginDto.getEmail());
-        System.out.println("!! loginDto - password : " + loginDto.getPassword());
 
 //        System.out.println("!! make objectMapper");
 //        System.out.println("!! inputStream : " + request.getInputStream().readAllBytes());

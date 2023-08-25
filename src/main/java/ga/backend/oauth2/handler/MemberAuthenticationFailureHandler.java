@@ -1,6 +1,7 @@
 package ga.backend.oauth2.handler;
 
 import com.google.gson.Gson;
+import ga.backend.exception.ExceptionCode;
 import ga.backend.oauth2.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,14 +24,22 @@ public class MemberAuthenticationFailureHandler implements AuthenticationFailure
 
         log.error("# Authentication failed: {}", exception.getMessage());
 
-        sendErrorResponse(response);
+        // 이메일 불일치
+        if(exception.getMessage().equals("Employee not found")) sendErrorResponse(response, ExceptionCode.INVALID_EMAIL);
+        // 비밀번호 불일치
+        else sendErrorResponse(response, ExceptionCode.WRONG_PASSWORD);
     }
 
-    private void sendErrorResponse(HttpServletResponse response) throws IOException {
+    private void sendErrorResponse(HttpServletResponse response, ExceptionCode exceptionCode) throws IOException {
         Gson gson = new Gson();
-        ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.UNAUTHORIZED);
+        // 401, HttpStatus.UNAUTHORIZED
+        ErrorResponse errorResponse = ErrorResponse.of(exceptionCode);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(exceptionCode.getStatus());
+
+//        ErrorResponse errorResponse = ErrorResponse.of(HttpStatus.UNAUTHORIZED);
+//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.getWriter().write(gson.toJson(errorResponse, ErrorResponse.class));
     }
 }

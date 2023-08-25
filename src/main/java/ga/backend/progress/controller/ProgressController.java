@@ -5,6 +5,7 @@ import ga.backend.progress.dto.ProgressResponseDto;
 import ga.backend.progress.entity.Progress;
 import ga.backend.progress.mapper.ProgressMapper;
 import ga.backend.progress.service.ProgressService;
+import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping("/progress")
+@RequestMapping(Version.currentUrl + "/progress")
 @Validated
 @AllArgsConstructor
 public class ProgressController {

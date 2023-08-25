@@ -20,3 +20,13 @@ jwt:
   key: ${JWT_SECRET_KEY}                # 민감한 정보는 시스템 환경 변수에서 로드한다.
   access-token-expiration-minutes: 30   # access-token 유효시간 : 30분
   refresh-token-expiration-minutes: 420 # sercret-token 유효시간 : 420분(7시간)
+
+# 에러 처리
+server:
+  error:
+#    include-exception: true     # 응답에 exception의 내용을 포함할지 여부
+#    include-stacktrace: always  # 응답에 stacktrace 내용을 포함할 지 여부
+    path: '/error'               # 응답을 처리할 Handler의 경로
+    whitelabel:
+      enabled: true             # 서버 오류 발생시 브라우저에 보여줄 기본 페이지 생성 여부
+    include-message: always
