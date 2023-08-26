@@ -2,6 +2,8 @@
 package ga.backend.exception;
 import lombok.Getter;
 
+import java.util.Arrays;
+
 public enum ExceptionCode {
     COMPANY_NOT_FOUND(404, "Company not found"),
     DONG_NOT_FOUND(404, "Dong not found"),
@@ -12,6 +14,7 @@ public enum ExceptionCode {
     PROGRESS_NOT_FOUND(404, "Progress not found"),
     PERFORMANCE_NOT_FOUND(404, "Performance not found"),
     CUSTOM_TYPE_NOT_FOUND(404, "CustomType not found"),
+    PASSWORD_AND_REPASSWORD_NOT_SAME(400, "password and rePassword are not same"),
     INVALID_EMAIL(401, "Invalid Email"),
     WRONG_PASSWORD(401, "Wrong Password"),
     TAMPERED_TOKEN(1004, "Tampered Token"); // 변조된 토큰
@@ -26,5 +29,12 @@ public enum ExceptionCode {
     ExceptionCode(int code, String message) {
         this.status = code;
         this.message = message;
+    }
+
+    public static ExceptionCode findByMessage(String message) {
+        return Arrays.stream(ExceptionCode.values())
+                .filter(exceptionCode -> exceptionCode.getMessage().equals(message))
+                .findFirst()
+                .orElse(null);
     }
 }

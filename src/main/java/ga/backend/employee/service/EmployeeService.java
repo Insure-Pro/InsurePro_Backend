@@ -1,5 +1,6 @@
 package ga.backend.employee.service;
 
+import ga.backend.company.service.CompanyService;
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.repository.EmployeeRepository;
 import ga.backend.event.UserRegistrationApplicationEvent;
@@ -18,17 +19,24 @@ import java.util.Optional;
 @AllArgsConstructor
 public class EmployeeService {
     private final EmployeeRepository employeeRespository;
+    private final CompanyService companyService;
     private final CustomAuthorityUtils authorityUtils;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher publisher;
 
     // CREATE
-    public Employee createEmployee(Employee employee) {
+    public Employee createEmployee(Employee employee, long companyPk) {
         employee.setRoles(authorityUtils.createRoles(employee.getEmail())); // 권한 설정
         employee.setPassword(passwordEncoder.encode(employee.getPassword())); // 비밀번호 인코딩
+        if(companyPk != 0) employee.setCompany(companyService.verifiedCompany(companyPk)); // 회사 연관관계 설정
         publisher.publishEvent(new UserRegistrationApplicationEvent(employee));
 
         return employeeRespository.save(employee);
+    }
+
+    // 비밀번호 확인
+    public void checkPassword(String password, String rePassword) {
+        if(!password.equals(rePassword)) new BusinessLogicException(ExceptionCode.PASSWORD_AND_REPASSWORD_NOT_SAME);
     }
 
     // READ

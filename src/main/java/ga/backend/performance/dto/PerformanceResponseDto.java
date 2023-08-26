@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class PerformanceResponseDto {
@@ -21,5 +22,7 @@ public class PerformanceResponseDto {
         private int rp;
         private int apc;
         private int contractNm;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
     }
 }

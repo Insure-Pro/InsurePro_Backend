@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
 public class EmployeeResponseDto {
@@ -14,8 +15,9 @@ public class EmployeeResponseDto {
         private Long pk;
         private String id;
         private String email;
-        private String password;
         private boolean regiYn;
         private boolean delYn;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
     }
 }

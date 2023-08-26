@@ -11,6 +11,7 @@ import javax.persistence.Id;
 import java.sql.Date;
 import java.sql.Time;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class ScheduleResponseDto {
@@ -25,7 +26,10 @@ public class ScheduleResponseDto {
         private LocalTime finishTm;
         private LocalTime time;
         private String address;
-        private boolean meetYn = false;
-        private boolean delYn = false;
+        private boolean meetYn;
+        private boolean delYn;
+        private String color;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
     }
 }

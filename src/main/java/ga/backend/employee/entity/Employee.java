@@ -2,8 +2,10 @@ package ga.backend.employee.entity;
 
 import ga.backend.auditable.Auditable;
 import ga.backend.company.entity.Company;
+import ga.backend.customer.entity.Customer;
 import ga.backend.performance.entity.Performance;
 import ga.backend.progress.entity.Progress;
+import ga.backend.schedule.entity.Schedule;
 import lombok.*;
 
 import javax.persistence.*;
@@ -46,6 +48,9 @@ public class Employee extends Auditable {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>(); // 권한
 
+    @Column
+    private int authNum; // 이메일 인증 번호
+
     @ManyToOne
     @JoinColumn(name = "company_pk")
     private Company company;
@@ -55,4 +60,10 @@ public class Employee extends Auditable {
 
     @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Progress> progresses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Customer> customers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Schedule> schedules = new ArrayList<>();
 }
