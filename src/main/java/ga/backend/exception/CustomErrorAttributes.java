@@ -5,6 +5,7 @@ import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 //import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -22,8 +23,7 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
                                          Exception ex) {
         storeErrorAttributes(request, ex);
-        System.out.println("!! exception : " + ex.getMessage());
-//        System.out.println("!! " + ex.);
+        System.out.println("!! exception1 : " + ex.getMessage());
 //        response.setStatus();
         return null;
     }
@@ -79,6 +79,9 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
             }
         }
 
+        Exception ex = (Exception) webRequest.getAttribute(ERROR_INTERNAL_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
+        System.out.println("!! exception2 : " + ex.getMessage());
+        System.out.println("!! exception2 : " + webRequest.getAttribute(ERROR_INTERNAL_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST).toString());
 
 
 //        result.put("greeting", "Hello");
@@ -88,6 +91,6 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
     }
 
     public int getStatus() {
-
+        return 0;
     }
 }
