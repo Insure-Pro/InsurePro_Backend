@@ -46,6 +46,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.security:spring-security-test'
 	implementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// 이메일 인증
+	implementation 'javax.mail:mail'
+	implementation 'org.springframework:spring-context-support'
 }
 
 tasks.named('test') {
