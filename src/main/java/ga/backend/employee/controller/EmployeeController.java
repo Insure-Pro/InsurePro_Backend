@@ -33,6 +33,10 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    // 이메일 인증번호 전송
+//    @PostMapping("/sendEmail")
+//    public ResponseEntity sendEmail()
+
     // READ
     @GetMapping("/{employee-pk}")
     public ResponseEntity getEmployee(@Positive @PathVariable("employee-pk") long employeePk) {

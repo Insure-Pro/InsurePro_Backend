@@ -36,7 +36,7 @@ public class EmployeeService {
 
     // 비밀번호 확인
     public void checkPassword(String password, String rePassword) {
-        if(!password.equals(rePassword)) new BusinessLogicException(ExceptionCode.PASSWORD_AND_REPASSWORD_NOT_SAME);
+        if(!password.equals(rePassword)) throw new BusinessLogicException(ExceptionCode.PASSWORD_AND_REPASSWORD_NOT_SAME);
     }
 
     // READ

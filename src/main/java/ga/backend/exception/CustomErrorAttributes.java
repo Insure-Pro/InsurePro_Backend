@@ -3,6 +3,7 @@ package ga.backend.exception;
 import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.DefaultErrorAttributes;
 //import org.springframework.boot.web.reactive.error.DefaultErrorAttributes;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
@@ -23,8 +24,12 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
     public ModelAndView resolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
                                          Exception ex) {
         storeErrorAttributes(request, ex);
-        System.out.println("!! exception1 : " + ex.getMessage());
-//        response.setStatus();
+
+//        System.out.println("!! response status : " + response.getStatus());
+
+//        System.out.println("!! exception1 : " + ex.getMessage());
+//        System.out.println("!! exception1 : " + ex.toString());
+
         return null;
     }
 
@@ -71,26 +76,23 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
 
 //        ----------------------------------------------------------------------------------
         Map<String, Object> result = super.getErrorAttributes(webRequest, options);
+        Exception ex = (Exception) webRequest.getAttribute(ERROR_INTERNAL_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
         result.remove("timestamp");
-        if(result.get("exception").toString().contains("BusinessLogicException")) {
-            ExceptionCode exceptionCode = ExceptionCode.findByMessage(result.get("message").toString());
-            if(exceptionCode != null) {
-                result.put("status", exceptionCode.getStatus());
-            }
+        if(ex != null && ex.toString().contains("default message")) {
+            String[] strings = ex.toString().split("default message ");
+            String message = "";
+            if(strings.length > 2) message = strings[strings.length-1].replace("[", "").replace("]", "");
+            result.put("message", message);
         }
 
-        Exception ex = (Exception) webRequest.getAttribute(ERROR_INTERNAL_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
-        System.out.println("!! exception2 : " + ex.getMessage());
-        System.out.println("!! exception2 : " + webRequest.getAttribute(ERROR_INTERNAL_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST).toString());
+//        System.out.println("!! exception2 : " + ex.getMessage()); // message
+//        System.out.println("!! exception2 : " + ex.toString()); // exception + message
+//        System.out.println("!! exception2 : " + webRequest.getAttribute(ERROR_INTERNAL_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST).toString()); // exception + message
 
 
 //        result.put("greeting", "Hello");
 //        System.out.println("!! options key : " + Arrays.toString(options.getIncludes().toArray()));
 //        System.out.println("!! error key : " + Arrays.toString(result.keySet().toArray()));
         return result;
-    }
-
-    public int getStatus() {
-        return 0;
     }
 }
