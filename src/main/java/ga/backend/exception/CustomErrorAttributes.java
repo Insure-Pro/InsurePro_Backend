@@ -78,16 +78,16 @@ public class CustomErrorAttributes extends DefaultErrorAttributes {
         Map<String, Object> result = super.getErrorAttributes(webRequest, options);
         Exception ex = (Exception) webRequest.getAttribute(ERROR_INTERNAL_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST);
         result.remove("timestamp");
-        if(ex.toString().contains("default message")) {
+        if(ex != null && ex.toString().contains("default message")) {
             String[] strings = ex.toString().split("default message ");
             String message = "";
             if(strings.length > 2) message = strings[strings.length-1].replace("[", "").replace("]", "");
             result.put("message", message);
         }
 
-        System.out.println("!! exception2 : " + ex.getMessage()); // message
-        System.out.println("!! exception2 : " + ex.toString()); // exception + message
-        System.out.println("!! exception2 : " + webRequest.getAttribute(ERROR_INTERNAL_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST).toString()); // exception + message
+//        System.out.println("!! exception2 : " + ex.getMessage()); // message
+//        System.out.println("!! exception2 : " + ex.toString()); // exception + message
+//        System.out.println("!! exception2 : " + webRequest.getAttribute(ERROR_INTERNAL_ATTRIBUTE, RequestAttributes.SCOPE_REQUEST).toString()); // exception + message
 
 
 //        result.put("greeting", "Hello");
