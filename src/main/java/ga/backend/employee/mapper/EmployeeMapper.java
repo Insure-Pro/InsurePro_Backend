@@ -8,6 +8,7 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface EmployeeMapper {
     Employee employeePostDtoToEmployee(EmployeeRequestDto.Post post);
+    Employee employeeSigninDtoToEmployee(EmployeeRequestDto.Signin signin);
     Employee employeePatchDtoToEmployee(EmployeeRequestDto.Patch patch);
     EmployeeResponseDto.Response employeeToEmployeeResponseDto(Employee employee);
 }

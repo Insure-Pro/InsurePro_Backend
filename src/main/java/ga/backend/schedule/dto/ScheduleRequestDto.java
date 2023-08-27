@@ -21,8 +21,9 @@ public class ScheduleRequestDto {
         private LocalTime finishTm;
         private LocalTime time;
         private String address;
-        private boolean meetYn = false;
-        private boolean delYn = false;
+        private boolean meetYn;
+        private boolean delYn;
+        private String color;
     }
 
     @AllArgsConstructor
@@ -36,7 +37,8 @@ public class ScheduleRequestDto {
         private LocalTime finishTm;
         private LocalTime time;
         private String address;
-        private boolean meetYn = false;
-        private boolean delYn = false;
+        private boolean meetYn;
+        private boolean delYn;
+        private String color;
     }
 }

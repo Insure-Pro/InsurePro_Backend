@@ -1,11 +1,11 @@
 package ga.backend.config;
 
-import ga.backend.employee.entity.Employee;
 import ga.backend.employee.service.EmployeeService;
 import ga.backend.oauth2.filter.JwtAuthenticationFilter;
 import ga.backend.oauth2.filter.JwtVerificationFilter;
 import ga.backend.oauth2.handler.*;
 import ga.backend.oauth2.jwt.JwtTokenizer;
+import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 /**
@@ -46,7 +45,7 @@ public class SecurityConfiguration {
                 .apply(new CustomFilterConfigurer())
                 .and()
                 .logout()
-                .logoutUrl("/logout") // 로그아웃 처리 URL(기본값)
+                .logoutUrl(Version.currentUrl + "/logout") // 로그아웃 처리 URL(기본값)
                 .invalidateHttpSession(true) // 로그아웃 성공 시 세션 제거
                 .clearAuthentication(true) // 로그아웃 시 권한 제거
                 .permitAll() // 모두 허용
@@ -80,7 +79,7 @@ public class SecurityConfiguration {
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
             JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer, employeeService);
-            jwtAuthenticationFilter.setFilterProcessesUrl("/login");          // login url
+            jwtAuthenticationFilter.setFilterProcessesUrl(Version.currentUrl + "/login");          // login url
 
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new MemberAuthenticationSuccessHandler());
             jwtAuthenticationFilter.setAuthenticationFailureHandler(new MemberAuthenticationFailureHandler());

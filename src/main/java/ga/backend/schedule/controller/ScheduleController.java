@@ -5,6 +5,7 @@ import ga.backend.schedule.dto.ScheduleResponseDto;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.schedule.mapper.ScheduleMapper;
 import ga.backend.schedule.service.ScheduleService;
+import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping("/schedule")
+@RequestMapping(Version.currentUrl + "/schedule")
 @Validated
 @AllArgsConstructor
 public class ScheduleController {

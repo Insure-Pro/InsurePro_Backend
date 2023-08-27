@@ -5,6 +5,7 @@ import ga.backend.dong.dto.DongResponseDto;
 import ga.backend.dong.entity.Dong;
 import ga.backend.dong.mapper.DongMapper;
 import ga.backend.dong.service.DongService;
+import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping("/dong")
+@RequestMapping(Version.currentUrl + "/dong")
 @Validated
 @AllArgsConstructor
 public class DongController {

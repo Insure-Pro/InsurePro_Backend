@@ -5,6 +5,7 @@ import ga.backend.employee.dto.EmployeeResponseDto;
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.mapper.EmployeeMapper;
 import ga.backend.employee.service.EmployeeService;
+import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping("/employee")
+@RequestMapping(Version.currentUrl + "/employee")
 @Validated
 @AllArgsConstructor
 public class EmployeeController {
@@ -23,9 +24,10 @@ public class EmployeeController {
     private final EmployeeMapper employeeMapper;
 
     // CREATE
-    @PostMapping
-    public ResponseEntity postEmployee(@Valid @RequestBody EmployeeRequestDto.Post post) {
-        Employee employee = employeeService.createEmployee(employeeMapper.employeePostDtoToEmployee(post));
+    @PostMapping("/signin")
+    public ResponseEntity postEmployee(@Valid @RequestBody EmployeeRequestDto.Signin signin) {
+        employeeService.checkPassword(signin.getPassword(), signin.getRePassword()); // 비밀번호 확인
+        Employee employee = employeeService.createEmployee(employeeMapper.employeeSigninDtoToEmployee(signin), signin.getCompanyPk());
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);

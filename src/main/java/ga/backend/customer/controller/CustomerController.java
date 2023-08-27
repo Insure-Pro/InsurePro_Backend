@@ -5,6 +5,7 @@ import ga.backend.customer.dto.CustomerResponseDto;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.mapper.CustomerMapper;
 import ga.backend.customer.service.*;
+import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping("/customer")
+@RequestMapping(Version.currentUrl + "/customer")
 @Validated
 @AllArgsConstructor
 public class CustomerController {

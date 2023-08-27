@@ -12,12 +12,12 @@ import java.util.stream.Collectors;
 
 @Getter
 public class ErrorResponse {
-    private double status;
+    private int status;
     private String message;
     private List<FieldError> fieldErrors;
     private List<ConstraintViolationError> violationErrors;
 
-    private ErrorResponse(double status, String message) {
+    private ErrorResponse(int status, String message) {
         this.status = status;
         this.message = message;
     }
