@@ -17,7 +17,9 @@ public enum ExceptionCode {
     PASSWORD_AND_REPASSWORD_NOT_SAME(400, "password and rePassword are not same"),
     INVALID_EMAIL(401, "Invalid Email"),
     WRONG_PASSWORD(401, "Wrong Password"),
-    TAMPERED_TOKEN(1004, "Tampered Token"); // 변조된 토큰
+    TAMPERED_TOKEN(1004, "Tampered Token"), // 변조된 토큰
+    FAIL_SEND_EMAIL(500, "Fail send email"),
+    NOT_MATCH_AUTHNUM(401, "Not Match authNum");
 
 
     @Getter
