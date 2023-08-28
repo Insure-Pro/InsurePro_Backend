@@ -48,9 +48,6 @@ public class Employee extends Auditable {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>(); // 권한
 
-    @Column
-    private int authNum; // 이메일 인증 번호
-
     @ManyToOne
     @JoinColumn(name = "company_pk")
     private Company company;
