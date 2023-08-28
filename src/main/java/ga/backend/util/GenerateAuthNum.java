@@ -1,10 +1,7 @@
 package ga.backend.util;
 
-import org.springframework.context.annotation.Configuration;
-
 import java.util.Random;
 
-@Configuration
 public class GenerateAuthNum {
     // 랜덤번호 생성하기
     public int randomNumber() {

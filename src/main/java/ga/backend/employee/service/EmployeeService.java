@@ -1,6 +1,5 @@
 package ga.backend.employee.service;
 
-import ga.backend.authorizationNumber.service.AuthorizationNumberService;
 import ga.backend.company.service.CompanyService;
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.repository.EmployeeRepository;
@@ -24,14 +23,12 @@ public class EmployeeService {
     private final CustomAuthorityUtils authorityUtils;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher publisher;
-    private final AuthorizationNumberService authorizationNumberService;
 
     // CREATE
-    public Employee createEmployee(Employee employee, long companyPk, int authNum) {
+    public Employee createEmployee(Employee employee, long companyPk) {
         employee.setRoles(authorityUtils.createRoles(employee.getEmail())); // 권한 설정
         employee.setPassword(passwordEncoder.encode(employee.getPassword())); // 비밀번호 인코딩
         if(companyPk != 0) employee.setCompany(companyService.verifiedCompany(companyPk)); // 회사 연관관계 설정
-        authorizationNumberService.checkAuthNum(employee.getEmail(), authNum); // 인증번호와 이메일 확인
         publisher.publishEvent(new UserRegistrationApplicationEvent(employee));
 
         return employeeRespository.save(employee);
