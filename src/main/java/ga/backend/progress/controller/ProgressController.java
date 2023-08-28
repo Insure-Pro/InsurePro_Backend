@@ -38,7 +38,7 @@ public class ProgressController {
         Progress progress = progressService.findProgress(progressPk);
         ProgressResponseDto.Response response = progressMapper.progressToProgressResponseDto(progress);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // UPDATE
@@ -47,7 +47,7 @@ public class ProgressController {
         Progress progress = progressService.patchProgress(progressMapper.progressPatchDtoToProgress(patch));
         ProgressResponseDto.Response response = progressMapper.progressToProgressResponseDto(progress);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // DELETE

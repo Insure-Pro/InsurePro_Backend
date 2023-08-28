@@ -38,7 +38,7 @@ public class CompanyController {
         Company company = companyService.findCompany(companyPk);
         CompanyResponseDto.Response response = companyMapper.companyToCompanyResponseDto(company);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // UPDATE
@@ -47,7 +47,7 @@ public class CompanyController {
         Company company = companyService.patchCompany(companyMapper.companyPatchDtoToCompany(patch));
         CompanyResponseDto.Response response = companyMapper.companyToCompanyResponseDto(company);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // DELETE

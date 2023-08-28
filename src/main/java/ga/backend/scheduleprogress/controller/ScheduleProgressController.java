@@ -38,7 +38,7 @@ public class ScheduleProgressController {
         ScheduleProgress scheduleProgress = scheduleProgressService.findScheduleProgress(scheduleProgressPk);
         ScheduleProgressResponseDto.Response response = scheduleProgressMapper.scheduleProgressToScheduleProgressResponseDto(scheduleProgress);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // UPDATE
@@ -47,7 +47,7 @@ public class ScheduleProgressController {
         ScheduleProgress scheduleProgress = scheduleProgressService.patchScheduleProgress(scheduleProgressMapper.scheduleProgressPatchDtoToScheduleProgress(patch));
         ScheduleProgressResponseDto.Response response = scheduleProgressMapper.scheduleProgressToScheduleProgressResponseDto(scheduleProgress);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // DELETE
