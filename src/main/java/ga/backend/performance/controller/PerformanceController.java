@@ -38,7 +38,7 @@ public class PerformanceController {
         Performance performance = performanceService.findPerformance(performancePk);
         PerformanceResponseDto.Response response = performanceMapper.performanceToPerformanceResponseDto(performance);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // UPDATE
@@ -47,7 +47,7 @@ public class PerformanceController {
         Performance performance = performanceService.patchPerformance(performanceMapper.performancePatchDtoToPerformance(patch));
         PerformanceResponseDto.Response response = performanceMapper.performanceToPerformanceResponseDto(performance);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // DELETE

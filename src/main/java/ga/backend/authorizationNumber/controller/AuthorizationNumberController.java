@@ -38,7 +38,7 @@ public class AuthorizationNumberController {
         AuthorizationNumber authorizationNumber = authorizationNumberService.checkAuthNum(authorizationNumberMapper.authorizationNumberCheckDtoToAuthorizationNumber(check));
         AuthorizationNumberResponseDto.Response response = authorizationNumberMapper.authorizationNumberToAuthorizationNumberResponseDto(authorizationNumber);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // UPDATE

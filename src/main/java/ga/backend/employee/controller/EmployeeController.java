@@ -23,7 +23,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
     private final EmployeeMapper employeeMapper;
 
-    // CREATE
+    // CREATE - 회원가입
     @PostMapping("/signin")
     public ResponseEntity postEmployee(@Valid @RequestBody EmployeeRequestDto.Signin signin) {
         employeeService.checkPassword(signin.getPassword(), signin.getRePassword()); // 비밀번호 확인
@@ -43,7 +43,16 @@ public class EmployeeController {
         Employee employee = employeeService.findEmployee(employeePk);
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 가입한 이메일 찾기
+    @GetMapping
+    public ResponseEntity getEmployee(@RequestParam("id") String employee_id) {
+        Employee employee = employeeService.verifiedEmployeeById(employee_id);
+        EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // UPDATE
@@ -52,7 +61,7 @@ public class EmployeeController {
         Employee employee = employeeService.patchEmployee(employeeMapper.employeePatchDtoToEmployee(patch));
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // DELETE

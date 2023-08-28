@@ -1,7 +1,5 @@
 package ga.backend.company.controller;
 
-import com.nimbusds.jose.shaded.json.JSONArray;
-import com.nimbusds.jose.shaded.json.JSONObject;
 import ga.backend.company.dto.CompanyRequestDto;
 import ga.backend.company.dto.CompanyResponseDto;
 import ga.backend.company.entity.Company;
