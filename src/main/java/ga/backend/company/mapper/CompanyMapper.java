@@ -6,6 +6,8 @@ import ga.backend.company.entity.Company;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface CompanyMapper {
 
@@ -13,4 +15,6 @@ public interface CompanyMapper {
     Company companyPostDtoToCompany(CompanyRequestDto.Post post);
     Company companyPatchDtoToCompany(CompanyRequestDto.Patch patch);
     CompanyResponseDto.Response companyToCompanyResponseDto(Company company);
+    List<CompanyResponseDto.Response> companyToCompanyListResponseDto(List<Company> companys);
+
 }
