@@ -3,6 +3,7 @@ package ga.backend.employee.entity;
 import ga.backend.auditable.Auditable;
 import ga.backend.company.entity.Company;
 import ga.backend.customer.entity.Customer;
+import ga.backend.dayschedule.entity.DaySchedule;
 import ga.backend.performance.entity.Performance;
 import ga.backend.progress.entity.Progress;
 import ga.backend.schedule.entity.Schedule;
@@ -66,4 +67,7 @@ public class Employee extends Auditable {
 
     @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Schedule> schedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<DaySchedule> daySchedules = new ArrayList<>();
 }
