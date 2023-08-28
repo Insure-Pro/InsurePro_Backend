@@ -48,9 +48,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// 이메일 인증
-//	implementation 'javax.mail:mail:1.4.7'
-//	implementation 'org.springframework:spring-context-support:5.3.9'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'javax.mail:mail'
+	implementation 'org.springframework:spring-context-support'
 }
 
 tasks.named('test') {

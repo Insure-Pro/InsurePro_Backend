@@ -11,17 +11,6 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  mail: # 메일 전송 설정
-    host: smtp.gmail.com
-    port: 587 # 465 또는 587 포트 사용 가능(SMTP)
-    username: ${EMAIL_USERNAME} # 전송할 이메일
-    password: ${EMAIL_PW} # 생성된 비밀번호 (참고 사이트 : https://hyunmin1906.tistory.com/276)
-    properties.mail.smtp:
-      auth: true
-      timeout: 25000
-      starttls.enable: true
-    protocol: smtp
-
 
 mail:
   address:

@@ -27,15 +27,15 @@ public class EmployeeController {
     @PostMapping("/signin")
     public ResponseEntity postEmployee(@Valid @RequestBody EmployeeRequestDto.Signin signin) {
         employeeService.checkPassword(signin.getPassword(), signin.getRePassword()); // 비밀번호 확인
-        Employee employee = employeeService.createEmployee(
-                employeeMapper.employeeSigninDtoToEmployee(signin),
-                signin.getCompanyPk(),
-                signin.getAuthNum()
-        );
+        Employee employee = employeeService.createEmployee(employeeMapper.employeeSigninDtoToEmployee(signin), signin.getCompanyPk());
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    // 이메일 인증번호 전송
+//    @PostMapping("/sendEmail")
+//    public ResponseEntity sendEmail()
 
     // READ
     @GetMapping("/{employee-pk}")
