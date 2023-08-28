@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2023-08-28T15:44:10+0900",
+    date = "2023-08-28T17:13:29+0900",
     comments = "version: 1.5.1.Final, compiler: javac, environment: Java 11.0.16.1 (Oracle Corporation)"
 )
 @Component
@@ -25,7 +25,6 @@ public class CompanyMapperImpl implements CompanyMapper {
 
         company.setPk( post.getPk() );
         company.setName( post.getName() );
-        company.setDelYn( post.isDelYn() );
 
         return company;
     }

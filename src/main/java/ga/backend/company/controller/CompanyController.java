@@ -26,6 +26,7 @@ public class CompanyController {
     // CREATE
     @PostMapping
     public ResponseEntity postCompany(@Valid @RequestBody CompanyRequestDto.Post post) {
+        System.out.println("post hello");
         Company company = companyService.createCompany(companyMapper.companyPostDtoToCompany(post));
         CompanyResponseDto.Response response = companyMapper.companyToCompanyResponseDto(company);
 

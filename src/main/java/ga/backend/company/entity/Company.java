@@ -33,4 +33,10 @@ public class Company extends Auditable {
 
     @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<CustomerType> customerTypes = new ArrayList<>();
+
+    public Company createCompany(String name) {
+        Company company = new Company();
+        company.name = name;
+        return company;
+    }
 }
