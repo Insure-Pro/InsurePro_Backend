@@ -75,20 +75,14 @@ public class AuthorizationNumberService {
     public void emailConfig(String fromMail, String toMail, String title, String content) {
         MimeMessage message = mailSender.createMimeMessage();
 
-        // true 매개값을 전달하면 multipart 형식의 메세지 전달이 가능.문자 인코딩 설정도 가능하다.
+        // true 매개값을 전달하면 multipart 형식의 메세지 전달이 가능.문자 인코딩 설정도 가능
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message,true,"utf-8");
             helper.setFrom(fromMail);
             helper.setTo(toMail);
             helper.setSubject(title);
-            // true 전달 > html 형식으로 전송 , 작성하지 않으면 단순 텍스트로 전달.
-            helper.setText(content,true);
-
-            // SMPT Port 설정
-//            Properties properties = System.getProperties();
-//            properties.setProperty("mail.smtp.port", "8080");
-
-            mailSender.send(message);
+            helper.setText(content,true); // true 전달 > html 형식으로 전송 , 작성하지 않으면 단순 텍스트로 전달됨
+            mailSender.send(message); // 이메일 전송
         } catch (MessagingException e) {
             throw new BusinessLogicException(ExceptionCode.FAIL_SEND_EMAIL);
         }
