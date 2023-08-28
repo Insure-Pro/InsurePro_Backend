@@ -6,6 +6,7 @@ import ga.backend.customer.entity.Customer;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,5 +32,5 @@ public class CustomerType extends Auditable {
     private Company company;
 
     @OneToMany(mappedBy = "customerType")
-    private List<Customer> customers;
+    private List<Customer> customers = new ArrayList<>();;
 }

@@ -1,5 +1,7 @@
 package ga.backend.company.controller;
 
+import com.nimbusds.jose.shaded.json.JSONArray;
+import com.nimbusds.jose.shaded.json.JSONObject;
 import ga.backend.company.dto.CompanyRequestDto;
 import ga.backend.company.dto.CompanyResponseDto;
 import ga.backend.company.entity.Company;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping(Version.currentUrl + "/company")
@@ -33,11 +36,18 @@ public class CompanyController {
     }
 
     // READ
-    @GetMapping("/{company-pk}")
-    public ResponseEntity getCompany(@Positive @PathVariable("company-pk") long companyPk) {
-        Company company = companyService.findCompany(companyPk);
-        CompanyResponseDto.Response response = companyMapper.companyToCompanyResponseDto(company);
 
+    @GetMapping
+    public ResponseEntity getCompanyList(
+            @RequestParam(value = "pk", required = false) Long pk,
+            @RequestParam(value = "name", required = false) String name) {
+        // pk, name Repuest Param에 따른 Company 리스트
+        List<Company> findCompanys = companyService.findCompanys(pk, name);
+        List<CompanyResponseDto.Response> companys = companyMapper.companyToCompanyListResponseDto(findCompanys);
+
+        // {"companys" : []} 형식으로 변환
+        JSONObject response = new JSONObject();
+        response.put("companys", companys);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
