@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,7 +34,7 @@ public class Customer extends Auditable {
     private Employee employee;
 
     @OneToMany(mappedBy = "customer")
-    private List<Schedule> schedules;
+    private List<Schedule> schedules = new ArrayList<>();
 
     @Column
     private String name; // 이름

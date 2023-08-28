@@ -7,6 +7,8 @@ import ga.backend.exception.ExceptionCode;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +22,20 @@ public class CompanyService {
     }
 
     // READ
+    public List<Company> findCompanys(Long pk, String name) {
+        List<Company> companyList = new ArrayList<>();
+        if (pk == null && name == null) {
+            companyList = companyRespository.findAllByDelYn(false);
+        } else if (pk == null) {
+            companyList = companyRespository.findAllByDelYnAndName(false, name);
+        } else if (name == null) {
+            companyList = companyRespository.findAllByDelYnAndPk(false, pk);
+        } else {
+            companyList = companyRespository.findAllByDelYnAndPkAndName(false, pk, name);
+        }
+        return companyList;
+    }
+
     public Company findCompany(long companyPk) {
         Company company = verifiedCompany(companyPk);
         return company;

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -18,7 +19,7 @@ public class Dong extends Auditable {
     private Long pk;
 
     @OneToMany(mappedBy = "dong")
-    private List<Customer> customers;
+    private List<Customer> customers = new ArrayList<>();;
 
     @Column
     private String si;
