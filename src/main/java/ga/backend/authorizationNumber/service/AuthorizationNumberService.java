@@ -52,7 +52,7 @@ public class AuthorizationNumberService {
     // 검증
     public AuthorizationNumber verifiedAuthorizationNumber(String email) {
         Optional<AuthorizationNumber> authorizationNumber = authorizationNumberRespository.findById(email);
-        return authorizationNumber.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
+        return authorizationNumber.orElseThrow(() -> new BusinessLogicException(ExceptionCode.AUTHORIZATION_NUMBER_NOT_FOUND));
     }
 
     //이메일 보낼 양식 설정하기
@@ -82,7 +82,7 @@ public class AuthorizationNumberService {
             helper.setTo(toMail);
             helper.setSubject(title);
             helper.setText(content,true); // true 전달 > html 형식으로 전송 , 작성하지 않으면 단순 텍스트로 전달됨
-            mailSender.send(message); // 이메일 전송
+//            mailSender.send(message); // 이메일 전송
         } catch (MessagingException e) {
             throw new BusinessLogicException(ExceptionCode.FAIL_SEND_EMAIL);
         }
