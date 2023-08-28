@@ -4,12 +4,15 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.Email;
+
 public class AuthorizationNumberRequestDto {
     @AllArgsConstructor
     @Setter
     @Getter
     public static class Post {
         private long employee_pk;
+        @Email
         private String email;
     }
 
