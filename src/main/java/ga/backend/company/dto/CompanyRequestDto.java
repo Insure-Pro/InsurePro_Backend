@@ -14,21 +14,25 @@ public class CompanyRequestDto {
     @Setter
     @Getter
     public static class Post {
+
+        private Long pk;
+
+        private String name; // 회사명
+
+        private boolean delYn; // 회사 삭제 여부
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Setter
+    @Getter
+    public static class Patch {
+
         private Long pk;
 
         @NotEmpty
         private String name; // 회사명
 
-        @Column(insertable=false, updatable=false)
-        private boolean delYn; // 회사 삭제 여부
-    }
-
-    @AllArgsConstructor
-    @Setter
-    @Getter
-    public static class Patch {
-        private Long pk;
-        private String name; // 회사명
         private boolean delYn; // 회사 삭제 여부
 
     }

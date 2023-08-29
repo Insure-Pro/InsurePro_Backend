@@ -23,7 +23,7 @@ public class CompanyService {
 
     // READ
     public List<Company> findCompanys(Long pk, String name) {
-        List<Company> companyList = new ArrayList<>();
+        List<Company> companyList;
         if (pk == null && name == null) {
             companyList = companyRespository.findAllByDelYn(false);
         } else if (pk == null) {
@@ -50,9 +50,11 @@ public class CompanyService {
     }
 
     // DELETE
-    public void deleteCompany(long companyPk) {
+    public Company deleteCompany(long companyPk) {
         Company company = verifiedCompany(companyPk);
-        companyRespository.delete(company);
+        company.setDelYn(true);
+        companyRespository.save(company);
+        return company;
     }
 
     // 검증
