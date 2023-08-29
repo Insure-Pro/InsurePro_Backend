@@ -23,7 +23,9 @@ public class CompanyService {
 
     // READ
     public List<Company> findCompanys(Long pk, String name) {
+
         List<Company> companyList;
+
         if (pk == null && name == null) {
             companyList = companyRespository.findAllByDelYn(false);
         } else if (pk == null) {

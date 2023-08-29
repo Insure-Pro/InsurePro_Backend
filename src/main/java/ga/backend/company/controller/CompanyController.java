@@ -7,6 +7,8 @@ import ga.backend.company.dto.CompanyResponseDto;
 import ga.backend.company.entity.Company;
 import ga.backend.company.mapper.CompanyMapper;
 import ga.backend.company.service.CompanyService;
+import ga.backend.exception.BusinessLogicException;
+import ga.backend.exception.ExceptionCode;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -66,7 +68,7 @@ public class CompanyController {
      */
     @GetMapping
     public ResponseEntity getCompanyList(
-            @RequestParam(value = "pk", required = false) Long pk,
+            @Positive @RequestParam(value = "pk", required = false) Long pk,
             @RequestParam(value = "name", required = false) String name) {
 
         // 조회
