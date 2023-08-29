@@ -43,7 +43,7 @@ public class CompanyController {
         // 응답
         CompanyResponseDto.Response response = companyMapper.companyToCompanyResponseDto(company);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
@@ -76,6 +76,7 @@ public class CompanyController {
         List<CompanyResponseDto.Response> companys = companyMapper.companyToCompanyListResponseDto(findCompanys);
         JSONObject response = new JSONObject();
         response.put("companys", companys);
+
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
