@@ -7,6 +7,8 @@ import java.util.Arrays;
 public enum ExceptionCode {
     COMPANY_NOT_FOUND(404, "Company not found"),
     DONG_NOT_FOUND(404, "Dong not found"),
+    DO_NOT_FOUND(404, "Do not found"),
+    GU_NOT_FOUND(404, "Gu not found"),
     SCHEDULE_NOT_FOUND(404, "Schedule not found"),
     CUSTOMER_TYPE_NOT_FOUND(404, "CustomerType not found"),
     CUSTOMER_NOT_FOUND(404, "Customer not found"),

@@ -19,4 +19,5 @@ public class FindEmployee {
         Optional<Employee> employee = employeeRepository.findByEmail(principal.toString());
 
         return employee.orElse(null);
-    }}
+    }
+}

@@ -31,7 +31,7 @@ public class Schedule extends Auditable {
     @JoinColumn(name = "employee_pk")
     private Employee employee;
 
-    @OneToOne(mappedBy = "schedule")
+    @OneToOne(mappedBy = "schedule", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private ScheduleProgress scheduleProgress;
 
     @Column

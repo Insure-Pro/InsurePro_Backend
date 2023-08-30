@@ -28,9 +28,8 @@ public class DongService {
     // UPDATE
     public Dong patchDong(Dong dong) {
         Dong findDong = verifiedDong(dong.getPk());
-        Optional.ofNullable(dong.getSi()).ifPresent(findDong::setSi);
-        Optional.ofNullable(dong.getGu()).ifPresent(findDong::setGu);
         Optional.ofNullable(dong.getDong()).ifPresent(findDong::setDong);
+        Optional.ofNullable(dong.getDelYn()).ifPresent(findDong::setDelYn);
         return dongRespository.save(findDong);
     }
 

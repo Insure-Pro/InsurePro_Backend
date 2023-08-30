@@ -33,7 +33,7 @@ public class Customer extends Auditable {
     @JoinColumn(name = "employee_pk")
     private Employee employee;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Schedule> schedules = new ArrayList<>();
 
     @Column

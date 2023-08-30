@@ -17,7 +17,7 @@ public class Progress extends Auditable {
     @Column(name = "progress_pk")
     private Long pk;
 
-    @OneToOne(mappedBy = "progress")
+    @OneToOne(mappedBy = "progress", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private ScheduleProgress scheduleProgress;
 
     @Column
