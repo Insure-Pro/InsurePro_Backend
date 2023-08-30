@@ -7,6 +7,7 @@ import ga.backend.exception.ExceptionCode;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,33 +16,39 @@ public class MetroService {
     private final MetroRepository metroRespository;
 
     // CREATE
-    public Metro createMetro(Metro aMetro) {
-        return metroRespository.save(aMetro);
+    public Metro createMetro(Metro metro) {
+        return metroRespository.save(metro);
     }
 
     // READ
     public Metro findMetro(long metroPk) {
-        Metro aMetro = verifiedMetro(metroPk);
-        return aMetro;
+        Metro metro = verifiedMetro(metroPk);
+        return metro;
+    }
+    
+    // 모든 내용 반환
+    public List<Metro> findMetros() {
+        List<Metro> metros = metroRespository.findAll();
+        return metros;
     }
 
     // UPDATE
-    public Metro patchMetro(Metro aMetro) {
-        Metro findMetro = verifiedMetro(aMetro.getPk());
-        Optional.ofNullable(aMetro.getMetro()).ifPresent(findMetro::setMetro);
-        Optional.ofNullable(aMetro.getDelYn()).ifPresent(findMetro::setDelYn);
+    public Metro patchMetro(Metro metro) {
+        Metro findMetro = verifiedMetro(metro.getPk());
+        Optional.ofNullable(metro.getMetro()).ifPresent(findMetro::setMetro);
+        Optional.ofNullable(metro.getDelYn()).ifPresent(findMetro::setDelYn);
         return metroRespository.save(findMetro);
     }
 
     // DELETE
     public void deleteMetro(long metroPk) {
-        Metro aMetro = verifiedMetro(metroPk);
-        metroRespository.delete(aMetro);
+        Metro metro = verifiedMetro(metroPk);
+        metroRespository.delete(metro);
     }
 
     // 검증
     public Metro verifiedMetro(long metroPk) {
-        Optional<Metro> aMetro = metroRespository.findById(metroPk);
-        return aMetro.orElseThrow(() -> new BusinessLogicException(ExceptionCode.DONG_NOT_FOUND));
+        Optional<Metro> metro = metroRespository.findById(metroPk);
+        return metro.orElseThrow(() -> new BusinessLogicException(ExceptionCode.DONG_NOT_FOUND));
     }
 }

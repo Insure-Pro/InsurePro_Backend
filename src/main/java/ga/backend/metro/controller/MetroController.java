@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping(Version.currentUrl + "/metro")
@@ -26,8 +27,8 @@ public class MetroController {
     // CREATE
     @PostMapping
     public ResponseEntity postMetro(@Valid @RequestBody MetroRequestDto.Post post) {
-        Metro aMetro = metroService.createMetro(metroMapper.metroPostDtoToMetro(post));
-        MetroResponseDto.Response response = metroMapper.metroToMetroResponseDto(aMetro);
+        Metro metro = metroService.createMetro(metroMapper.metroPostDtoToMetro(post));
+        MetroResponseDto.Response response = metroMapper.metroToMetroResponseDto(metro);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -35,17 +36,26 @@ public class MetroController {
     // READ
     @GetMapping("/{metro-pk}")
     public ResponseEntity getMetro(@Positive @PathVariable("metro-pk") long metroPk) {
-        Metro aMetro = metroService.findMetro(metroPk);
-        MetroResponseDto.Response response = metroMapper.metroToMetroResponseDto(aMetro);
+        Metro metro = metroService.findMetro(metroPk);
+        MetroResponseDto.Response response = metroMapper.metroToMetroResponseDto(metro);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    
+    // 모든 내용 반환
+    @GetMapping("s")
+    public ResponseEntity getMetros() {
+        List<Metro> metros = metroService.findMetros();
+        List<MetroResponseDto.Response> responses = metroMapper.metroToListMetroResponseDto(metros);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     // UPDATE
     @PatchMapping
     public ResponseEntity patchMetro(@Valid @RequestBody MetroRequestDto.Patch patch) {
-        Metro aMetro = metroService.patchMetro(metroMapper.metroPatchDtoToMetro(patch));
-        MetroResponseDto.Response response = metroMapper.metroToMetroResponseDto(aMetro);
+        Metro metro = metroService.patchMetro(metroMapper.metroPatchDtoToMetro(patch));
+        MetroResponseDto.Response response = metroMapper.metroToMetroResponseDto(metro);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
