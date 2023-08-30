@@ -3,7 +3,9 @@ package ga.backend.oauth2.handler;
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.service.EmployeeService;
 import ga.backend.oauth2.filter.JwtVerificationFilter;
+import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 
@@ -13,9 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
+@Configuration
 @AllArgsConstructor
 public class MemberLogoutSuccessHandler implements LogoutSuccessHandler {
     private final EmployeeService employeeService;
+    private final FindEmployee findEmployee;
     private final JwtVerificationFilter jwtVerificationFilter;
 
 
@@ -33,7 +37,7 @@ public class MemberLogoutSuccessHandler implements LogoutSuccessHandler {
         jwtVerificationFilter.setAuthenticationToContext(claims);
 
         // 토큰값 초기화
-        Employee employee = employeeService.getLoginEmployee();
+        Employee employee = findEmployee.getLoginEmployeeByToken();
         employee.setAccessToken("");
         employee.setRefreshToken("");
         employeeService.patchEmployeeToken(employee);

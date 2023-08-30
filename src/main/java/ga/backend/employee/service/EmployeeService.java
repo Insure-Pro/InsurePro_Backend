@@ -8,9 +8,9 @@ import ga.backend.event.UserRegistrationApplicationEvent;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.oauth2.utils.CustomAuthorityUtils;
+import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +25,7 @@ public class EmployeeService {
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher publisher;
     private final AuthorizationNumberService authorizationNumberService;
+    private final FindEmployee findEmployee;
 
     // CREATE
     public Employee createEmployee(Employee employee, long companyPk, int authNum) {
@@ -43,29 +44,49 @@ public class EmployeeService {
     }
 
     // READ
-    public Employee findEmployee(long employeePk) {
+    public Employee findEmployeeByPk(long employeePk) {
         Employee employee = verifiedEmployeeByPk(employeePk);
+        return employee;
+    }
+
+    // 토큰으로 직원 조회
+    public Employee findEmployeeByToken() {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        if(employee == null)
+            throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND);
+
         return employee;
     }
 
     // UPDATE
     public Employee patchEmployee(Employee employee) {
-        Employee findEmployee = verifiedEmployeeByPk(employee.getPk());
+        Employee findEmployee = findEmployeeByToken();
         Optional.ofNullable(employee.getId()).ifPresent(findEmployee::setId);
         Optional.ofNullable(employee.getEmail()).ifPresent(findEmployee::setEmail);
-        Optional.ofNullable(employee.getPassword()).ifPresent(findEmployee::setPassword);
-        Optional.ofNullable(employee.getAccessToken()).ifPresent(findEmployee::setAccessToken);
-        Optional.ofNullable(employee.getRefreshToken()).ifPresent(findEmployee::setRefreshToken);
+        Optional.ofNullable(employee.getDelYn()).ifPresent(findEmployee::setDelYn);
+        Optional.ofNullable(employee.getRegiYn()).ifPresent(findEmployee::setRegiYn);
 
         return employeeRespository.save(findEmployee);
     }
 
+    // 로그아웃 시 토큰값 변경
     public Employee patchEmployeeToken(Employee employee) {
         Employee findEmployee = verifiedEmployeeByPk(employee.getPk());
         Optional.ofNullable(employee.getAccessToken()).ifPresent(findEmployee::setAccessToken);
         Optional.ofNullable(employee.getRefreshToken()).ifPresent(findEmployee::setRefreshToken);
 
         return employeeRespository.save(findEmployee);
+    }
+
+    // 비밀번호 변경
+    public Employee changePassword(Employee employee, int authNum) {
+        Employee changeEmployee = verifiedEmployeeByEmail(employee.getEmail());
+        changeEmployee.setPassword(passwordEncoder.encode(employee.getPassword())); // 비밀번호 인코딩
+        authorizationNumberService.checkAuthNum(changeEmployee.getEmail(), authNum); // 인증번호와 이메일 확인
+
+        publisher.publishEvent(new UserRegistrationApplicationEvent(changeEmployee));
+
+        return employeeRespository.save(changeEmployee);
     }
 
     // DELETE
@@ -76,7 +97,7 @@ public class EmployeeService {
 
     // 검증 - pk
     public Employee verifiedEmployeeByPk(long employeePk) {
-        Optional<Employee> employee = employeeRespository.findById(employeePk);
+         Optional<Employee> employee = employeeRespository.findById(employeePk);
         return employee.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
     }
 
@@ -90,13 +111,5 @@ public class EmployeeService {
     public Employee verifiedEmployeeById(String id) {
         Optional<Employee> employee = employeeRespository.findById(id);
         return employee.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
-    }
-
-    // 로그인한 직원 가져오기
-    public Employee getLoginEmployee() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //SecurityContextHolder에서 회원정보 가져오기
-        Optional<Employee> employee = employeeRespository.findByEmail(principal.toString());
-
-        return employee.orElse(null);
     }
 }

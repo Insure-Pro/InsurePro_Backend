@@ -26,12 +26,11 @@ public class EmployeeRequestDto {
     @Setter
     @Getter
     public static class Patch {
-        private Long pk;
         private String id;
         private String email;
         private String password;
-        private boolean regiYn;
-        private boolean delYn;
+        private Boolean regiYn;
+        private Boolean delYn;
     }
 
     @AllArgsConstructor

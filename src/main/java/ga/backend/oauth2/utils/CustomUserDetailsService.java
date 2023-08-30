@@ -36,8 +36,8 @@ public class CustomUserDetailsService implements UserDetailsService {
             setId(employee.getId());
             setEmail(employee.getEmail());
             setPassword(employee.getPassword());
-            setRegiYn(employee.isRegiYn());
-            setDelYn(employee.isDelYn());
+            setRegiYn(employee.getRegiYn());
+            setDelYn(employee.getDelYn());
             setAccessToken(employee.getAccessToken());
             setRefreshToken(employee.getRefreshToken());
             setRoles(employee.getRoles());

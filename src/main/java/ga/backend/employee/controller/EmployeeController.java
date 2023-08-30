@@ -40,7 +40,16 @@ public class EmployeeController {
     // READ
     @GetMapping("/{employee-pk}")
     public ResponseEntity getEmployee(@Positive @PathVariable("employee-pk") long employeePk) {
-        Employee employee = employeeService.findEmployee(employeePk);
+        Employee employee = employeeService.findEmployeeByPk(employeePk);
+        EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 토큰으로 employee 정보 조회하기
+    @GetMapping
+    public ResponseEntity getEmployee() {
+        Employee employee = employeeService.findEmployeeByToken();
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -59,6 +68,16 @@ public class EmployeeController {
     @PatchMapping
     public ResponseEntity patchEmployee(@Valid @RequestBody EmployeeRequestDto.Patch patch) {
         Employee employee = employeeService.patchEmployee(employeeMapper.employeePatchDtoToEmployee(patch));
+        EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 비밀번호 변경
+    @PatchMapping("/password")
+    public ResponseEntity patchEmployee(@Valid @RequestBody EmployeeRequestDto.ChangePassword changePassword) {
+        employeeService.checkPassword(changePassword.getPassword(), changePassword.getRePassword()); // 비밀번호 확인
+        Employee employee = employeeService.changePassword(employeeMapper.employeeChangePasswordToEmployee(changePassword), changePassword.getAuthNum());
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
