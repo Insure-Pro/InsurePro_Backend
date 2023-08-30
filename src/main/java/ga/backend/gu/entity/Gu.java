@@ -1,6 +1,6 @@
 package ga.backend.gu.entity;
 
-//import ga.backend.Do.entity.Do;
+import ga.backend.metro.entity.Metro;
 import ga.backend.auditable.Auditable;
 import ga.backend.dong.entity.Dong;
 import lombok.Getter;
@@ -22,9 +22,9 @@ public class Gu extends Auditable {
     @OneToMany(mappedBy = "gu", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     List<Dong> dongs = new ArrayList<>();
 
-//    @ManyToOne
-//    @JoinColumn(name = "do_pk")
-//    Do aDo;
+    @ManyToOne
+    @JoinColumn(name = "metro_pk")
+    Metro metro;
 
     @Column
     private String gu;
