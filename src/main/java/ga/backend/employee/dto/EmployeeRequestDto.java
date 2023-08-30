@@ -54,6 +54,23 @@ public class EmployeeRequestDto {
         private long companyPk; // 회사 식별자
 
         private int authNum; // 이메일 인증 번호
+    }
 
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class ChangePassword {
+        @Email
+        private String email;
+
+        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=?<>:])[A-Za-z\\d~!@#$%^&*()+|=]{4,16}$",
+                message = "특수문자는 1개 이상 들어가야 합니다, 비밀번호 '최소 4자에서 최대 16자'까지 허용")
+        private String password;
+
+        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=?<>:])[A-Za-z\\d~!@#$%^&*()+|=]{4,16}$",
+                message = "특수문자는 1개 이상 들어가야 합니다, 비밀번호 '최소 4자에서 최대 16자'까지 허용")
+        private String rePassword; // 비밀번호 재확인
+
+        private int authNum; // 이메일 인증 번호
     }
 }

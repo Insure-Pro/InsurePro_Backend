@@ -47,7 +47,7 @@ public class EmployeeController {
     }
 
     // 가입한 이메일 찾기
-    @GetMapping
+    @GetMapping("/email")
     public ResponseEntity getEmployee(@RequestParam("id") String employee_id) {
         Employee employee = employeeService.verifiedEmployeeById(employee_id);
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
