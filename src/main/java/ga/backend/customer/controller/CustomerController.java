@@ -38,7 +38,7 @@ public class CustomerController {
         Customer customer = customerService.findCustomer(customerPk);
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // UPDATE
@@ -47,7 +47,7 @@ public class CustomerController {
         Customer customer = customerService.patchCustomer(customerMapper.customerPatchDtoToCustomer(patch));
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // DELETE

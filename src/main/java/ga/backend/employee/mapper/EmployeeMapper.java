@@ -10,5 +10,6 @@ public interface EmployeeMapper {
     Employee employeePostDtoToEmployee(EmployeeRequestDto.Post post);
     Employee employeeSigninDtoToEmployee(EmployeeRequestDto.Signin signin);
     Employee employeePatchDtoToEmployee(EmployeeRequestDto.Patch patch);
+    Employee employeeChangePasswordToEmployee(EmployeeRequestDto.ChangePassword changePassword);
     EmployeeResponseDto.Response employeeToEmployeeResponseDto(Employee employee);
 }

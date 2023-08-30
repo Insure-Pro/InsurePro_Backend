@@ -38,7 +38,7 @@ public class DongController {
         Dong dong = dongService.findDong(dongPk);
         DongResponseDto.Response response = dongMapper.dongToDongResponseDto(dong);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // UPDATE
@@ -47,7 +47,7 @@ public class DongController {
         Dong dong = dongService.patchDong(dongMapper.dongPatchDtoToDong(patch));
         DongResponseDto.Response response = dongMapper.dongToDongResponseDto(dong);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // DELETE

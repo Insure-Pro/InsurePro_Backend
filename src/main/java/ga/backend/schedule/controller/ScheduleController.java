@@ -38,7 +38,7 @@ public class ScheduleController {
         Schedule schedule = scheduleService.findSchedule(schedulePk);
         ScheduleResponseDto.Response response = scheduleMapper.scheduleToScheduleResponseDto(schedule);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // UPDATE
@@ -47,7 +47,7 @@ public class ScheduleController {
         Schedule schedule = scheduleService.patchSchedule(scheduleMapper.schedulePatchDtoToSchedule(patch));
         ScheduleResponseDto.Response response = scheduleMapper.scheduleToScheduleResponseDto(schedule);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // DELETE

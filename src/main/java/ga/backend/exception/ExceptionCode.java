@@ -14,12 +14,13 @@ public enum ExceptionCode {
     PROGRESS_NOT_FOUND(404, "Progress not found"),
     PERFORMANCE_NOT_FOUND(404, "Performance not found"),
     CUSTOM_TYPE_NOT_FOUND(404, "CustomType not found"),
+    AUTHORIZATION_NUMBER_NOT_FOUND(404, "Authorization Number not found"),
     PASSWORD_AND_REPASSWORD_NOT_SAME(400, "password and rePassword are not same"),
     INVALID_EMAIL(401, "Invalid Email"),
     WRONG_PASSWORD(401, "Wrong Password"),
     TAMPERED_TOKEN(1004, "Tampered Token"), // 변조된 토큰
     FAIL_SEND_EMAIL(500, "Fail send email"),
-    NOT_MATCH_AUTHNUM(401, "Not Match authNum");
+    NOT_MATCH_AUTHNUM(400, "Not Match authNum");
 
 
     @Getter

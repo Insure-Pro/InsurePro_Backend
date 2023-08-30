@@ -35,10 +35,10 @@ public class Employee extends Auditable {
     private String password; // 비밀번호
 
     @Column
-    private boolean regiYn = false; // 가입 승인 여부
+    private Boolean regiYn = false; // 가입 승인 여부
 
     @Column
-    private boolean delYn = false; // 직원 삭제 여부
+    private Boolean delYn = false; // 직원 삭제 여부
 
     @Column
     private String accessToken = ""; // access 토큰
