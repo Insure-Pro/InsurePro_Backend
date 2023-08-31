@@ -20,6 +20,12 @@ public class MetroService {
         return metroRespository.save(metro);
     }
 
+    public Metro createMetro(String metroName) {
+        Metro metro = new Metro();
+        metro.setMetro(metroName);
+        return metroRespository.save(metro);
+    }
+
     // READ
     public Metro findMetro(long metroPk) {
         Metro metro = verifiedMetro(metroPk);

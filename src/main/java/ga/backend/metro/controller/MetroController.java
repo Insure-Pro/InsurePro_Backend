@@ -17,7 +17,7 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
-@RequestMapping(Version.currentUrl + "/metro")
+@RequestMapping(Version.currentUrl)
 @Validated
 @AllArgsConstructor
 public class MetroController {
@@ -25,7 +25,7 @@ public class MetroController {
     private final MetroMapper metroMapper;
 
     // CREATE
-    @PostMapping
+    @PostMapping("/metro")
     public ResponseEntity postMetro(@Valid @RequestBody MetroRequestDto.Post post) {
         Metro metro = metroService.createMetro(metroMapper.metroPostDtoToMetro(post));
         MetroResponseDto.Response response = metroMapper.metroToMetroResponseDto(metro);
@@ -34,7 +34,7 @@ public class MetroController {
     }
 
     // READ
-    @GetMapping("/{metro-pk}")
+    @GetMapping("/metro/{metro-pk}")
     public ResponseEntity getMetro(@Positive @PathVariable("metro-pk") long metroPk) {
         Metro metro = metroService.findMetro(metroPk);
         MetroResponseDto.Response response = metroMapper.metroToMetroResponseDto(metro);
@@ -43,7 +43,7 @@ public class MetroController {
     }
     
     // 모든 내용 반환
-    @GetMapping("s")
+    @GetMapping("/metros")
     public ResponseEntity getMetros() {
         List<Metro> metros = metroService.findMetros();
         List<MetroResponseDto.Response> responses = metroMapper.metroToListMetroResponseDto(metros);
@@ -52,7 +52,7 @@ public class MetroController {
     }
 
     // UPDATE
-    @PatchMapping
+    @PatchMapping("/metro")
     public ResponseEntity patchMetro(@Valid @RequestBody MetroRequestDto.Patch patch) {
         Metro metro = metroService.patchMetro(metroMapper.metroPatchDtoToMetro(patch));
         MetroResponseDto.Response response = metroMapper.metroToMetroResponseDto(metro);
@@ -61,7 +61,7 @@ public class MetroController {
     }
 
     // DELETE
-    @DeleteMapping("/{metro-pk}")
+    @DeleteMapping("/metro/{metro-pk}")
     public ResponseEntity deleteMetro(@Positive @PathVariable("metro-pk") long metroPk) {
         metroService.deleteMetro(metroPk);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
