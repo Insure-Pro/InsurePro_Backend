@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
-@RequestMapping(Version.currentUrl + "/dong")
+@RequestMapping(Version.currentUrl)
 @Validated
 @AllArgsConstructor
 public class DongController {
@@ -24,7 +25,7 @@ public class DongController {
     private final DongMapper dongMapper;
 
     // CREATE
-    @PostMapping
+    @PostMapping("/dong")
     public ResponseEntity postDong(@Valid @RequestBody DongRequestDto.Post post) {
         Dong dong = dongService.createDong(dongMapper.dongPostDtoToDong(post));
         DongResponseDto.Response response = dongMapper.dongToDongResponseDto(dong);
@@ -33,7 +34,7 @@ public class DongController {
     }
 
     // READ
-    @GetMapping("/{dong-pk}")
+    @GetMapping("/dong/{dong-pk}")
     public ResponseEntity getDong(@Positive @PathVariable("dong-pk") long dongPk) {
         Dong dong = dongService.findDong(dongPk);
         DongResponseDto.Response response = dongMapper.dongToDongResponseDto(dong);
@@ -41,8 +42,25 @@ public class DongController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 구에 해당하는 동 내용 반환
+    @GetMapping("/dongs/all")
+    public ResponseEntity getDongs() {
+        List<Dong> dongs = dongService.findDongs();
+        List<DongResponseDto.Response> responses = dongMapper.dongToListDongResponseDto(dongs);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    @GetMapping("/dongs")
+    public ResponseEntity getGus(@Valid @RequestParam("gu") long guPk) {
+        List<Dong> dongs = dongService.findDongs(guPk);
+        List<DongResponseDto.Response> responses = dongMapper.dongToListDongResponseDto(dongs);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     // UPDATE
-    @PatchMapping
+    @PatchMapping("/dong")
     public ResponseEntity patchDong(@Valid @RequestBody DongRequestDto.Patch patch) {
         Dong dong = dongService.patchDong(dongMapper.dongPatchDtoToDong(patch));
         DongResponseDto.Response response = dongMapper.dongToDongResponseDto(dong);
@@ -51,7 +69,7 @@ public class DongController {
     }
 
     // DELETE
-    @DeleteMapping("/{dong-pk}")
+    @DeleteMapping("/dong/{dong-pk}")
     public ResponseEntity deleteDong(@Positive @PathVariable("dong-pk") long dongPk) {
         dongService.deleteDong(dongPk);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

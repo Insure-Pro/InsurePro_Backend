@@ -55,6 +55,6 @@ public class MetroService {
     // 검증
     public Metro verifiedMetro(long metroPk) {
         Optional<Metro> metro = metroRespository.findById(metroPk);
-        return metro.orElseThrow(() -> new BusinessLogicException(ExceptionCode.DONG_NOT_FOUND));
+        return metro.orElseThrow(() -> new BusinessLogicException(ExceptionCode.METRO_NOT_FOUND));
     }
 }

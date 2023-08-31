@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
-@RequestMapping(Version.currentUrl + "/gu")
+@RequestMapping(Version.currentUrl)
 @Validated
 @AllArgsConstructor
 public class GuController {
@@ -24,7 +25,7 @@ public class GuController {
     private final GuMapper guMapper;
 
     // CREATE
-    @PostMapping
+    @PostMapping("/gu")
     public ResponseEntity postGu(@Valid @RequestBody GuRequestDto.Post post) {
         Gu gu = guService.createGu(guMapper.guPostDtoToGu(post));
         GuResponseDto.Response response = guMapper.guToGuResponseDto(gu);
@@ -33,7 +34,7 @@ public class GuController {
     }
 
     // READ
-    @GetMapping("/{gu-pk}")
+    @GetMapping("/gu/{gu-pk}")
     public ResponseEntity getGu(@Positive @PathVariable("gu-pk") long guPk) {
         Gu gu = guService.findGu(guPk);
         GuResponseDto.Response response = guMapper.guToGuResponseDto(gu);
@@ -41,8 +42,26 @@ public class GuController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 모든 내용 반환
+    @GetMapping("/gus/all")
+    public ResponseEntity getGus() {
+        List<Gu> gus = guService.findGus();
+        List<GuResponseDto.Response> responses = guMapper.guToListGuResponseDto(gus);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    // 광역시에 해당하는 구 내용 반환
+    @GetMapping("/gus")
+    public ResponseEntity getGus(@Valid @RequestParam("metro") long metroPk) {
+        List<Gu> gus = guService.findGusByMetroPk(metroPk);
+        List<GuResponseDto.Response> responses = guMapper.guToListGuResponseDto(gus);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     // UPDATE
-    @PatchMapping
+    @PatchMapping("/gu")
     public ResponseEntity patchGu(@Valid @RequestBody GuRequestDto.Patch patch) {
         Gu gu = guService.patchGu(guMapper.guPatchDtoToGu(patch));
         GuResponseDto.Response response = guMapper.guToGuResponseDto(gu);
@@ -51,7 +70,7 @@ public class GuController {
     }
 
     // DELETE
-    @DeleteMapping("/{gu-pk}")
+    @DeleteMapping("/gu/{gu-pk}")
     public ResponseEntity deleteGu(@Positive @PathVariable("gu-pk") long guPk) {
         guService.deleteGu(guPk);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
