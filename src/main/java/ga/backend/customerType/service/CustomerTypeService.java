@@ -1,5 +1,8 @@
 package ga.backend.customerType.service;
 
+import ga.backend.company.entity.Company;
+import ga.backend.company.repository.CompanyRepository;
+import ga.backend.company.service.CompanyService;
 import ga.backend.customerType.entity.CustomerType;
 import ga.backend.customerType.repository.CustomerTypeRepository;
 import ga.backend.exception.BusinessLogicException;
@@ -13,9 +16,12 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CustomerTypeService {
     private final CustomerTypeRepository customerTypeRespository;
+    private final CompanyService companyService;
+
 
     // CREATE
-    public CustomerType createCustomerType(CustomerType customerType) {
+    public CustomerType createCustomerType(CustomerType customerType, Long company_pk) {
+        customerType.setCompany(companyService.verifiedCompany(company_pk));
         return customerTypeRespository.save(customerType);
     }
 

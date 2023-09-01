@@ -1,5 +1,6 @@
 package ga.backend.customerType.controller;
 
+import com.nimbusds.jose.shaded.json.JSONObject;
 import ga.backend.customerType.dto.CustomerTypeRequestDto;
 import ga.backend.customerType.dto.CustomerTypeResponseDto;
 import ga.backend.customerType.entity.CustomerType;
@@ -16,7 +17,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping(Version.currentUrl + "/customerType")
+@RequestMapping(Version.currentUrl + "/customertypes")
 @Validated
 @AllArgsConstructor
 public class CustomerTypeController {
@@ -26,15 +27,16 @@ public class CustomerTypeController {
     // CREATE
     @PostMapping
     public ResponseEntity postCustomerType(@Valid @RequestBody CustomerTypeRequestDto.Post post) {
-        CustomerType customerType = customerTypeService.createCustomerType(customerTypeMapper.customerTypePostDtoToCustomerType(post));
+
+        CustomerType customerType = customerTypeService.createCustomerType(customerTypeMapper.customerTypePostDtoToCustomerType(post), post.getCompany_pk());
         CustomerTypeResponseDto.Response response = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // READ
-    @GetMapping("/{customerType-pk}")
-    public ResponseEntity getCustomerType(@Positive @PathVariable("customerType-pk") long customerTypePk) {
+    @GetMapping("/{customer_type_pk}")
+    public ResponseEntity getCustomerType(@Positive @PathVariable("customer_type_pk") long customerTypePk) {
         CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
         CustomerTypeResponseDto.Response response = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
 
@@ -45,8 +47,9 @@ public class CustomerTypeController {
     @PatchMapping
     public ResponseEntity patchCustomerType(@Valid @RequestBody CustomerTypeRequestDto.Patch patch) {
         CustomerType customerType = customerTypeService.patchCustomerType(customerTypeMapper.customerTypePatchDtoToCustomerType(patch));
-        CustomerTypeResponseDto.Response response = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
-
+        CustomerTypeResponseDto.Response customerTypeResponse = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
+        JSONObject response = new JSONObject();
+        response.put("companyTypes", customerTypeResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
