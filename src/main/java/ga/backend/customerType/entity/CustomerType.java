@@ -31,6 +31,6 @@ public class CustomerType extends Auditable {
     @JoinColumn(name = "company_pk")
     private Company company;
 
-    @OneToMany(mappedBy = "customerType")
+    @OneToMany(mappedBy = "customerType", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Customer> customers = new ArrayList<>();;
 }

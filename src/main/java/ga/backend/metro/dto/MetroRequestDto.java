@@ -1,16 +1,16 @@
-package ga.backend.dong.dto;
+package ga.backend.metro.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-public class DongRequestDto {
+public class MetroRequestDto {
     @AllArgsConstructor
     @Setter
     @Getter
     public static class Post {
         private Long pk;
-        private String dong;
+        private String metro;
         private Boolean delYn;
     }
 
@@ -19,7 +19,7 @@ public class DongRequestDto {
     @Getter
     public static class Patch {
         private Long pk;
-        private String dong;
+        private String metro;
         private Boolean delYn;
     }
 }
