@@ -18,7 +18,9 @@ public class LiService {
     private final DongService dongService;
 
     // CREATE
-    public Li createLi(Li li) {
+    public Li createLi(Li li, long dongPk) {
+        li.setDong(dongService.verifiedDong(dongPk));
+//        if(li.getDelYn() == null) li.setDelYn(false);
         return liRespository.save(li);
     }
 

@@ -27,7 +27,7 @@ public class LiController {
     // CREATE
     @PostMapping("/li")
     public ResponseEntity postLi(@Valid @RequestBody LiRequestDto.Post post) {
-        Li li = liService.createLi(liMapper.liPostDtoToLi(post));
+        Li li = liService.createLi(liMapper.liPostDtoToLi(post), post.getDongPk());
         LiResponseDto.Response response = liMapper.liToLiResponseDto(li);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);

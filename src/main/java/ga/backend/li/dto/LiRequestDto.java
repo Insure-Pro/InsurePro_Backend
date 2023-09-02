@@ -15,7 +15,8 @@ public class LiRequestDto {
         private String li; // 리 이름
         private double latitude; // 위도
         private double longitude; // 경도
-        private Boolean delYn;
+        private Long dongPk; // 읍면동 식볇자
+        private Boolean delYn = false;
     }
 
     @AllArgsConstructor

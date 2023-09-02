@@ -6,6 +6,7 @@ import ga.backend.dong.entity.Dong;
 import ga.backend.gu.entity.Gu;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -34,6 +35,6 @@ public class Li extends Auditable {
     @Column
     private double longitude; // 경도
 
-    @Column
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private Boolean delYn = false; // 삭제 여부
 }
