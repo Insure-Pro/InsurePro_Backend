@@ -3,7 +3,6 @@ package ga.backend.li.service;
 import ga.backend.dong.service.DongService;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
-import ga.backend.dong.service.GuService;
 import ga.backend.li.entity.Li;
 import ga.backend.li.repository.LiRepository;
 import lombok.AllArgsConstructor;
