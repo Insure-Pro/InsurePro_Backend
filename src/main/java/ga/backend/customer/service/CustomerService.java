@@ -30,9 +30,16 @@ public class CustomerService {
         Customer findCustomer = verifiedCustomer(customer.getPk());
         Optional.ofNullable(customer.getName()).ifPresent(findCustomer::setName);
         Optional.ofNullable(customer.getBirth()).ifPresent(findCustomer::setBirth);
+        Optional.ofNullable(customer.getDongString()).ifPresent(findCustomer::setDongString);
         Optional.ofNullable(customer.getAddress()).ifPresent(findCustomer::setAddress);
         Optional.ofNullable(customer.getPhone()).ifPresent(findCustomer::setPhone);
         Optional.ofNullable(customer.getMemo()).ifPresent(findCustomer::setMemo);
+        Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
+        Optional.ofNullable(customer.getIntensiveCareStartDate()).ifPresent(findCustomer::setIntensiveCareStartDate);
+        Optional.ofNullable(customer.getIntensiveCareFinishDate()).ifPresent(findCustomer::setIntensiveCareFinishDate);
+        Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
+        Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
+        if(customer.getAge() != 0) findCustomer.setAge(customer.getAge());
 
 
         return customerRespository.save(findCustomer);
