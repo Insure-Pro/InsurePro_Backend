@@ -2,7 +2,12 @@ package ga.backend.address.controller;
 
 import ga.backend.address.dto.AddressRequestDto;
 import ga.backend.address.service.AddressService;
-import ga.backend.metro.service.MetroService;
+import ga.backend.dong.mapper.DongMapper;
+import ga.backend.gu.entity.Gu;
+import ga.backend.gu.mapper.GuMapper;
+import ga.backend.li.entity.Li;
+import ga.backend.li.mapper.LiMapper;
+import ga.backend.metro.mapper.MetroMapper;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,7 +30,7 @@ public class AddressController {
 
     @PostMapping
     public ResponseEntity postAddress(@Valid @RequestBody List<AddressRequestDto.Post> posts) {
-//        addressService.
+        addressService.createAddresses(posts);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

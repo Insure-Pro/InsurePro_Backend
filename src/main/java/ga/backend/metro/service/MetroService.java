@@ -38,6 +38,12 @@ public class MetroService {
         return metros;
     }
 
+    // metro 이름으로 Metro 반환
+    public Metro findMetroByMetro(String metroName) {
+        Optional<Metro> metro = metroRespository.findByMetro(metroName);
+        return metro.orElse(null);
+    }
+
     // UPDATE
     public Metro patchMetro(Metro metro) {
         Metro findMetro = verifiedMetro(metro.getPk());

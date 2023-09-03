@@ -42,8 +42,10 @@ public class ProgressController {
     }
 
     // UPDATE
-    @PatchMapping
-    public ResponseEntity patchProgress(@Valid @RequestBody ProgressRequestDto.Patch patch) {
+    @PatchMapping("/{progress-pk}")
+    public ResponseEntity patchProgress(@Positive @PathVariable("progress-pk") long progressPk,
+                                        @Valid @RequestBody ProgressRequestDto.Patch patch) {
+        patch.setPk(progressPk);
         Progress progress = progressService.patchProgress(progressMapper.progressPatchDtoToProgress(patch));
         ProgressResponseDto.Response response = progressMapper.progressToProgressResponseDto(progress);
 

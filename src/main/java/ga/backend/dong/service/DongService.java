@@ -39,21 +39,28 @@ public class DongService {
         return dong;
     }
 
-    // 구에 해당하는 동 내용 반환
+    // 구에 해당하는 Dong 반환
     public List<Dong> findDongs() {
         List<Dong> dongs = dongRespository.findAll();
         return dongs;
     }
 
-    // gu-pk에 해당하는 dong 내용 반환
+    // gu-pk에 해당하는 Dong 반환
     public List<Dong> findDongs(long guPk) {
         List<Dong> dongs = dongRespository.findByGu_Pk(guPk);
         return dongs;
     }
 
+    // dong이름과 gu-pk로 Dong 반환
     public Dong findDongByDongAndGuPk(String dongName, long guPk) {
-        Dong dong = dongRespository.findByDongAndGu_Pk(dongName, guPk);
-        return dong;
+        Optional<Dong> dong = dongRespository.findByDongAndGu_Pk(dongName, guPk);
+        return dong.orElse(null);
+    }
+
+    // dong이름으로 Dong 반환
+    public Dong findDongByDong(String dongName) {
+        Optional<Dong> dong = dongRespository.findByDong(dongName);
+        return dong.orElse(null);
     }
 
     // UPDATE

@@ -35,8 +35,8 @@ public class CustomerTypeController {
     }
 
     // READ
-    @GetMapping("/{customer_type_pk}")
-    public ResponseEntity getCustomerType(@Positive @PathVariable("customer_type_pk") long customerTypePk) {
+    @GetMapping("/{customer-type-pk}")
+    public ResponseEntity getCustomerType(@Positive @PathVariable("customer-type-pk") long customerTypePk) {
         CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
         CustomerTypeResponseDto.Response response = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
 
@@ -44,8 +44,10 @@ public class CustomerTypeController {
     }
 
     // UPDATE
-    @PatchMapping
-    public ResponseEntity patchCustomerType(@Valid @RequestBody CustomerTypeRequestDto.Patch patch) {
+    @PatchMapping("/{customer-type-pk}")
+    public ResponseEntity patchCustomerType(@Positive @PathVariable("customer-type-pk") long customerTypePk,
+                                            @Valid @RequestBody CustomerTypeRequestDto.Patch patch) {
+        patch.setPk(customerTypePk);
         CustomerType customerType = customerTypeService.patchCustomerType(customerTypeMapper.customerTypePatchDtoToCustomerType(patch));
         CustomerTypeResponseDto.Response customerTypeResponse = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
         JSONObject response = new JSONObject();
@@ -54,8 +56,8 @@ public class CustomerTypeController {
     }
 
     // DELETE
-    @DeleteMapping("/{customerType-pk}")
-    public ResponseEntity deleteCustomerType(@Positive @PathVariable("customerType-pk") long customerTypePk) {
+    @DeleteMapping("/{customer-type-pk}")
+    public ResponseEntity deleteCustomerType(@Positive @PathVariable("customer-type-pk") long customerTypePk) {
         customerTypeService.deleteCustomerType(customerTypePk);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

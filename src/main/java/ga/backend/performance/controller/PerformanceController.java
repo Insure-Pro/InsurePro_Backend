@@ -42,8 +42,10 @@ public class PerformanceController {
     }
 
     // UPDATE
-    @PatchMapping
-    public ResponseEntity patchPerformance(@Valid @RequestBody PerformanceRequestDto.Patch patch) {
+    @PatchMapping("/{performance-pk}")
+    public ResponseEntity patchPerformance(@Positive @PathVariable("performance-pk") long performancePk,
+                                           @Valid @RequestBody PerformanceRequestDto.Patch patch) {
+        patch.setPk(performancePk);
         Performance performance = performanceService.patchPerformance(performanceMapper.performancePatchDtoToPerformance(patch));
         PerformanceResponseDto.Response response = performanceMapper.performanceToPerformanceResponseDto(performance);
 

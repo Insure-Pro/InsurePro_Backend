@@ -20,7 +20,6 @@ public class LiService {
     // CREATE
     public Li createLi(Li li, long dongPk) {
         li.setDong(dongService.verifiedDong(dongPk));
-//        if(li.getDelYn() == null) li.setDelYn(false);
         return liRespository.save(li);
     }
 
@@ -41,21 +40,28 @@ public class LiService {
         return li;
     }
 
-    // 모든 리 반환
+    // 모든 Li 반환
     public List<Li> findLis() {
         List<Li> lis = liRespository.findAll();
         return lis;
     }
 
-    // dong-pk에 해당하는 li 내용 반환
+    // dong-pk에 해당하는 Li 반환
     public List<Li> findLis(long dongPk) {
         List<Li> lis = liRespository.findByDong_Pk(dongPk);
         return lis;
     }
 
+    // li이름과 gu-pi로 Li 반환
     public Li findLiAndGuPk(String liName, long dongPk) {
-        Li li = liRespository.findByLiAndDong_Pk(liName, dongPk);
-        return li;
+        Optional<Li> li = liRespository.findByLiAndDong_Pk(liName, dongPk);
+        return li.orElse(null);
+    }
+
+    // li 이름으로 Li 반환
+    public Li findLiByLi(String liName) {
+        Optional<Li> li = liRespository.findByLi(liName);
+        return li.orElse(null);
     }
 
     // UPDATE
@@ -63,6 +69,8 @@ public class LiService {
         Li findLi = verifiedLi(li.getPk());
         Optional.ofNullable(li.getLi()).ifPresent(findLi::setLi);
         Optional.ofNullable(li.getDelYn()).ifPresent(findLi::setDelYn);
+        if(li.getLatitude() != 0.0) findLi.setLatitude(li.getLatitude());
+        if(li.getLongitude() != 0.0) findLi.setLongitude(li.getLongitude());
         return liRespository.save(findLi);
     }
 

@@ -60,8 +60,10 @@ public class LiController {
     }
 
     // UPDATE
-    @PatchMapping("/li")
-    public ResponseEntity patchLi(@Valid @RequestBody LiRequestDto.Patch patch) {
+    @PatchMapping("/li/{li-pk}")
+    public ResponseEntity patchLi(@Positive @PathVariable("li-pk") long liPk,
+                                  @Valid @RequestBody LiRequestDto.Patch patch) {
+        patch.setPk(liPk);
         Li li = liService.patchLi(liMapper.liPatchDtoToLi(patch));
         LiResponseDto.Response response = liMapper.liToLiResponseDto(li);
 

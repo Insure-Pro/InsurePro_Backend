@@ -42,8 +42,10 @@ public class CustomerController {
     }
 
     // UPDATE
-    @PatchMapping
-    public ResponseEntity patchCustomer(@Valid @RequestBody CustomerRequestDto.Patch patch) {
+    @PatchMapping("/{customer-pk}")
+    public ResponseEntity patchCustomer(@Positive @PathVariable("customer-pk") long customerPk,
+                                        @Valid @RequestBody CustomerRequestDto.Patch patch) {
+        patch.setPk(customerPk);
         Customer customer = customerService.patchCustomer(customerMapper.customerPatchDtoToCustomer(patch));
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
 

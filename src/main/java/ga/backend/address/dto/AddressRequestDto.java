@@ -17,8 +17,8 @@ public class AddressRequestDto {
         private String gu;
         private String dong;
         private String li;
-        private String latitude;
-        private String longitude;
+        private double latitude;
+        private double longitude;
         private String codeType;
     }
 }

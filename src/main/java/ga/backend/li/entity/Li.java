@@ -35,6 +35,6 @@ public class Li extends Auditable {
     @Column
     private double longitude; // 경도
 
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    @Column
     private Boolean delYn = false; // 삭제 여부
 }

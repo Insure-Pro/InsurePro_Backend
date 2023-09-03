@@ -42,8 +42,10 @@ public class DayScheduleController {
     }
 
     // UPDATE
-    @PatchMapping
-    public ResponseEntity patchDaySchedule(@Valid @RequestBody DayScheduleRequestDto.Patch patch) {
+    @PatchMapping("/{daySchedule-pk}")
+    public ResponseEntity patchDaySchedule(@Positive @PathVariable("daySchedule-pk") long daySchedulePk,
+                                           @Valid @RequestBody DayScheduleRequestDto.Patch patch) {
+        patch.setPk(daySchedulePk);
         DaySchedule daySchedule = dayScheduleService.patchDaySchedule(dayScheduleMapper.daySchedulePatchDtoToDaySchedule(patch));
         DayScheduleResponseDto.Response response = dayScheduleMapper.dayScheduleToDayScheduleResponseDto(daySchedule);
 

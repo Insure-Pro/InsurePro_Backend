@@ -51,9 +51,16 @@ public class GuService {
         return gus;
     }
 
+    // gu이름과 metroPk로 Gu 반환
     public Gu findGuByGuAndMetroPk(String guName, long metroPk) {
-        Gu gu = guRespository.findByGuAndMetro_Pk(guName, metroPk);
-        return gu;
+        Optional<Gu> gu = guRespository.findByGuAndMetro_Pk(guName, metroPk);
+        return gu.orElse(null);
+    }
+
+    // gu 이름으로 Gu 반환
+    public Gu findGuByGu(String guName) {
+        Optional<Gu> gu = guRespository.findByGu(guName);
+        return gu.orElse(null);
     }
 
     // UPDATE
