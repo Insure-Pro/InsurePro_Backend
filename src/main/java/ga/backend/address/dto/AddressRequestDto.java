@@ -12,7 +12,7 @@ public class AddressRequestDto {
     @Setter
     @Getter
     public static class Post {
-        private int code;
+        private long code;
         private String metro;
         private String gu;
         private String dong;
