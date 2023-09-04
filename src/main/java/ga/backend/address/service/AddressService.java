@@ -29,8 +29,8 @@ public class AddressService {
 
     public void createAddresses(List<AddressRequestDto.Post> posts) {
         for (AddressRequestDto.Post post:posts) {
-            Metro metro = metroService.findMetroByMetro(post.getMetro());
-            if(metro == null) metro = metroService.createMetro(metro);
+            Metro metro = metroService.findMetroByMetroName(post.getMetro());
+            if(metro == null) metro = metroService.createMetro(post.getMetro());
 
             Gu gu = guService.findGuByGuAndMetroPk(post.getGu(), metro.getPk());
             if(gu == null) gu = guService.createGu(post.getGu(), metro);

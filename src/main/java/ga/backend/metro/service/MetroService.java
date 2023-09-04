@@ -39,7 +39,7 @@ public class MetroService {
     }
 
     // metro 이름으로 Metro 반환
-    public Metro findMetroByMetro(String metroName) {
+    public Metro findMetroByMetroName(String metroName) {
         Optional<Metro> metro = metroRespository.findByMetroName(metroName);
         return metro.orElse(null);
     }
