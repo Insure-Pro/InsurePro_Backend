@@ -61,7 +61,10 @@ public class Customer extends Auditable {
     private String memo; // 메모
 
     @Column
-    private Boolean contractYn; // 계약 체결 여부
+    private Boolean contractYn = false; // 계약 체결 여부
+
+    @Column
+    private Boolean delYn = false; // 고객 삭제 여부
 
     @Column
     private LocalDate intensiveCareStartDate; // 집중관리시기 - 시작
@@ -72,6 +75,4 @@ public class Customer extends Auditable {
     @Column
     private LocalDate registerDate; // 고객 등록 날짜
 
-    @Column
-    private Boolean delYn; // 고객 삭제 여부
 }
