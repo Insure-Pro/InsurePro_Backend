@@ -1,5 +1,6 @@
 package ga.backend.li.service;
 
+import ga.backend.dong.entity.Dong;
 import ga.backend.dong.service.DongService;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
@@ -18,8 +19,17 @@ public class LiService {
     private final DongService dongService;
 
     // CREATE
+    public Li createLi(Li li) {
+        return liRespository.save(li);
+    }
+
     public Li createLi(Li li, long dongPk) {
         li.setDong(dongService.verifiedDong(dongPk));
+        return liRespository.save(li);
+    }
+
+    public Li createLi(Li li, Dong dong) {
+        li.setDong(dong);
         return liRespository.save(li);
     }
 

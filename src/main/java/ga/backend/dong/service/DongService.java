@@ -4,6 +4,7 @@ import ga.backend.dong.entity.Dong;
 import ga.backend.dong.repository.DongRepository;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
+import ga.backend.gu.entity.Gu;
 import ga.backend.gu.service.GuService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,13 @@ public class DongService {
 
     // CREATE
     public Dong createDong(Dong dong) {
+        return dongRespository.save(dong);
+    }
+
+    public Dong createDong(String dongName, Gu gu) {
+        Dong dong = new Dong();
+        dong.setGu(gu);
+        dong.setDong(dongName);
         return dongRespository.save(dong);
     }
 

@@ -31,13 +31,13 @@ public class AddressService {
     public void createAddresses(List<AddressRequestDto.Post> posts) {
         for (AddressRequestDto.Post post:posts) {
             Metro metro = metroService.findMetroByMetro(post.getMetro());
-            if(metro == null) metro = metroService.createMetro(post.getMetro());
+            if(metro == null) metro = metroService.createMetro(metro);
 
             Gu gu = guService.findGuByGuAndMetroPk(post.getGu(), metro.getPk());
-            if(gu == null) gu = guService.createGu(post.getGu(), metro.getPk());
+            if(gu == null) gu = guService.createGu(post.getGu(), metro);
 
             Dong dong = dongService.findDongByDongAndGuPk(post.getDong(), gu.getPk());
-            if(dong == null) dong = dongService.createDong(post.getDong(), gu.getPk());
+            if(dong == null) dong = dongService.createDong(post.getDong(), gu);
 
             Li li = liService.findLiAndGuPk(post.getLi(), dong.getPk());
             if(li == null) {
@@ -45,7 +45,8 @@ public class AddressService {
                 newLi.setLi(post.getLi());
                 newLi.setLatitude(post.getLatitude());
                 newLi.setLongitude(post.getLongitude());
-                li = liService.createLi(newLi, dong.getPk());
+                newLi.setDong(dong);
+                li = liService.createLi(newLi);
             }
         }
     }

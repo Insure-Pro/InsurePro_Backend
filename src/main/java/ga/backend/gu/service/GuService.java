@@ -4,6 +4,7 @@ import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.gu.entity.Gu;
 import ga.backend.gu.repository.GuRepository;
+import ga.backend.metro.entity.Metro;
 import ga.backend.metro.service.MetroService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,13 @@ public class GuService {
 
     // CREATE
     public Gu createGu(Gu gu) {
+        return guRespository.save(gu);
+    }
+
+    public Gu createGu(String guName, Metro metro) {
+        Gu gu = new Gu();
+        gu.setMetro(metro);
+        gu.setGu(guName);
         return guRespository.save(gu);
     }
 
