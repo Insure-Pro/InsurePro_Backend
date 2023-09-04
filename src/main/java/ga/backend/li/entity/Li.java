@@ -3,10 +3,8 @@ package ga.backend.li.entity;
 import ga.backend.auditable.Auditable;
 import ga.backend.customer.entity.Customer;
 import ga.backend.dong.entity.Dong;
-import ga.backend.gu.entity.Gu;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -27,7 +25,7 @@ public class Li extends Auditable {
     Dong dong;
 
     @Column
-    private String li; // 리 이름
+    private String liName; // 리 이름
 
     @Column
     private double latitude; // 위도

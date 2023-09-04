@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface LiRepository extends JpaRepository<Li, Long> {
     List<Li> findByDong_Pk(long dongPk);
-    Optional<Li> findByLiAndDong_Pk(String liName, long dongPk);
-    Optional<Li> findByLi(String liName);
+    Optional<Li> findByLiNameAndDong_Pk(String liName, long dongPk);
+    Optional<Li> findByLiName(String liName);
 }

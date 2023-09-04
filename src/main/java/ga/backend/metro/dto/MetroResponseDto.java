@@ -12,7 +12,7 @@ public class MetroResponseDto {
     @Getter
     public static class Response {
         private Long pk;
-        private String metro;
+        private String metroName;
         private Boolean delYn;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;

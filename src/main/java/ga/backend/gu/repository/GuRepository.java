@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface GuRepository extends JpaRepository<Gu, Long> {
     List<Gu> findByMetro_Pk(long metroPk);
-    Optional<Gu> findByGuAndMetro_Pk(String guName, long metroPk);
-    Optional<Gu> findByGu(String guName);
+    Optional<Gu> findByGuNameAndMetro_Pk(String guName, long metroPk);
+    Optional<Gu> findByGuName(String guName);
 }

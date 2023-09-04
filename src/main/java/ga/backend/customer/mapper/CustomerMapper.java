@@ -9,5 +9,5 @@ import org.mapstruct.Mapper;
 public interface CustomerMapper {
     Customer customerPostDtoToCustomer(CustomerRequestDto.Post post);
     Customer customerPatchDtoToCustomer(CustomerRequestDto.Patch patch);
-    CustomerResponseDto.Response customerToCustomerResponseDto(Customer customer);
+    CustomerResponseDto.Response customerToCustomerResponseDto(Customer customer, String customerTypeString);
 }

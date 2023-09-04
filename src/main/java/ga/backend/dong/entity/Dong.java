@@ -1,7 +1,6 @@
 package ga.backend.dong.entity;
 
 import ga.backend.auditable.Auditable;
-import ga.backend.customer.entity.Customer;
 import ga.backend.gu.entity.Gu;
 import ga.backend.li.entity.Li;
 import lombok.Getter;
@@ -28,7 +27,7 @@ public class Dong extends Auditable {
     Gu gu;
 
     @Column
-    private String dong;
+    private String dongName;
 
     @Column
     private Boolean delYn = false;

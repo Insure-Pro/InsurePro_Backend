@@ -12,7 +12,7 @@ public class DongResponseDto {
     @Getter
     public static class Response {
         private Long pk;
-        private String dong;
+        private String dongName;
         private Boolean delYn;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;

@@ -12,7 +12,7 @@ public class GuResponseDto {
     @Getter
     public static class Response {
         private Long pk;
-        private String gu;
+        private String guName;
         private Boolean delYn;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;

@@ -26,14 +26,14 @@ public class DongService {
     public Dong createDong(String dongName, Gu gu) {
         Dong dong = new Dong();
         dong.setGu(gu);
-        dong.setDong(dongName);
+        dong.setDongName(dongName);
         return dongRespository.save(dong);
     }
 
     public Dong createDong(String dongName, long guPk) {
         Dong dong = new Dong();
         dong.setGu(guService.verifiedGu(guPk));
-        dong.setDong(dongName);
+        dong.setDongName(dongName);
         return dongRespository.save(dong);
     }
 
@@ -61,20 +61,20 @@ public class DongService {
 
     // dong이름과 gu-pk로 Dong 반환
     public Dong findDongByDongAndGuPk(String dongName, long guPk) {
-        Optional<Dong> dong = dongRespository.findByDongAndGu_Pk(dongName, guPk);
+        Optional<Dong> dong = dongRespository.findByDongNameAndGu_Pk(dongName, guPk);
         return dong.orElse(null);
     }
 
     // dong이름으로 Dong 반환
     public Dong findDongByDong(String dongName) {
-        Optional<Dong> dong = dongRespository.findByDong(dongName);
+        Optional<Dong> dong = dongRespository.findByDongName(dongName);
         return dong.orElse(null);
     }
 
     // UPDATE
     public Dong patchDong(Dong dong) {
         Dong findDong = verifiedDong(dong.getPk());
-        Optional.ofNullable(dong.getDong()).ifPresent(findDong::setDong);
+        Optional.ofNullable(dong.getDongName()).ifPresent(findDong::setDongName);
         Optional.ofNullable(dong.getDelYn()).ifPresent(findDong::setDelYn);
         return dongRespository.save(findDong);
     }

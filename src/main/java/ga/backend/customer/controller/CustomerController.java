@@ -5,6 +5,8 @@ import ga.backend.customer.dto.CustomerResponseDto;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.mapper.CustomerMapper;
 import ga.backend.customer.service.*;
+import ga.backend.customerType.entity.CustomerType;
+import ga.backend.customerType.service.CustomerTypeService;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,8 +28,15 @@ public class CustomerController {
     // CREATE
     @PostMapping
     public ResponseEntity postCustomer(@Valid @RequestBody CustomerRequestDto.Post post) {
-        Customer customer = customerService.createCustomer(customerMapper.customerPostDtoToCustomer(post));
-        CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
+        Customer customer = customerService.createCustomer(customerMapper.customerPostDtoToCustomer(post),
+                post.getCustomerTypePk(),
+                post.getLiPk())
+                ;
+        CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(
+                customer
+                ,
+                customer.getCustomerType().getType()
+        );
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -36,7 +45,7 @@ public class CustomerController {
     @GetMapping("/{customer-pk}")
     public ResponseEntity getCustomer(@Positive @PathVariable("customer-pk") long customerPk) {
         Customer customer = customerService.findCustomer(customerPk);
-        CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
+        CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer, customer.getCustomerType().getType());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -47,7 +56,7 @@ public class CustomerController {
                                         @Valid @RequestBody CustomerRequestDto.Patch patch) {
         patch.setPk(customerPk);
         Customer customer = customerService.patchCustomer(customerMapper.customerPatchDtoToCustomer(patch));
-        CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
+        CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer, customer.getCustomerType().getType());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

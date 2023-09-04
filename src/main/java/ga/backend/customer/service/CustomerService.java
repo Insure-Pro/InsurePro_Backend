@@ -2,8 +2,13 @@ package ga.backend.customer.service;
 
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.repository.CustomerRepository;
+import ga.backend.customerType.service.CustomerTypeService;
+import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
+import ga.backend.li.entity.Li;
+import ga.backend.li.service.LiService;
+import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,10 +17,21 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class CustomerService {
+    private final CustomerTypeService customerTypeService;
+    private final LiService liService;
     private final CustomerRepository customerRespository;
+    private final FindEmployee findEmployee;
 
     // CREATE
-    public Customer createCustomer(Customer customer) {
+    public Customer createCustomer(Customer customer, long customerTypePk, long liPk) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        customer.setEmployee(employee);
+        customer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
+
+        Li li = liService.findLi(liPk);
+        customer.setLi(li);
+        customer.setDongString(liService.findDongString(li));
+
         return customerRespository.save(customer);
     }
 
@@ -30,7 +46,6 @@ public class CustomerService {
         Customer findCustomer = verifiedCustomer(customer.getPk());
         Optional.ofNullable(customer.getName()).ifPresent(findCustomer::setName);
         Optional.ofNullable(customer.getBirth()).ifPresent(findCustomer::setBirth);
-        Optional.ofNullable(customer.getDongString()).ifPresent(findCustomer::setDongString);
         Optional.ofNullable(customer.getAddress()).ifPresent(findCustomer::setAddress);
         Optional.ofNullable(customer.getPhone()).ifPresent(findCustomer::setPhone);
         Optional.ofNullable(customer.getMemo()).ifPresent(findCustomer::setMemo);

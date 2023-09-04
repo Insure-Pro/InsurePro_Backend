@@ -10,7 +10,7 @@ public class MetroRequestDto {
     @Getter
     public static class Post {
         private Long pk;
-        private String metro;
+        private String metroName;
         private Boolean delYn;
     }
 
@@ -19,7 +19,7 @@ public class MetroRequestDto {
     @Getter
     public static class Patch {
         private Long pk;
-        private String metro;
+        private String metroName;
         private Boolean delYn;
     }
 }

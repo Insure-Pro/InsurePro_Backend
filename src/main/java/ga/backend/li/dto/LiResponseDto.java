@@ -12,7 +12,7 @@ public class LiResponseDto {
     @Getter
     public static class Response {
         private Long pk;
-        private String li; // 리 이름
+        private String liName; // 리 이름
         private double latitude; // 위도
         private double longitude; // 경도
         private Boolean delYn;

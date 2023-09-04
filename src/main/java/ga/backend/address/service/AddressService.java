@@ -12,7 +12,6 @@ import ga.backend.metro.entity.Metro;
 import ga.backend.metro.service.MetroService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.test.context.junit4.statements.SpringRepeat;
 
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class AddressService {
             Li li = liService.findLiAndGuPk(post.getLi(), dong.getPk());
             if(li == null) {
                 Li newLi = new Li();
-                newLi.setLi(post.getLi());
+                newLi.setLiName(post.getLi());
                 newLi.setLatitude(post.getLatitude());
                 newLi.setLongitude(post.getLongitude());
                 newLi.setDong(dong);

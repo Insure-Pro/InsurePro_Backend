@@ -26,14 +26,14 @@ public class GuService {
     public Gu createGu(String guName, Metro metro) {
         Gu gu = new Gu();
         gu.setMetro(metro);
-        gu.setGu(guName);
+        gu.setGuName(guName);
         return guRespository.save(gu);
     }
 
     public Gu createGu(String guName, long metroPk) {
         Gu gu = new Gu();
         gu.setMetro(metroService.verifiedMetro(metroPk));
-        gu.setGu(guName);
+        gu.setGuName(guName);
         return guRespository.save(gu);
     }
 
@@ -61,20 +61,20 @@ public class GuService {
 
     // gu이름과 metroPk로 Gu 반환
     public Gu findGuByGuAndMetroPk(String guName, long metroPk) {
-        Optional<Gu> gu = guRespository.findByGuAndMetro_Pk(guName, metroPk);
+        Optional<Gu> gu = guRespository.findByGuNameAndMetro_Pk(guName, metroPk);
         return gu.orElse(null);
     }
 
     // gu 이름으로 Gu 반환
     public Gu findGuByGu(String guName) {
-        Optional<Gu> gu = guRespository.findByGu(guName);
+        Optional<Gu> gu = guRespository.findByGuName(guName);
         return gu.orElse(null);
     }
 
     // UPDATE
     public Gu patchGu(Gu gu) {
         Gu findGu = verifiedGu(gu.getPk());
-        Optional.ofNullable(gu.getGu()).ifPresent(findGu::setGu);
+        Optional.ofNullable(gu.getGuName()).ifPresent(findGu::setGuName);
         Optional.ofNullable(gu.getDelYn()).ifPresent(findGu::setDelYn);
         return guRespository.save(findGu);
     }

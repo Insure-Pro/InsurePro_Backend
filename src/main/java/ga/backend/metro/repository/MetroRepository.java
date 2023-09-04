@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface MetroRepository extends JpaRepository<Metro, Long> {
-    Optional<Metro> findByMetro(String metroName);
+    Optional<Metro> findByMetroName(String metroName);
 }

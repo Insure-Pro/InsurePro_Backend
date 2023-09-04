@@ -43,7 +43,7 @@ public class Customer extends Auditable {
     private String name; // 이름
 
     @Column
-    private String birth; // 생년월일
+    private LocalDate birth; // 생년월일
 
     @Column
     private int age; // 나이
