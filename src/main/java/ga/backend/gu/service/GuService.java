@@ -55,7 +55,7 @@ public class GuService {
 
     // metro-pk에 해당하는 Gu 내용 반환
     public List<Gu> findGusByMetroPk(long metroPk) {
-        List<Gu> gus = guRespository.findByMetro_Pk(metroPk);
+        List<Gu> gus = guRespository.findByMetro_Pk(metroService.findMetro(metroPk).getPk());
         return gus;
     }
 

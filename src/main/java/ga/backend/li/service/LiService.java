@@ -58,7 +58,7 @@ public class LiService {
 
     // dong-pk에 해당하는 Li 반환
     public List<Li> findLis(long dongPk) {
-        List<Li> lis = liRespository.findByDong_Pk(dongPk);
+        List<Li> lis = liRespository.findByDong_Pk(dongService.findDong(dongPk).getPk());
         return lis;
     }
 

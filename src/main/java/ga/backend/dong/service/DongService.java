@@ -55,7 +55,7 @@ public class DongService {
 
     // gu-pk에 해당하는 Dong 반환
     public List<Dong> findDongs(long guPk) {
-        List<Dong> dongs = dongRespository.findByGu_Pk(guPk);
+        List<Dong> dongs = dongRespository.findByGu_Pk(guService.findGu(guPk).getPk());
         return dongs;
     }
 
