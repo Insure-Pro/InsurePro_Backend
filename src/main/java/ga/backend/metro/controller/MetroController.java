@@ -52,8 +52,10 @@ public class MetroController {
     }
 
     // UPDATE
-    @PatchMapping("/metro")
-    public ResponseEntity patchMetro(@Valid @RequestBody MetroRequestDto.Patch patch) {
+    @PatchMapping("/metro/{metro-pk}")
+    public ResponseEntity patchMetro(@Positive @PathVariable("metro-pk") long metroPk,
+                                     @Valid @RequestBody MetroRequestDto.Patch patch) {
+        patch.setPk(metroPk);
         Metro metro = metroService.patchMetro(metroMapper.metroPatchDtoToMetro(patch));
         MetroResponseDto.Response response = metroMapper.metroToMetroResponseDto(metro);
 

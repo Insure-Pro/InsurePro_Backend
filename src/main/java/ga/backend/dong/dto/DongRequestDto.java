@@ -10,7 +10,7 @@ public class DongRequestDto {
     @Getter
     public static class Post {
         private Long pk;
-        private String dong;
+        private String dongName;
         private Boolean delYn;
     }
 
@@ -19,7 +19,7 @@ public class DongRequestDto {
     @Getter
     public static class Patch {
         private Long pk;
-        private String dong;
+        private String dongName;
         private Boolean delYn;
     }
 }

@@ -4,6 +4,7 @@ import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.gu.entity.Gu;
 import ga.backend.gu.repository.GuRepository;
+import ga.backend.metro.entity.Metro;
 import ga.backend.metro.service.MetroService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,17 @@ public class GuService {
         return guRespository.save(gu);
     }
 
+    public Gu createGu(String guName, Metro metro) {
+        Gu gu = new Gu();
+        gu.setMetro(metro);
+        gu.setGuName(guName);
+        return guRespository.save(gu);
+    }
+
     public Gu createGu(String guName, long metroPk) {
         Gu gu = new Gu();
         gu.setMetro(metroService.verifiedMetro(metroPk));
-        gu.setGu(guName);
+        gu.setGuName(guName);
         return guRespository.save(gu);
     }
 
@@ -47,19 +55,26 @@ public class GuService {
 
     // metro-pk에 해당하는 Gu 내용 반환
     public List<Gu> findGusByMetroPk(long metroPk) {
-        List<Gu> gus = guRespository.findByMetro_Pk(metroPk);
+        List<Gu> gus = guRespository.findByMetro_Pk(metroService.findMetro(metroPk).getPk());
         return gus;
     }
 
+    // gu이름과 metroPk로 Gu 반환
     public Gu findGuByGuAndMetroPk(String guName, long metroPk) {
-        Gu gu = guRespository.findByGuAndMetro_Pk(guName, metroPk);
-        return gu;
+        Optional<Gu> gu = guRespository.findByGuNameAndMetro_Pk(guName, metroPk);
+        return gu.orElse(null);
+    }
+
+    // gu 이름으로 Gu 반환
+    public Gu findGuByGu(String guName) {
+        Optional<Gu> gu = guRespository.findByGuName(guName);
+        return gu.orElse(null);
     }
 
     // UPDATE
     public Gu patchGu(Gu gu) {
         Gu findGu = verifiedGu(gu.getPk());
-        Optional.ofNullable(gu.getGu()).ifPresent(findGu::setGu);
+        Optional.ofNullable(gu.getGuName()).ifPresent(findGu::setGuName);
         Optional.ofNullable(gu.getDelYn()).ifPresent(findGu::setDelYn);
         return guRespository.save(findGu);
     }

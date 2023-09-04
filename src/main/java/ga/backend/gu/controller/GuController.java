@@ -61,8 +61,10 @@ public class GuController {
     }
 
     // UPDATE
-    @PatchMapping("/gu")
-    public ResponseEntity patchGu(@Valid @RequestBody GuRequestDto.Patch patch) {
+    @PatchMapping("/gu/{gu-pk}")
+    public ResponseEntity patchGu(@Positive @PathVariable("gu-pk") long guPk,
+                                  @Valid @RequestBody GuRequestDto.Patch patch) {
+        patch.setPk(guPk);
         Gu gu = guService.patchGu(guMapper.guPatchDtoToGu(patch));
         GuResponseDto.Response response = guMapper.guToGuResponseDto(gu);
 

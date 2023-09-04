@@ -42,8 +42,10 @@ public class ScheduleController {
     }
 
     // UPDATE
-    @PatchMapping
-    public ResponseEntity patchSchedule(@Valid @RequestBody ScheduleRequestDto.Patch patch) {
+    @PatchMapping("/{schedule-pk}")
+    public ResponseEntity patchSchedule(@Positive @PathVariable("schedule-pk") long schedulePk,
+                                        @Valid @RequestBody ScheduleRequestDto.Patch patch) {
+        patch.setPk(schedulePk);
         Schedule schedule = scheduleService.patchSchedule(scheduleMapper.schedulePatchDtoToSchedule(patch));
         ScheduleResponseDto.Response response = scheduleMapper.scheduleToScheduleResponseDto(schedule);
 

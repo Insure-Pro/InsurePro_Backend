@@ -10,7 +10,7 @@ public class GuRequestDto {
     @Getter
     public static class Post {
         private Long pk;
-        private String gu;
+        private String guName;
         private Boolean delYn;
     }
 
@@ -19,7 +19,7 @@ public class GuRequestDto {
     @Getter
     public static class Patch {
         private Long pk;
-        private String gu;
+        private String guName;
         private Boolean delYn;
     }
 }

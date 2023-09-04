@@ -22,7 +22,7 @@ public class MetroService {
 
     public Metro createMetro(String metroName) {
         Metro metro = new Metro();
-        metro.setMetro(metroName);
+        metro.setMetroName(metroName);
         return metroRespository.save(metro);
     }
 
@@ -38,10 +38,16 @@ public class MetroService {
         return metros;
     }
 
+    // metro 이름으로 Metro 반환
+    public Metro findMetroByMetroName(String metroName) {
+        Optional<Metro> metro = metroRespository.findByMetroName(metroName);
+        return metro.orElse(null);
+    }
+
     // UPDATE
     public Metro patchMetro(Metro metro) {
         Metro findMetro = verifiedMetro(metro.getPk());
-        Optional.ofNullable(metro.getMetro()).ifPresent(findMetro::setMetro);
+        Optional.ofNullable(metro.getMetroName()).ifPresent(findMetro::setMetroName);
         Optional.ofNullable(metro.getDelYn()).ifPresent(findMetro::setDelYn);
         return metroRespository.save(findMetro);
     }

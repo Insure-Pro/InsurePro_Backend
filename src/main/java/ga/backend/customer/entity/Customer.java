@@ -4,11 +4,14 @@ import ga.backend.auditable.Auditable;
 import ga.backend.customerType.entity.CustomerType;
 import ga.backend.dong.entity.Dong;
 import ga.backend.employee.entity.Employee;
+import ga.backend.li.entity.Li;
 import ga.backend.schedule.entity.Schedule;
+import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,9 +24,9 @@ public class Customer extends Auditable {
     @Column(name = "customer_pk")
     private Long pk;
 
-    @ManyToOne
-    @JoinColumn(name = "dong_pk")
-    private Dong dong;
+    @OneToOne
+    @JoinColumn(name = "li_pk")
+    private Li li;
 
     @ManyToOne
     @JoinColumn(name = "customer_type_pk")
@@ -40,13 +43,16 @@ public class Customer extends Auditable {
     private String name; // 이름
 
     @Column
-    private String birth; // 생년월일
+    private LocalDate birth; // 생년월일
 
     @Column
     private int age; // 나이
 
     @Column
-    private String address; // 주소
+    private String dongString; // 행정동 주소
+
+    @Column
+    private String address; // 상세 주소
 
     @Column
     private String phone; // 연락처
@@ -55,8 +61,18 @@ public class Customer extends Auditable {
     private String memo; // 메모
 
     @Column
-    private boolean contractYn; // 계약 체결 여부
+    private Boolean contractYn = false; // 계약 체결 여부
 
     @Column
-    private boolean delYn; // 고객 삭제 여부
+    private Boolean delYn = false; // 고객 삭제 여부
+
+    @Column
+    private LocalDate intensiveCareStartDate; // 집중관리시기 - 시작
+
+    @Column
+    private LocalDate intensiveCareFinishDate; // 집중관리시기 - 끝
+
+    @Column
+    private LocalDate registerDate; // 고객 등록 날짜
+
 }

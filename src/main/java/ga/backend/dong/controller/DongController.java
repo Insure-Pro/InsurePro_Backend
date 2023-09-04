@@ -60,8 +60,10 @@ public class DongController {
     }
 
     // UPDATE
-    @PatchMapping("/dong")
-    public ResponseEntity patchDong(@Valid @RequestBody DongRequestDto.Patch patch) {
+    @PatchMapping("/dong/{dong-pk}")
+    public ResponseEntity patchDong(@Positive @PathVariable("dong-pk") long dongPk,
+                                    @Valid @RequestBody DongRequestDto.Patch patch) {
+        patch.setPk(dongPk);
         Dong dong = dongService.patchDong(dongMapper.dongPatchDtoToDong(patch));
         DongResponseDto.Response response = dongMapper.dongToDongResponseDto(dong);
 

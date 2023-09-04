@@ -27,7 +27,7 @@ public class Gu extends Auditable {
     Metro metro;
 
     @Column
-    private String gu;
+    private String guName;
 
     @Column
     private Boolean delYn = false;

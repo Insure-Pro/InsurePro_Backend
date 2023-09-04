@@ -4,6 +4,7 @@ import ga.backend.dong.entity.Dong;
 import ga.backend.dong.repository.DongRepository;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
+import ga.backend.gu.entity.Gu;
 import ga.backend.gu.service.GuService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,10 +23,17 @@ public class DongService {
         return dongRespository.save(dong);
     }
 
+    public Dong createDong(String dongName, Gu gu) {
+        Dong dong = new Dong();
+        dong.setGu(gu);
+        dong.setDongName(dongName);
+        return dongRespository.save(dong);
+    }
+
     public Dong createDong(String dongName, long guPk) {
         Dong dong = new Dong();
         dong.setGu(guService.verifiedGu(guPk));
-        dong.setDong(dongName);
+        dong.setDongName(dongName);
         return dongRespository.save(dong);
     }
 
@@ -39,27 +47,34 @@ public class DongService {
         return dong;
     }
 
-    // 구에 해당하는 동 내용 반환
+    // 구에 해당하는 Dong 반환
     public List<Dong> findDongs() {
         List<Dong> dongs = dongRespository.findAll();
         return dongs;
     }
 
-    // gu-pk에 해당하는 dong 내용 반환
+    // gu-pk에 해당하는 Dong 반환
     public List<Dong> findDongs(long guPk) {
-        List<Dong> dongs = dongRespository.findByGu_Pk(guPk);
+        List<Dong> dongs = dongRespository.findByGu_Pk(guService.findGu(guPk).getPk());
         return dongs;
     }
 
+    // dong이름과 gu-pk로 Dong 반환
     public Dong findDongByDongAndGuPk(String dongName, long guPk) {
-        Dong dong = dongRespository.findByDongAndGu_Pk(dongName, guPk);
-        return dong;
+        Optional<Dong> dong = dongRespository.findByDongNameAndGu_Pk(dongName, guPk);
+        return dong.orElse(null);
+    }
+
+    // dong이름으로 Dong 반환
+    public Dong findDongByDong(String dongName) {
+        Optional<Dong> dong = dongRespository.findByDongName(dongName);
+        return dong.orElse(null);
     }
 
     // UPDATE
     public Dong patchDong(Dong dong) {
         Dong findDong = verifiedDong(dong.getPk());
-        Optional.ofNullable(dong.getDong()).ifPresent(findDong::setDong);
+        Optional.ofNullable(dong.getDongName()).ifPresent(findDong::setDongName);
         Optional.ofNullable(dong.getDelYn()).ifPresent(findDong::setDelYn);
         return dongRespository.save(findDong);
     }

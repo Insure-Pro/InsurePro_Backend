@@ -1,8 +1,8 @@
 package ga.backend.dong.entity;
 
 import ga.backend.auditable.Auditable;
-import ga.backend.customer.entity.Customer;
 import ga.backend.gu.entity.Gu;
+import ga.backend.li.entity.Li;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,14 +20,14 @@ public class Dong extends Auditable {
     private Long pk;
 
     @OneToMany(mappedBy = "dong", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Customer> customers = new ArrayList<>();
+    private List<Li> lis = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "gu_pk")
     Gu gu;
 
     @Column
-    private String dong;
+    private String dongName;
 
     @Column
     private Boolean delYn = false;

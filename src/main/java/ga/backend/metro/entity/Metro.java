@@ -22,7 +22,7 @@ public class Metro extends Auditable {
     List<Gu> gus = new ArrayList<>();
 
     @Column
-    private String metro;
+    private String metroName;
 
     @Column
     private Boolean delYn = false;
