@@ -67,7 +67,7 @@ public class CustomerTypeController {
     public ResponseEntity patchCustomerType(@Positive @PathVariable("customer-type-pk") long customerTypePk,
                                             @Valid @RequestBody CustomerTypeRequestDto.Patch patch) {
         patch.setPk(customerTypePk);
-        CustomerType customerType = customerTypeService.patchCustomerType(customerTypeMapper.customerTypePatchDtoToCustomerType(patch));
+        CustomerType customerType = customerTypeService.patchCustomerType(customerTypeMapper.customerTypePatchDtoToCustomerType(patch), patch.getCompany_pk());
         CustomerTypeResponseDto.Response customerTypeResponse = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
         JSONObject response = new JSONObject();
         response.put("customertypes", customerTypeResponse);
