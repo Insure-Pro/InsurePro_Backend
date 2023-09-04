@@ -22,10 +22,12 @@ public class CustomerTypeRequestDto {
     }
 
     @AllArgsConstructor
+    @NoArgsConstructor
     @Setter
     @Getter
     public static class Patch {
         private Long pk;
+        private Long company_pk;
         private String type;
         private String detail;
         private boolean delYn;

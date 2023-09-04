@@ -10,6 +10,7 @@ import ga.backend.exception.ExceptionCode;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,12 +32,29 @@ public class CustomerTypeService {
         return customerType;
     }
 
+    public List<CustomerType> findCustomerTypes(Long company_pk, String company_name) {
+        List<CustomerType> customerTypeList;
+
+        if (company_pk == null && company_name == null) {
+            customerTypeList = customerTypeRespository.findAllByDelYn(false);
+        } else if (company_pk == null) {
+            customerTypeList = customerTypeRespository.findAllByDelYnAndCompany_Name(false, company_name);
+        } else if (company_name == null) {
+            customerTypeList = customerTypeRespository.findAllByDelYnAndCompany_Pk(false, company_pk);
+        } else {
+            customerTypeList = customerTypeRespository.findAllByDelYnAndCompany_PkAndCompany_Name(false, company_pk, company_name);
+        }
+        return customerTypeList;
+    }
+
     // UPDATE
-    public CustomerType patchCustomerType(CustomerType customerType) {
+    public CustomerType patchCustomerType(CustomerType customerType, Long company_pk) {
         CustomerType findCustomerType = verifiedCustomerType(customerType.getPk());
         Optional.ofNullable(customerType.getType()).ifPresent(findCustomerType::setType);
         Optional.ofNullable(customerType.getDetail()).ifPresent(findCustomerType::setDetail);
 
+        Company company = companyService.verifiedCompany(company_pk);
+        customerType.setCompany(company);
         return customerTypeRespository.save(findCustomerType);
     }
 
