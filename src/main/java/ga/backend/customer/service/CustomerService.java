@@ -46,7 +46,26 @@ public class CustomerService {
     // 최신순 정렬 - 생성일 기준
     public List<Customer> findCustomerByLatest() {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        List<Customer> customers = customerRespository.findAllByEmployee(employee, Sort.by(Sort.Direction.DESC, "createdAt"));
+        List<Customer> customers = customerRespository.findAllByEmployee(
+                employee, Sort.by(Sort.Direction.DESC, "createdAt")
+        );
+        return customers;
+    }
+
+    // 나이별 정렬(2030, 4050, 6070)
+    public List<Customer> findCustomerByAge(String age) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        int start = 0;
+
+        if(age.equals("2030")) start =  20;
+        else if(age.equals("4050")) start =  40;
+        else if(age.equals("6070")) start =  60;
+
+        int end = start + 19;
+
+        List<Customer> customers = customerRespository.findByEmployeeAndAgeBetween(
+                employee, start, end, Sort.by(Sort.Direction.ASC, "age")
+        );
         return customers;
     }
 

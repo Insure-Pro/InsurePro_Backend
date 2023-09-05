@@ -60,6 +60,15 @@ public class CustomerController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
+    // 나이별 정렬(2030, 4050, 6070)
+    @GetMapping("/customers/age/{age}")
+    public ResponseEntity getCustomers(@PathVariable("age") String age) {
+        List<Customer> customers = customerService.findCustomerByAge(age);
+        List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     // UPDATE
     @PatchMapping("/customer/{customer-pk}")
     public ResponseEntity patchCustomer(@Positive @PathVariable("customer-pk") long customerPk,
