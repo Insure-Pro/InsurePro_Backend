@@ -69,6 +69,15 @@ public class CustomerController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
+    // 지역별 정렬
+    @GetMapping("/customers")
+    public ResponseEntity findCustomerByLi(@RequestParam("dongPk") long dongPk) {
+        List<Customer> customers = customerService.findCustomerByLi(dongPk);
+        List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     // UPDATE
     @PatchMapping("/customer/{customer-pk}")
     public ResponseEntity patchCustomer(@Positive @PathVariable("customer-pk") long customerPk,

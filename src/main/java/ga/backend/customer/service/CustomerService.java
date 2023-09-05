@@ -3,6 +3,7 @@ package ga.backend.customer.service;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.repository.CustomerRepository;
 import ga.backend.customerType.service.CustomerTypeService;
+import ga.backend.dong.service.DongService;
 import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
@@ -20,8 +21,9 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CustomerService {
     private final CustomerTypeService customerTypeService;
-    private final LiService liService;
     private final CustomerRepository customerRespository;
+    private final LiService liService;
+    private final DongService dongService;
     private final FindEmployee findEmployee;
 
     // CREATE
@@ -47,7 +49,7 @@ public class CustomerService {
     public List<Customer> findCustomerByLatest() {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         List<Customer> customers = customerRespository.findAllByEmployee(
-                employee, Sort.by(Sort.Direction.DESC, "createdAt")
+                employee, Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
         );
         return customers;
     }
@@ -64,7 +66,18 @@ public class CustomerService {
         int end = start + 19;
 
         List<Customer> customers = customerRespository.findByEmployeeAndAgeBetween(
-                employee, start, end, Sort.by(Sort.Direction.ASC, "age")
+                employee, start, end, Sort.by(Sort.Direction.ASC, "age") // 오름차순
+        );
+        return customers;
+    }
+
+    // 지역별 정렬
+    public List<Customer> findCustomerByLi(Long dongPk) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        String dongName = dongService.verifiedDong(dongPk).getDongName();
+
+        List<Customer> customers = customerRespository.findByEmployeeAndDongStringContains(
+                employee, dongName, Sort.by(Sort.Direction.ASC, "li_pk") // 오름차순
         );
         return customers;
     }
