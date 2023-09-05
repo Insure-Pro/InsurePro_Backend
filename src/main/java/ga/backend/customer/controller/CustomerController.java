@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping(Version.currentUrl)
@@ -50,10 +51,14 @@ public class CustomerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-//    @GetMapping("/customers")
-//    public ResponseEntity getCustomers() {
-//
-//    }
+    // 최신순 정렬 - 생성일 기준
+    @GetMapping("/customers/latest")
+    public ResponseEntity getCustomers() {
+        List<Customer> customers = customerService.findCustomerByLatest();
+        List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
 
     // UPDATE
     @PatchMapping("/customer/{customer-pk}")

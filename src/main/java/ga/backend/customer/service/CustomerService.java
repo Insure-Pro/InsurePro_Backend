@@ -10,8 +10,10 @@ import ga.backend.li.entity.Li;
 import ga.backend.li.service.LiService;
 import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,6 +41,13 @@ public class CustomerService {
     public Customer findCustomer(long customerPk) {
         Customer customer = verifiedCustomer(customerPk);
         return customer;
+    }
+
+    // 최신순 정렬 - 생성일 기준
+    public List<Customer> findCustomerByLatest() {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        List<Customer> customers = customerRespository.findAllByEmployee(employee, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return customers;
     }
 
     // UPDATE
