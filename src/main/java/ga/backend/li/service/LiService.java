@@ -98,7 +98,7 @@ public class LiService {
     // 검증
     public Li verifiedLi(long liPk) {
         Optional<Li> li = liRespository.findById(liPk);
-        return li.orElseThrow(() -> new BusinessLogicException(ExceptionCode.DONG_NOT_FOUND));
+        return li.orElseThrow(() -> new BusinessLogicException(ExceptionCode.LI_NOT_FOUND));
     }
 
     // dongString 반환

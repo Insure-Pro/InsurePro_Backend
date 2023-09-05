@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping(Version.currentUrl + "/customer")
+@RequestMapping(Version.currentUrl)
 @Validated
 @AllArgsConstructor
 public class CustomerController {
@@ -26,7 +26,7 @@ public class CustomerController {
     private final CustomerMapper customerMapper;
 
     // CREATE
-    @PostMapping
+    @PostMapping("/customer")
     public ResponseEntity postCustomer(@Valid @RequestBody CustomerRequestDto.Post post) {
         Customer customer = customerService.createCustomer(customerMapper.customerPostDtoToCustomer(post),
                 post.getCustomerTypePk(),
@@ -42,7 +42,7 @@ public class CustomerController {
     }
 
     // READ
-    @GetMapping("/{customer-pk}")
+    @GetMapping("/customer/{customer-pk}")
     public ResponseEntity getCustomer(@Positive @PathVariable("customer-pk") long customerPk) {
         Customer customer = customerService.findCustomer(customerPk);
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer, customer.getCustomerType().getType());
@@ -50,8 +50,13 @@ public class CustomerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+//    @GetMapping("/customers")
+//    public ResponseEntity getCustomers() {
+//
+//    }
+
     // UPDATE
-    @PatchMapping("/{customer-pk}")
+    @PatchMapping("/customer/{customer-pk}")
     public ResponseEntity patchCustomer(@Positive @PathVariable("customer-pk") long customerPk,
                                         @Valid @RequestBody CustomerRequestDto.Patch patch) {
         patch.setPk(customerPk);
@@ -62,7 +67,7 @@ public class CustomerController {
     }
 
     // DELETE
-    @DeleteMapping("/{customer-pk}")
+    @DeleteMapping("/customer/{customer-pk}")
     public ResponseEntity deleteCustomer(@Positive @PathVariable("customer-pk") long customerPk) {
         customerService.deleteCustomer(customerPk);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

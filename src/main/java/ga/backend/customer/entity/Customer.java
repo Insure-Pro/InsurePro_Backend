@@ -24,7 +24,7 @@ public class Customer extends Auditable {
     @Column(name = "customer_pk")
     private Long pk;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "li_pk")
     private Li li;
 

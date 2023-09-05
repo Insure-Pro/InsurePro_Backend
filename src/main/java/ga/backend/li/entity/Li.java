@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,8 +18,8 @@ public class Li extends Auditable {
     @Column(name = "li_pk")
     private Long pk;
 
-    @OneToOne(mappedBy = "li", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private Customer customer;
+    @OneToMany(mappedBy = "li", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Customer> customers;
 
     @ManyToOne
     @JoinColumn(name = "dong_pk")
