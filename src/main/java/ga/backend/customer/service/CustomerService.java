@@ -82,6 +82,16 @@ public class CustomerService {
         return customers;
     }
 
+    // 계약여부 정렬
+    public List<Customer> findCustomerBycontractYn(boolean contractYn) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+
+        List<Customer> customers = customerRespository.findByEmployeeAndContractYn(
+                employee, contractYn
+        );
+        return customers;
+    }
+
     // UPDATE
     public Customer patchCustomer(Customer customer) {
         Customer findCustomer = verifiedCustomer(customer.getPk());

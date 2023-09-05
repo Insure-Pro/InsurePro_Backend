@@ -78,6 +78,15 @@ public class CustomerController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
+    // 계약여부 정렬
+    @GetMapping("/customers/contractYn/{contractYn}")
+    public ResponseEntity findCustomerByLi(@PathVariable("contractYn") boolean contractYn) {
+        List<Customer> customers = customerService.findCustomerBycontractYn(contractYn);
+        List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     // UPDATE
     @PatchMapping("/customer/{customer-pk}")
     public ResponseEntity patchCustomer(@Positive @PathVariable("customer-pk") long customerPk,
