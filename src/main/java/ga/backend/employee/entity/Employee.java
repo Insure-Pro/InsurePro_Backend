@@ -7,6 +7,7 @@ import ga.backend.dayschedule.entity.DaySchedule;
 import ga.backend.performance.entity.Performance;
 import ga.backend.progress.entity.Progress;
 import ga.backend.schedule.entity.Schedule;
+import ga.backend.team.entity.Team;
 import lombok.*;
 
 import javax.persistence.*;
@@ -53,6 +54,10 @@ public class Employee extends Auditable {
     @JoinColumn(name = "company_pk")
     private Company company;
 
+    @ManyToOne
+    @JoinColumn(name = "team_pk")
+    private Team team;
+
     @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Performance> performances = new ArrayList<>();
 
@@ -67,4 +72,5 @@ public class Employee extends Auditable {
 
     @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<DaySchedule> daySchedules = new ArrayList<>();
+
 }
