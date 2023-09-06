@@ -9,7 +9,7 @@ public enum ExceptionCode {
     METRO_NOT_FOUND(404, "Metro not found"),
     GU_NOT_FOUND(404, "Gu not found"),
     DONG_NOT_FOUND(404, "Dong not found"),
-    SCHEDULE_NOT_FOUND(404, "Schedule not found"),
+    SCHEDULE_NOT_FOUND(404, "Team not found"),
     CUSTOMER_TYPE_NOT_FOUND(404, "CustomerType not found"),
     CUSTOMER_NOT_FOUND(404, "Customer not found"),
     EMPLOYEE_NOT_FOUND(404, "Employee not found"),
