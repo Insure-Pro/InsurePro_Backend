@@ -52,8 +52,6 @@ public class EmployeeService {
     // 토큰으로 직원 조회
     public Employee findEmployeeByToken() {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        if(employee == null)
-            throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND);
 
         return employee;
     }
