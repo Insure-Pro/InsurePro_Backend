@@ -97,6 +97,7 @@ public class CustomerController {
     }
 
     // UPDATE
+    // 고객 수정(모든 값 수정 가능)
     @PatchMapping("/customer/{customer-pk}")
     public ResponseEntity patchCustomer(@Positive @PathVariable("customer-pk") long customerPk,
                                         @Valid @RequestBody CustomerRequestDto.Patch patch) {
