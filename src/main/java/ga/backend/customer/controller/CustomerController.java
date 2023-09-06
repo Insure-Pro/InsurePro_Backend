@@ -62,7 +62,7 @@ public class CustomerController {
 
     // 나이별 정렬(2030, 4050, 6070)
     @GetMapping("/customers/age/{age}")
-    public ResponseEntity getCustomers(@PathVariable("age") String age) {
+    public ResponseEntity getCustomersByAge(@PathVariable("age") String age) {
         List<Customer> customers = customerService.findCustomerByAge(age);
         List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
 
@@ -71,7 +71,7 @@ public class CustomerController {
 
     // 지역별 정렬
     @GetMapping("/customers")
-    public ResponseEntity findCustomerByLi(@RequestParam("dongPk") long dongPk) {
+    public ResponseEntity findCustomersByDong(@RequestParam("dongPk") long dongPk) {
         List<Customer> customers = customerService.findCustomerByLi(dongPk);
         List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
 
@@ -80,8 +80,17 @@ public class CustomerController {
 
     // 계약여부 정렬
     @GetMapping("/customers/contractYn/{contractYn}")
-    public ResponseEntity findCustomerByLi(@PathVariable("contractYn") boolean contractYn) {
-        List<Customer> customers = customerService.findCustomerBycontractYn(contractYn);
+    public ResponseEntity findCustomersByContractYn(@PathVariable("contractYn") boolean contractYn) {
+        List<Customer> customers = customerService.findCustomerByContractYn(contractYn);
+        List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    // 관리 고객 정렬
+    @GetMapping("/customers/intensiveCare")
+    public ResponseEntity findCustomersByIntensiveCare() {
+        List<Customer> customers = customerService.findCustomerByIntensiveCare();
         List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);

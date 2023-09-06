@@ -59,9 +59,9 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         int start = 0;
 
-        if(age.equals("2030")) start =  20;
-        else if(age.equals("4050")) start =  40;
-        else if(age.equals("6070")) start =  60;
+        if (age.equals("2030")) start = 20;
+        else if (age.equals("4050")) start = 40;
+        else if (age.equals("6070")) start = 60;
 
         int end = start + 19;
 
@@ -83,12 +83,23 @@ public class CustomerService {
     }
 
     // 계약여부 정렬
-    public List<Customer> findCustomerBycontractYn(boolean contractYn) {
+    public List<Customer> findCustomerByContractYn(boolean contractYn) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
         List<Customer> customers = customerRespository.findByEmployeeAndContractYn(
                 employee, contractYn
         );
+        return customers;
+    }
+
+    // 관리 고객 정렬
+    public List<Customer> findCustomerByIntensiveCare() {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+
+        List<Customer> customers =
+                customerRespository.findByEmployeeAndIntensiveCareExists(
+                        employee
+                );
         return customers;
     }
 
@@ -105,7 +116,7 @@ public class CustomerService {
         Optional.ofNullable(customer.getIntensiveCareFinishDate()).ifPresent(findCustomer::setIntensiveCareFinishDate);
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
         Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
-        if(customer.getAge() != 0) findCustomer.setAge(customer.getAge());
+        if (customer.getAge() != 0) findCustomer.setAge(customer.getAge());
 
 
         return customerRespository.save(findCustomer);
