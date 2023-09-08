@@ -106,7 +106,7 @@ public class CustomerService {
     // UPDATE
     public Customer patchCustomer(Customer customer) {
         Customer findCustomer = verifiedCustomer(customer.getPk());
-        if(customer.getEmployee().getPk() != findCustomer.getEmployee().getPk())
+        if(customer.getEmployee().getPk() != findEmployee.getLoginEmployeeByToken().getPk())
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_CONTAIN_CUSTOMER);
 
         Optional.ofNullable(customer.getName()).ifPresent(findCustomer::setName);
