@@ -109,6 +109,13 @@ public class CustomerService {
         if(customer.getEmployee().getPk() != findEmployee.getLoginEmployeeByToken().getPk())
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_CONTAIN_CUSTOMER);
 
+        if(customer.getCustomerType() != null) {
+            findCustomer.setCustomerType(customerTypeService.findCustomerType(customer.getCustomerType().getPk()));
+        }
+        if(customer.getLi() != null) {
+            findCustomer.setLi(liService.findLi(customer.getLi().getPk()));
+        }
+
         Optional.ofNullable(customer.getName()).ifPresent(findCustomer::setName);
         Optional.ofNullable(customer.getBirth()).ifPresent(findCustomer::setBirth);
         Optional.ofNullable(customer.getAddress()).ifPresent(findCustomer::setAddress);
