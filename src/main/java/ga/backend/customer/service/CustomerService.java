@@ -104,30 +104,32 @@ public class CustomerService {
     }
 
     // UPDATE
-    public Customer patchCustomer(Customer customer) {
+    public Customer patchCustomer(Customer customer, long customerTypePk, long liPk) {
         Customer findCustomer = verifiedCustomer(customer.getPk());
-        if(customer.getEmployee().getPk() != findEmployee.getLoginEmployeeByToken().getPk())
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        // 직원 유효성 검사
+        if(findCustomer.getEmployee().getPk() != employee.getPk())
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_CONTAIN_CUSTOMER);
-
-        if(customer.getCustomerType() != null) {
-            findCustomer.setCustomerType(customerTypeService.findCustomerType(customer.getCustomerType().getPk()));
+        if(customerTypePk != 0) {
+            findCustomer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
         }
-        if(customer.getLi() != null) {
-            findCustomer.setLi(liService.findLi(customer.getLi().getPk()));
+        if(liPk != 0) {
+            Li li = liService.findLi(liPk);
+            findCustomer.setLi(li);
+            findCustomer.setDongString(liService.findDongString(li));
         }
 
         Optional.ofNullable(customer.getName()).ifPresent(findCustomer::setName);
         Optional.ofNullable(customer.getBirth()).ifPresent(findCustomer::setBirth);
+        if (customer.getAge() != 0) findCustomer.setAge(customer.getAge());
         Optional.ofNullable(customer.getAddress()).ifPresent(findCustomer::setAddress);
         Optional.ofNullable(customer.getPhone()).ifPresent(findCustomer::setPhone);
         Optional.ofNullable(customer.getMemo()).ifPresent(findCustomer::setMemo);
         Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
+        Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
         Optional.ofNullable(customer.getIntensiveCareStartDate()).ifPresent(findCustomer::setIntensiveCareStartDate);
         Optional.ofNullable(customer.getIntensiveCareFinishDate()).ifPresent(findCustomer::setIntensiveCareFinishDate);
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
-        Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
-        if (customer.getAge() != 0) findCustomer.setAge(customer.getAge());
-
 
         return customerRespository.save(findCustomer);
     }
