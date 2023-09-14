@@ -14,8 +14,8 @@ public class CustomerRequestDto {
     @Getter
     public static class Post {
         private Long pk;
-        private Long customerTypePk; // 고객 유형 식별자
-        private Long liPk; // 리 식별자
+        private long customerTypePk; // 고객 유형 식별자
+        private long liPk; // 리 식별자
         private String name; // 이름
         private LocalDate birth; // 생년월일
         private int age; // 나이
