@@ -32,9 +32,11 @@ public class CustomerService {
         customer.setEmployee(employee);
         customer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
 
-        Li li = liService.findLi(liPk);
-        customer.setLi(li);
-        customer.setDongString(liService.findDongString(li));
+        if(liPk != 0) {
+            Li li = liService.findLi(liPk);
+            customer.setLi(li);
+            customer.setDongString(liService.findDongString(li));
+        }
 
         return customerRespository.save(customer);
     }
