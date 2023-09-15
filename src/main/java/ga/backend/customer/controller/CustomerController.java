@@ -34,8 +34,7 @@ public class CustomerController {
                 post.getLiPk())
                 ;
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(
-                customer
-                ,
+                customer,
                 customer.getCustomerType().getType()
         );
 
@@ -97,11 +96,31 @@ public class CustomerController {
     }
 
     // UPDATE
+    // 고객 수정(모든 값 수정 가능)
     @PatchMapping("/customer/{customer-pk}")
     public ResponseEntity patchCustomer(@Positive @PathVariable("customer-pk") long customerPk,
                                         @Valid @RequestBody CustomerRequestDto.Patch patch) {
         patch.setPk(customerPk);
-        Customer customer = customerService.patchCustomer(customerMapper.customerPatchDtoToCustomer(patch));
+        Customer customer = customerService.patchCustomer(
+                customerMapper.customerPatchDtoToCustomer(patch),
+                patch.getCustomerTypePk(),
+                patch.getLiPk()
+        );
+        CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer, customer.getCustomerType().getType());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 고객 수정(contractYn 수정)
+    @PatchMapping("/customer/{customer-pk}/contractYn")
+    public ResponseEntity patchCustomerByContractYn(@Positive @PathVariable("customer-pk") long customerPk,
+                                        @Valid @RequestBody CustomerRequestDto.Patch patch) {
+        patch.setPk(customerPk);
+        Customer customer = customerService.patchCustomer(
+                customerMapper.customerPatchDtoToCustomer(patch),
+                patch.getCustomerTypePk(),
+                patch.getLiPk()
+        );
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer, customer.getCustomerType().getType());
 
         return new ResponseEntity<>(response, HttpStatus.OK);

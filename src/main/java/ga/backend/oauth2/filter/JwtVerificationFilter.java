@@ -42,11 +42,17 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 
 //        check(request);
         try {
+            System.out.println("!! what1");
             Map<String, Object> claims = verifyAuthorizationJws(request);
+            System.out.println("!! keySet : " + claims.keySet());
+            System.out.println("!! what2");
             setAuthenticationToContext(claims);
+            System.out.println("!! what3");
         } catch (SignatureException se) { // signature 에러
+            System.out.println("!! error 1");
             request.setAttribute("exception", se);
         } catch (ExpiredJwtException ee) { // 기간 만료
+            System.out.println("!! error 2");
             request.setAttribute("exception", ee);
 
             /*
@@ -58,6 +64,9 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
             verifyRefreshToken(request, response);
 
         } catch (Exception e) { // 그 외의 에러
+            System.out.println("!! error 3");
+            System.out.println("error : " + e.getMessage());
+            System.out.println("eeror : " + e.getCause());
             request.setAttribute("exception", e);
         }
 
@@ -82,6 +91,7 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
             System.out.println("!! RefreshToken 유효기간 종료");
         } catch (Exception e) {
             request.setAttribute("exception", e);
+            System.out.println("## " + e.getMessage());
             System.out.println("!! RefreshToken의 header 불일치하면 동작");
         }
     }
@@ -139,9 +149,13 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 
     // access token 유효성 검증
     public Map<String, Object> verifyAuthorizationJws(HttpServletRequest request) {
+        System.out.println("#");
         String jws = request.getHeader("Authorization").replace("Bearer ", "");
+        System.out.println("##");
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
+        System.out.println("###");
         Map<String, Object> claims = jwtTokenizer.getClaims(jws, base64EncodedSecretKey).getBody();
+        System.out.println("####");
 
         verifyClaims(claims);
         return claims;
@@ -162,10 +176,14 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         String subject = (String) claims.get("sub"); // 이메일
         Employee employee = employeeService.verifiedEmployeeByEmail(subject);
 
+        System.out.println("!! ###");
+
         // token의 id 유효성 검사
-        String id = (String) claims.get("id"); // 사번
-        Employee employeeById = employeeService.verifiedEmployeeById(id);
-        if(!employeeById.equals(employeeById)) throw new BusinessLogicException(ExceptionCode.TAMPERED_TOKEN);
+//        String id = (String) claims.get("id"); // 사번
+//        Employee employeeById = employeeService.verifiedEmployeeById(id);
+//        if(!employeeById.equals(employeeById)) throw new BusinessLogicException(ExceptionCode.TAMPERED_TOKEN);
+
+        System.out.println("!! ####");
 
         // token의 roles 유효성 검사
         if(claims.get("roles") != null) {
@@ -174,11 +192,15 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
             if (!roles.containsAll(claimsRoles)) throw new BusinessLogicException(ExceptionCode.TAMPERED_TOKEN);
         }
 
+        System.out.println("!! ####");
+
+
         return employee;
     }
 
     // contextholder에 세션 저장
     public void setAuthenticationToContext(Map<String, Object> claims) {
+        System.out.println("!! 저장하기");
         List<GrantedAuthority> authorities = authorityUtils.createAuthorities((List) claims.get("roles"));
         Authentication authentication = new UsernamePasswordAuthenticationToken(claims.get("sub"), null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
