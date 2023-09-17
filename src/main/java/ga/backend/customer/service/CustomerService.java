@@ -68,7 +68,7 @@ public class CustomerService {
         int end = start + 19;
 
         List<Customer> customers = customerRespository.findByEmployeeAndAgeBetween(
-                employee, start, end, Sort.by(Sort.Direction.ASC, "createdAt") // 오름차순
+                employee, start, end, Sort.by(Sort.Direction.DESC, "createdAt") // 오름차순
         );
         return customers;
     }
