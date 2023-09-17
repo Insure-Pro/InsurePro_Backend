@@ -61,14 +61,14 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         int start = 0;
 
-        if (age.equals("2030")) start = 20;
-        else if (age.equals("4050")) start = 40;
-        else if (age.equals("6070")) start = 60;
+        if (age.equals("1020")) start = 10;
+        else if (age.equals("3040")) start = 30;
+        else if (age.equals("5060")) start = 50;
 
         int end = start + 19;
 
         List<Customer> customers = customerRespository.findByEmployeeAndAgeBetween(
-                employee, start, end, Sort.by(Sort.Direction.ASC, "age") // 오름차순
+                employee, start, end, Sort.by(Sort.Direction.ASC, "createdAt") // 오름차순
         );
         return customers;
     }
