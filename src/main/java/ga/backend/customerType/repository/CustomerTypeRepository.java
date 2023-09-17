@@ -6,10 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CustomerTypeRepository extends JpaRepository<CustomerType, Long> {
 
+    Optional<CustomerType> findTopByDelYnAndType(boolean delYn, String type);
     List<CustomerType> findAllByDelYnAndCompany_Pk(boolean delYn, Long pk);
     List<CustomerType> findAllByDelYnAndCompany_Name(boolean delYn, String name);
     List<CustomerType> findAllByDelYn(boolean delYn);
