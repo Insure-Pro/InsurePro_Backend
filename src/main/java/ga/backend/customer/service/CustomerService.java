@@ -114,14 +114,17 @@ public class CustomerService {
     }
 
     // UPDATE
-    public Customer patchCustomer(Customer customer, long customerTypePk, long liPk) {
+    public Customer patchCustomer(Customer customer, String customerTypeName, long liPk) {
         Customer findCustomer = verifiedCustomer(customer.getPk());
         Employee employee = findEmployee.getLoginEmployeeByToken();
         // 직원 유효성 검사
         if(findCustomer.getEmployee().getPk() != employee.getPk())
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_CONTAIN_CUSTOMER);
-        if(customerTypePk != 0) {
-            findCustomer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
+        if(customerTypeName != null) {
+            findCustomer.setCustomerType(
+                    customerTypeRepository.findTopByDelYnAndType(false, customerTypeName)
+                    .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOM_TYPE_NOT_FOUND))
+            );
         }
         if(liPk != 0) {
             Li li = liService.findLi(liPk);
