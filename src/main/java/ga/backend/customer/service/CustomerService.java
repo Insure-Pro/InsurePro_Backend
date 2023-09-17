@@ -2,6 +2,8 @@ package ga.backend.customer.service;
 
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.repository.CustomerRepository;
+import ga.backend.customerType.entity.CustomerType;
+import ga.backend.customerType.repository.CustomerTypeRepository;
 import ga.backend.customerType.service.CustomerTypeService;
 import ga.backend.dong.service.DongService;
 import ga.backend.employee.entity.Employee;
@@ -22,15 +24,21 @@ import java.util.Optional;
 public class CustomerService {
     private final CustomerTypeService customerTypeService;
     private final CustomerRepository customerRespository;
+    private final CustomerTypeRepository customerTypeRepository;
     private final LiService liService;
     private final DongService dongService;
     private final FindEmployee findEmployee;
 
     // CREATE
-    public Customer createCustomer(Customer customer, long customerTypePk, long liPk) {
+    public Customer createCustomer(Customer customer, String customerTypeName, long liPk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         customer.setEmployee(employee);
-        customer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
+        CustomerType customerType = customerTypeRepository
+                .findTopByDelYnAndType(false, customerTypeName)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOM_TYPE_NOT_FOUND));
+        System.out.println("여기");
+        System.out.println(customerType.getDetail());
+        customer.setCustomerType(customerType);
 
         if(liPk != 0) {
             Li li = liService.findLi(liPk);
@@ -61,14 +69,14 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         int start = 0;
 
-        if (age.equals("2030")) start = 20;
-        else if (age.equals("4050")) start = 40;
-        else if (age.equals("6070")) start = 60;
+        if (age.equals("1020")) start = 10;
+        else if (age.equals("3040")) start = 30;
+        else if (age.equals("5060")) start = 50;
 
         int end = start + 19;
 
         List<Customer> customers = customerRespository.findByEmployeeAndAgeBetween(
-                employee, start, end, Sort.by(Sort.Direction.ASC, "age") // 오름차순
+                employee, start, end, Sort.by(Sort.Direction.DESC, "createdAt") // 오름차순
         );
         return customers;
     }
@@ -106,14 +114,17 @@ public class CustomerService {
     }
 
     // UPDATE
-    public Customer patchCustomer(Customer customer, long customerTypePk, long liPk) {
+    public Customer patchCustomer(Customer customer, String customerTypeName, long liPk) {
         Customer findCustomer = verifiedCustomer(customer.getPk());
         Employee employee = findEmployee.getLoginEmployeeByToken();
         // 직원 유효성 검사
         if(findCustomer.getEmployee().getPk() != employee.getPk())
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_CONTAIN_CUSTOMER);
-        if(customerTypePk != 0) {
-            findCustomer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
+        if(customerTypeName != null) {
+            findCustomer.setCustomerType(
+                    customerTypeRepository.findTopByDelYnAndType(false, customerTypeName)
+                    .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOM_TYPE_NOT_FOUND))
+            );
         }
         if(liPk != 0) {
             Li li = liService.findLi(liPk);

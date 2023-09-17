@@ -30,9 +30,9 @@ public class CustomerController {
     @PostMapping("/customer")
     public ResponseEntity postCustomer(@Valid @RequestBody CustomerRequestDto.Post post) {
         Customer customer = customerService.createCustomer(customerMapper.customerPostDtoToCustomer(post),
-                post.getCustomerTypePk(),
-                post.getLiPk())
-                ;
+                post.getCustomerTypeName(),
+                post.getLiPk());
+
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(
                 customer,
                 customer.getCustomerType().getType()
@@ -103,7 +103,7 @@ public class CustomerController {
         patch.setPk(customerPk);
         Customer customer = customerService.patchCustomer(
                 customerMapper.customerPatchDtoToCustomer(patch),
-                patch.getCustomerTypePk(),
+                patch.getCustomerTypeName(),
                 patch.getLiPk()
         );
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer, customer.getCustomerType().getType());
@@ -118,7 +118,7 @@ public class CustomerController {
         patch.setPk(customerPk);
         Customer customer = customerService.patchCustomer(
                 customerMapper.customerPatchDtoToCustomer(patch),
-                patch.getCustomerTypePk(),
+                patch.getCustomerTypeName(),
                 patch.getLiPk()
         );
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer, customer.getCustomerType().getType());

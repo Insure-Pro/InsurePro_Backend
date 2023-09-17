@@ -58,6 +58,6 @@ public class TeamService {
     // 검증
     public Team verifiedTeam(long teamPk) {
         Optional<Team> team = teamRespository.findById(teamPk);
-        return team.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND));
+        return team.orElseThrow(() -> new BusinessLogicException(ExceptionCode.TEAM_NOT_FOUND));
     }
 }
