@@ -38,9 +38,9 @@ public class CorsFilter implements Filter {
                 "ACL, CANCELUPLOAD, CHECKIN, CHECKOUT, COPY, DELETE, GET, HEAD, POST, OPTIONS, PATCH");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers",
-                "Origin, X-Requested-With, Content-Type, Accept, access-Token, refresh-Token, Authorization");
+                "Origin, X-Requested-With, Content-Type, Accept, Refresh, Authorization");
         response.setHeader("Access-Control-Expose-Headers",
-                "access-Token, refresh-Token");
+                "Refresh, Authorization");
 
         // 로그인/회원가입의 버튼을 눌렀을 시, 쿠키값 저장하기
 //        System.out.println("!! 필터 : " + request.getHeaderNames());
