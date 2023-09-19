@@ -15,6 +15,7 @@ public class EmployeeResponseDto {
         private Long pk;
         private String id;
         private String email;
+        private String name; // 이름
         private boolean regiYn;
         private boolean delYn;
         private LocalDateTime createdAt;

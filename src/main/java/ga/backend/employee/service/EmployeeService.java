@@ -61,6 +61,7 @@ public class EmployeeService {
         Employee findEmployee = findEmployeeByToken();
         Optional.ofNullable(employee.getId()).ifPresent(findEmployee::setId);
         Optional.ofNullable(employee.getEmail()).ifPresent(findEmployee::setEmail);
+        Optional.ofNullable(employee.getName()).ifPresent(findEmployee::setName);
         Optional.ofNullable(employee.getDelYn()).ifPresent(findEmployee::setDelYn);
         Optional.ofNullable(employee.getRegiYn()).ifPresent(findEmployee::setRegiYn);
 
