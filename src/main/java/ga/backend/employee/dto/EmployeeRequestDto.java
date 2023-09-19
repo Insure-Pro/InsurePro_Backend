@@ -17,6 +17,7 @@ public class EmployeeRequestDto {
         private Long pk;
         private String id;
         private String email;
+        private String name; // 이름
         private String password;
         private boolean regiYn;
         private boolean delYn;
@@ -28,6 +29,7 @@ public class EmployeeRequestDto {
     public static class Patch {
         private String id;
         private String email;
+        private String name; // 이름
         private String password;
         private Boolean regiYn;
         private Boolean delYn;
@@ -41,6 +43,8 @@ public class EmployeeRequestDto {
         private String email;
 
         private String id; // 사번
+
+        private String name; // 이름
 
         @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[~!@#$%^&*()+|=?<>:])[A-Za-z\\d~!@#$%^&*()+|=]{4,16}$",
                 message = "특수문자는 1개 이상 들어가야 합니다, 비밀번호 '최소 4자에서 최대 16자'까지 허용")
