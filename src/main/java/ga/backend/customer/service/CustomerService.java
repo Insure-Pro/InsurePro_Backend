@@ -72,6 +72,7 @@ public class CustomerService {
         if (age.equals("1020")) start = 10;
         else if (age.equals("3040")) start = 30;
         else if (age.equals("5060")) start = 50;
+        else if (age.equals("7080")) start = 70;
 
         int end = start + 19;
 
