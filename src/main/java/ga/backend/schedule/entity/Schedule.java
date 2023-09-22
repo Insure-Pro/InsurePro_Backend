@@ -3,7 +3,6 @@ package ga.backend.schedule.entity;
 import ga.backend.auditable.Auditable;
 import ga.backend.customer.entity.Customer;
 import ga.backend.employee.entity.Employee;
-import ga.backend.scheduleprogress.entity.ScheduleProgress;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,9 +30,6 @@ public class Schedule extends Auditable {
     @JoinColumn(name = "employee_pk")
     private Employee employee;
 
-    @OneToOne(mappedBy = "schedule", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private ScheduleProgress scheduleProgress;
-
     @Column
     private String memo;
 
@@ -55,9 +51,29 @@ public class Schedule extends Auditable {
     @Column
     private String color;
 
-    @Column
-    private boolean meetYn = false;
+    @Enumerated(EnumType.STRING)
+    private Progress progress;
+
+    @Getter
+    public static enum Progress {
+        TA("TA"),
+        AP("AP"),
+        PC("PC"),
+        APC("APC"),
+        APC1("APC1"),
+        APC2("APC2"),
+        APC3("APC3");
+
+        private final String value;
+
+        Progress(String value) {
+            this.value = value;
+        }
+    }
 
     @Column
-    private boolean delYn = false;
+    private Boolean meetYn = false;
+
+    @Column
+    private Boolean delYn = false;
 }
