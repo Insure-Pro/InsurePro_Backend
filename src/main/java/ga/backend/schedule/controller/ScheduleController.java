@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping(Version.currentUrl)
@@ -24,10 +25,10 @@ public class ScheduleController {
     private final ScheduleMapper scheduleMapper;
 
     // CREATE
-    @PostMapping("/schedule/{customer_id}")
+    @PostMapping("/schedule/{customer-pk}")
     public ResponseEntity postSchedule(@Valid @RequestBody ScheduleRequestDto.Post post,
-                                       @Positive @PathVariable("customer_id") long customer_id) {
-        Schedule schedule = scheduleService.createSchedule(scheduleMapper.schedulePostDtoToSchedule(post), customer_id);
+                                       @Positive @PathVariable("customer-id") long customerPk) {
+        Schedule schedule = scheduleService.createSchedule(scheduleMapper.schedulePostDtoToSchedule(post), customerPk);
         ScheduleResponseDto.Response response = scheduleMapper.scheduleToScheduleResponseDto(schedule);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -40,6 +41,15 @@ public class ScheduleController {
         ScheduleResponseDto.Response response = scheduleMapper.scheduleToScheduleResponseDto(schedule);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 고객별 캘린더 조회
+    @GetMapping("/schedules/{customer-pk}")
+    public ResponseEntity getSchedules(@Positive @PathVariable("customer-pk") long customerPk) {
+        List<Schedule> schedules = scheduleService.findSchedulesByCustomer(customerPk);
+        List<ScheduleResponseDto.Response> rsesponses = scheduleMapper.schedulesToSchedulesResponseDto(schedules);
+
+        return new ResponseEntity<>(rsesponses, HttpStatus.OK);
     }
 
     // UPDATE

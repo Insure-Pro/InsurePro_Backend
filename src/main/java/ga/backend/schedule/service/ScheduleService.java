@@ -14,6 +14,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,9 +25,9 @@ public class ScheduleService {
     private final FindEmployee findEmployee;
 
     // CREATE
-    public Schedule createSchedule(Schedule schedule, long customer_id) {
+    public Schedule createSchedule(Schedule schedule, long customerPk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        Customer customer = customerService.findCustomer(customer_id);
+        Customer customer = customerService.findCustomer(customerPk);
 
         schedule.setEmployee(employee);
         schedule.setCustomer(customer);
@@ -42,6 +43,11 @@ public class ScheduleService {
     public Schedule findSchedule(long schedulePk) {
         Schedule schedule = verifiedSchedule(schedulePk);
         return schedule;
+    }
+
+    public List<Schedule> findSchedulesByCustomer(long customerPk) {
+        Customer customer = customerService.findCustomer(customerPk);
+        return scheduleRespository.findByCustomer(customer);
     }
 
     // UPDATE
