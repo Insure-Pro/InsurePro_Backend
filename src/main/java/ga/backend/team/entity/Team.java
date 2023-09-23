@@ -3,7 +3,6 @@ package ga.backend.team.entity;
 import ga.backend.auditable.Auditable;
 import ga.backend.customer.entity.Customer;
 import ga.backend.employee.entity.Employee;
-import ga.backend.scheduleprogress.entity.ScheduleProgress;
 import lombok.Getter;
 import lombok.Setter;
 

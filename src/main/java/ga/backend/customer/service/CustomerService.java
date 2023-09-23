@@ -157,6 +157,6 @@ public class CustomerService {
     // 검증
     public Customer verifiedCustomer(long customerPk) {
         Optional<Customer> customer = customerRespository.findById(customerPk);
-        return customer.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
+        return customer.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOMER_NOT_FOUND));
     }
 }

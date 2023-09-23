@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
-@RequestMapping(Version.currentUrl + "/schedule")
+@RequestMapping(Version.currentUrl)
 @Validated
 @AllArgsConstructor
 public class ScheduleController {
@@ -24,16 +25,17 @@ public class ScheduleController {
     private final ScheduleMapper scheduleMapper;
 
     // CREATE
-    @PostMapping
-    public ResponseEntity postSchedule(@Valid @RequestBody ScheduleRequestDto.Post post) {
-        Schedule schedule = scheduleService.createSchedule(scheduleMapper.schedulePostDtoToSchedule(post));
+    @PostMapping("/schedule/{customer-pk}")
+    public ResponseEntity postSchedule(@Valid @RequestBody ScheduleRequestDto.Post post,
+                                       @Positive @PathVariable("customer-id") long customerPk) {
+        Schedule schedule = scheduleService.createSchedule(scheduleMapper.schedulePostDtoToSchedule(post), customerPk);
         ScheduleResponseDto.Response response = scheduleMapper.scheduleToScheduleResponseDto(schedule);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // READ
-    @GetMapping("/{schedule-pk}")
+    @GetMapping("/schedule/{schedule-pk}")
     public ResponseEntity getSchedule(@Positive @PathVariable("schedule-pk") long schedulePk) {
         Schedule schedule = scheduleService.findSchedule(schedulePk);
         ScheduleResponseDto.Response response = scheduleMapper.scheduleToScheduleResponseDto(schedule);
@@ -41,8 +43,17 @@ public class ScheduleController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // 고객별 캘린더 조회
+    @GetMapping("/schedules/{customer-pk}")
+    public ResponseEntity getSchedules(@Positive @PathVariable("customer-pk") long customerPk) {
+        List<Schedule> schedules = scheduleService.findSchedulesByCustomer(customerPk);
+        List<ScheduleResponseDto.Response> rsesponses = scheduleMapper.schedulesToSchedulesResponseDto(schedules);
+
+        return new ResponseEntity<>(rsesponses, HttpStatus.OK);
+    }
+
     // UPDATE
-    @PatchMapping("/{schedule-pk}")
+    @PatchMapping("/schedule/{schedule-pk}")
     public ResponseEntity patchSchedule(@Positive @PathVariable("schedule-pk") long schedulePk,
                                         @Valid @RequestBody ScheduleRequestDto.Patch patch) {
         patch.setPk(schedulePk);
@@ -53,7 +64,7 @@ public class ScheduleController {
     }
 
     // DELETE
-    @DeleteMapping("/{schedule-pk}")
+    @DeleteMapping("/schedule/{schedule-pk}")
     public ResponseEntity deleteSchedule(@Positive @PathVariable("schedule-pk") long schedulePk) {
         scheduleService.deleteSchedule(schedulePk);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

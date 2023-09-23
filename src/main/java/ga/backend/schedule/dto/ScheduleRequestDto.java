@@ -1,5 +1,6 @@
 package ga.backend.schedule.dto;
 
+import ga.backend.schedule.entity.Schedule;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,11 +20,11 @@ public class ScheduleRequestDto {
         private LocalDate date;
         private LocalTime startTm;
         private LocalTime finishTm;
-        private LocalTime time;
         private String address;
-        private boolean meetYn;
-        private boolean delYn;
+        private Boolean meetYn;
+        private Boolean delYn;
         private String color;
+        private String progress;
     }
 
     @AllArgsConstructor
@@ -35,10 +36,10 @@ public class ScheduleRequestDto {
         private LocalDate date;
         private LocalTime startTm;
         private LocalTime finishTm;
-        private LocalTime time;
         private String address;
-        private boolean meetYn;
-        private boolean delYn;
+        private Boolean meetYn;
+        private Boolean delYn;
         private String color;
+        private Schedule.Progress progress;
     }
 }

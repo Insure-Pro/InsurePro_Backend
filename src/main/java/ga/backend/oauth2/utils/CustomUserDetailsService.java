@@ -43,7 +43,6 @@ public class CustomUserDetailsService implements UserDetailsService {
             setRoles(employee.getRoles());
             setCompany(employee.getCompany());
             setPerformances(employee.getPerformances());
-            setProgresses(employee.getProgresses());
         }
 
         @Override
