@@ -27,7 +27,7 @@ public class ScheduleController {
     // CREATE
     @PostMapping("/schedule/{customer-pk}")
     public ResponseEntity postSchedule(@Valid @RequestBody ScheduleRequestDto.Post post,
-                                       @Positive @PathVariable("customer-id") long customerPk) {
+                                       @Positive @PathVariable("customer-pk") long customerPk) {
         Schedule schedule = scheduleService.createSchedule(scheduleMapper.schedulePostDtoToSchedule(post), customerPk);
         ScheduleResponseDto.Response response = scheduleMapper.scheduleToScheduleResponseDto(schedule);
 
