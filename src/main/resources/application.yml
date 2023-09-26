@@ -1,16 +1,19 @@
 spring:
   datasource: # DATABASE
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://db-i6kte-kr.vpc-pub-cdb.ntruss.com:3306/ga
-    username: ${GA_MYSQL_ID}
-    password: ${GA_MYSQL_PW}
+    url: ${INSUREPRO_DB_HOST}
+    username: ${INSUREPRO_DB_ID}
+    password: ${INSUREPRO_DB_PW}
   jpa: # JPA
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
   mail: # 메일 전송 설정
     host: smtp.gmail.com
     port: 587 # 465 또는 587 포트 사용 가능(SMTP)
@@ -29,7 +32,7 @@ mail:
 
 jwt:
   key: ${JWT_SECRET_KEY}                # 민감한 정보는 시스템 환경 변수에서 로드한다.
-#  access-token-expiration-minutes: 30   # access-token 유효시간 : 30분
+  #  access-token-expiration-minutes: 30   # access-token 유효시간 : 30분
   access-token-expiration-minutes: 10000   # access-token 유효시간 : 10000분 -> 테스로 변경
   refresh-token-expiration-minutes: 420 # sercret-token 유효시간 : 420분(7시간)
 
@@ -37,7 +40,7 @@ jwt:
 server:
   error:
     include-exception: true     # 응답에 exception의 내용을 포함할지 여부
-#    include-stacktrace: always  # 응답에 stacktrace 내용을 포함할 지 여부
+    #    include-stacktrace: always  # 응답에 stacktrace 내용을 포함할 지 여부
     path: '/error'               # 응답을 처리할 Handler의 경로
     whitelabel:
       enabled: true             # 서버 오류 발생시 브라우저에 보여줄 기본 페이지 생성 여부
