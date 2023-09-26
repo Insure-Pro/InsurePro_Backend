@@ -5,6 +5,9 @@ import ga.backend.employee.dto.EmployeeResponseDto;
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.mapper.EmployeeMapper;
 import ga.backend.employee.service.EmployeeService;
+import ga.backend.team.dto.TeamResponseDto;
+import ga.backend.team.mapper.TeamMapper;
+import ga.backend.team.repository.TeamRepository;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,6 +25,7 @@ import javax.validation.constraints.Positive;
 public class EmployeeController {
     private final EmployeeService employeeService;
     private final EmployeeMapper employeeMapper;
+    private final TeamMapper teamMapper;
 
     // CREATE - 회원가입
     @PostMapping("/signin")
@@ -43,7 +47,8 @@ public class EmployeeController {
     public ResponseEntity getEmployee(@Positive @PathVariable("employee-pk") long employeePk) {
         Employee employee = employeeService.findEmployeeByPk(employeePk);
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
-
+        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam());
+        response.setTeamResponseDto(teamResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -52,6 +57,8 @@ public class EmployeeController {
     public ResponseEntity getEmployee() {
         Employee employee = employeeService.findEmployeeByToken();
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
+        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam());
+        response.setTeamResponseDto(teamResponse);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -61,6 +68,8 @@ public class EmployeeController {
     public ResponseEntity getEmployee(@RequestParam("id") String employee_id) {
         Employee employee = employeeService.verifiedEmployeeById(employee_id);
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
+        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam());
+        response.setTeamResponseDto(teamResponse);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -70,6 +79,8 @@ public class EmployeeController {
     public ResponseEntity patchEmployee(@Valid @RequestBody EmployeeRequestDto.Patch patch) {
         Employee employee = employeeService.patchEmployee(employeeMapper.employeePatchDtoToEmployee(patch));
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
+        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam());
+        response.setTeamResponseDto(teamResponse);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -80,6 +91,8 @@ public class EmployeeController {
         employeeService.checkPassword(changePassword.getPassword(), changePassword.getRePassword()); // 비밀번호 확인
         Employee employee = employeeService.changePassword(employeeMapper.employeeChangePasswordToEmployee(changePassword), changePassword.getAuthNum());
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
+        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam());
+        response.setTeamResponseDto(teamResponse);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
