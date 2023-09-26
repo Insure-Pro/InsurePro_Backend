@@ -30,6 +30,7 @@ public class EmployeeController {
         Employee employee = employeeService.createEmployee(
                 employeeMapper.employeeSigninDtoToEmployee(signin),
                 signin.getCompanyPk(),
+                signin.getTeamPk(),
                 signin.getAuthNum()
         );
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);

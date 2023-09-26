@@ -8,6 +8,7 @@ import ga.backend.event.UserRegistrationApplicationEvent;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.oauth2.utils.CustomAuthorityUtils;
+import ga.backend.team.service.TeamService;
 import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class EmployeeService {
     private final EmployeeRepository employeeRespository;
     private final CompanyService companyService;
+    private final TeamService teamService;
     private final CustomAuthorityUtils authorityUtils;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher publisher;
@@ -28,10 +30,11 @@ public class EmployeeService {
     private final FindEmployee findEmployee;
 
     // CREATE
-    public Employee createEmployee(Employee employee, long companyPk, int authNum) {
+    public Employee createEmployee(Employee employee, long companyPk, long teamPk, int authNum) {
         employee.setRoles(authorityUtils.createRoles(employee.getEmail())); // 권한 설정
         employee.setPassword(passwordEncoder.encode(employee.getPassword())); // 비밀번호 인코딩
         if(companyPk != 0) employee.setCompany(companyService.verifiedCompany(companyPk)); // 회사 연관관계 설정
+        if(teamPk != 0) employee.setTeam(teamService.verifiedTeam(teamPk)); // 회사 연관관계 설정
         authorizationNumberService.checkAuthNum(employee.getEmail(), authNum); // 인증번호와 이메일 확인
         publisher.publishEvent(new UserRegistrationApplicationEvent(employee));
 
