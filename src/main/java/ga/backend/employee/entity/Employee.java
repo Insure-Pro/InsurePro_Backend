@@ -5,6 +5,7 @@ import ga.backend.company.entity.Company;
 import ga.backend.customer.entity.Customer;
 import ga.backend.dayschedule.entity.DaySchedule;
 import ga.backend.performance.entity.Performance;
+import ga.backend.photo.entity.Photo;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.team.entity.Team;
 import lombok.*;
@@ -71,5 +72,8 @@ public class Employee extends Auditable {
 
     @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<DaySchedule> daySchedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Photo> photos = new ArrayList<>();
 
 }
