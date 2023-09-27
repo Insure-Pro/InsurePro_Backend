@@ -2,6 +2,11 @@ package ga.backend.team.controller;
 
 import com.nimbusds.jose.shaded.json.JSONObject;
 import ga.backend.company.dto.CompanyResponseDto;
+import ga.backend.employee.dto.EmployeeResponseDto;
+import ga.backend.employee.entity.Employee;
+import ga.backend.employee.mapper.EmployeeMapper;
+import ga.backend.exception.BusinessLogicException;
+import ga.backend.exception.ExceptionCode;
 import ga.backend.team.dto.TeamRequestDto;
 import ga.backend.team.dto.TeamResponseDto;
 import ga.backend.team.entity.Team;
@@ -25,6 +30,7 @@ import java.util.List;
 public class TeamController {
     private final TeamService teamService;
     private final TeamMapper teamMapper;
+    private final EmployeeMapper employeeMapper;
 
     // CREATE
     @PostMapping
@@ -64,5 +70,16 @@ public class TeamController {
     public ResponseEntity deleteTeam(@Positive @PathVariable("team-pk") long teamPk) {
         teamService.deleteTeam(teamPk);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // GET : 팀별 직원 조회
+    @GetMapping("/employees/{team-pk}")
+    public ResponseEntity getEmployeeListByTeam (@Positive @PathVariable(value = "team-pk") long teamPk) {
+
+        List<Employee> employees = teamService.findEmployeeListByTeam(teamPk);
+
+        // 응답
+        List<EmployeeResponseDto.Response> employeeResponse = employeeMapper.employeeToEmployeeListResponseDto(employees);
+        return new ResponseEntity<>(employeeResponse, HttpStatus.OK);
     }
 }

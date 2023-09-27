@@ -1,5 +1,6 @@
 package ga.backend.employee.dto;
 
+import ga.backend.team.dto.TeamResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +17,7 @@ public class EmployeeResponseDto {
         private String id;
         private String email;
         private String name; // 이름
+        private TeamResponseDto.Response teamResponseDto;
         private boolean regiYn;
         private boolean delYn;
         private LocalDateTime createdAt;

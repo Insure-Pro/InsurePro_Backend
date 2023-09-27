@@ -1,6 +1,8 @@
 package ga.backend.team.service;
 
 
+import ga.backend.employee.entity.Employee;
+import ga.backend.employee.repository.EmployeeRepository;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.team.entity.Team;
@@ -15,6 +17,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class TeamService {
     private final TeamRepository teamRespository;
+    private final EmployeeRepository employeeRepository;
 
     // CREATE
     public Team createTeam(Team team) {
@@ -53,6 +56,12 @@ public class TeamService {
     public void deleteTeam(long teamPk) {
         Team team = verifiedTeam(teamPk);
         teamRespository.delete(team);
+    }
+
+    // team에 소속된 직원 찾기
+    public List<Employee> findEmployeeListByTeam(long teamPk) {
+        Team team = verifiedTeam(teamPk);
+        return employeeRepository.findEmployeesByTeam(team);
     }
 
     // 검증
