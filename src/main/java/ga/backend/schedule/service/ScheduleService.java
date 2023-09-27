@@ -59,12 +59,19 @@ public class ScheduleService {
         Optional.ofNullable(schedule.getDate()).ifPresent(findSchedule::setDate);
         Optional.ofNullable(schedule.getStartTm()).ifPresent(findSchedule::setStartTm);
         Optional.ofNullable(schedule.getFinishTm()).ifPresent(findSchedule::setFinishTm);
-        Optional.ofNullable(time).ifPresent(findSchedule::setTime);
         Optional.ofNullable(schedule.getAddress()).ifPresent(findSchedule::setAddress);
         Optional.ofNullable(schedule.getMeetYn()).ifPresent(findSchedule::setMeetYn);
         Optional.ofNullable(schedule.getDelYn()).ifPresent(findSchedule::setDelYn);
         Optional.ofNullable(schedule.getColor()).ifPresent(findSchedule::setColor);
         Optional.ofNullable(schedule.getProgress()).ifPresent(findSchedule::setProgress);
+
+
+        if(schedule.getStartTm() != null && schedule.getFinishTm() != null)
+            findSchedule.setTime(findScheduleTime(schedule.getStartTm(), schedule.getFinishTm()));
+        else if(schedule.getStartTm() != null && findSchedule.getFinishTm() != null)
+            findSchedule.setTime(findScheduleTime(schedule.getStartTm(), findSchedule.getFinishTm()));
+        else if(findSchedule.getStartTm() != null && schedule.getFinishTm() != null)
+            findSchedule.setTime(findScheduleTime(findSchedule.getStartTm(), schedule.getFinishTm()));
 
         return scheduleRespository.save(findSchedule);
     }
