@@ -56,6 +56,8 @@ public class EmployeeRequestDto {
 
         private long companyPk; // 회사 식별자
 
+        private long teamPk; // 팀 식별자
+
         private int authNum; // 이메일 인증 번호
     }
 
