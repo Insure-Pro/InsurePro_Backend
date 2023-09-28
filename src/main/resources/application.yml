@@ -45,3 +45,16 @@ server:
     whitelabel:
       enabled: true             # 서버 오류 발생시 브라우저에 보여줄 기본 페이지 생성 여부
     include-message: always
+
+cloud:
+  aws:
+    s3:
+      bucket: ${INSUREPRO_S3_BUCKET}
+    credentials:
+      access-key: ${INSUREPRO_S3_KEY}
+      secret-key: ${INSUREPRO_S3_SECRET_KEY}
+    region:
+      static: ap-northeast-2
+      auto: false
+    stack:
+      auto: false
