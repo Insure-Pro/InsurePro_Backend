@@ -1,13 +1,23 @@
 package ga.backend.photo.service;
 
+import ga.backend.employee.dto.EmployeeResponseDto;
+import ga.backend.employee.entity.Employee;
+import ga.backend.employee.mapper.EmployeeMapper;
+import ga.backend.employee.service.EmployeeService;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
+import ga.backend.photo.dto.PhotoDetailResponseDto;
+import ga.backend.photo.dto.PhotoResponseDto;
 import ga.backend.photo.entity.Photo;
+import ga.backend.photo.mapper.PhotoMapper;
 import ga.backend.photo.repository.PhotoRepository;
+import ga.backend.team.entity.Team;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,9 +26,13 @@ import java.util.Optional;
 @Transactional
 public class PhotoService {
     private final PhotoRepository photoRespository;
+    private final EmployeeService employeeService;
+    private final EmployeeMapper employeeMapper;
+    private final PhotoMapper photoMapper;
 
     // CREATE
-    public Photo createPhoto(Photo photo) {
+    public Photo createPhoto(Photo photo, Long employeePk) {
+        photo.setEmployee(employeeService.verifiedEmployeeByPk(employeePk));
         return photoRespository.save(photo);
     }
 
@@ -39,14 +53,44 @@ public class PhotoService {
         return photoList;
     }
 
+    /**
+     * 직원의 가장 최신 photo
+     *
+     * @param employee
+     * @return
+     */
+    public Photo findRecentPhotoByEmployee(Employee employee) {
+        return photoRespository.findTopByDelYnAndEmployeeOrderByCreatedAt(false, employee).orElse(null);
+    }
+
+    public List<PhotoDetailResponseDto> findTeamPhotoListByEmployee(Long employeePk) {
+
+        Employee employee = employeeService.verifiedEmployeeByPk(employeePk);
+        List<PhotoDetailResponseDto> photoDetailList = new ArrayList<>();
+
+        if (employee.getTeam() != null) {
+            for (Employee teamEmployee : employee.getTeam().getEmployees()) {
+                PhotoResponseDto.Response photoResponseDto = photoMapper.photoToPhotoResponseDto(findRecentPhotoByEmployee(teamEmployee));
+                EmployeeResponseDto.Response employeeReponseDto = employeeMapper.employeeToEmployeeResponseDto(teamEmployee);
+                photoDetailList.add(new PhotoDetailResponseDto(employeeReponseDto, photoResponseDto));
+            }
+        }
+
+        return photoDetailList;
+    }
+
     public Photo findPhoto(long photoPk) {
         Photo photo = verifiedPhoto(photoPk);
         return photo;
     }
 
     // UPDATE
-    public Photo patchPhoto(Photo photo) {
+    public Photo patchPhoto(Photo photo, Long employeePk) {
         Photo findPhoto = verifiedPhoto(photo.getPk());
+        if (employeePk != null){
+            Employee employee = employeeService.verifiedEmployeeByPk(employeePk);
+            findPhoto.setEmployee(employee);
+        }
         Optional.ofNullable(photo.getName()).ifPresent(findPhoto::setName);
         Optional.ofNullable(photo.getPhotoUrl()).ifPresent(findPhoto::setPhotoUrl);
 

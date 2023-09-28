@@ -1,6 +1,7 @@
 package ga.backend.photo.controller;
 
 import com.nimbusds.jose.shaded.json.JSONObject;
+import ga.backend.photo.dto.PhotoDetailResponseDto;
 import ga.backend.photo.dto.PhotoRequestDto;
 import ga.backend.photo.dto.PhotoResponseDto;
 import ga.backend.photo.entity.Photo;
@@ -46,7 +47,7 @@ public class PhotoController {
         }
 
         // 생성
-        Photo photo = photoService.createPhoto(photoMapper.photoPostDtoToPhoto(post));
+        Photo photo = photoService.createPhoto(photoMapper.photoPostDtoToPhoto(post), post.getEmployeePk());
 
         // 응답
         PhotoResponseDto.Response response = photoMapper.photoToPhotoResponseDto(photo);
@@ -88,6 +89,21 @@ public class PhotoController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @GetMapping("/team")
+    public ResponseEntity getPhotoListByTeam(
+            @Positive @RequestParam(value = "employee-pk", required = false) Long employeepPk) {
+
+        // 조회
+        List<PhotoDetailResponseDto> findPhotos = photoService.findTeamPhotoListByEmployee(employeepPk);
+
+        // 응답
+//        List<PhotoResponseDto.Response> photos = photoMapper.photoToPhotoListResponseDto(findPhotos);
+//        JSONObject response = new JSONObject();
+//        response.put("photos", photos);
+
+        return new ResponseEntity<>(findPhotos, HttpStatus.CREATED);
+    }
+
     /**
      *
      * @param photoPk
@@ -104,12 +120,10 @@ public class PhotoController {
         if (file != null) {
             patch.setPhotoUrl(imageService.updateImage(file, "photo", "photoUrl"));
         }
-        System.out.println("setphotourl");
-        System.out.println(patch.getPhotoUrl());
 
         // 수정
         patch.setPk(photoPk);
-        Photo photo = photoService.patchPhoto(photoMapper.photoPatchDtoToPhoto(patch));
+        Photo photo = photoService.patchPhoto(photoMapper.photoPatchDtoToPhoto(patch), patch.getEmployeePk());
 
         // 응답
         PhotoResponseDto.Response response = photoMapper.photoToPhotoResponseDto(photo);
