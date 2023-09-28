@@ -33,7 +33,7 @@ public class ScheduleService {
         schedule.setCustomer(customer);
 
         // 만나는 시간(time) 자동 계싼
-        LocalTime time = findScheduleTime(schedule.getStartTm(), schedule.getStartTm());
+        LocalTime time = findScheduleTime(schedule.getStartTm(), schedule.getFinishTm());
         Optional.ofNullable(time).ifPresent(schedule::setTime);
 
         return scheduleRespository.save(schedule);
@@ -78,9 +78,11 @@ public class ScheduleService {
 
     // time 컬럼값 구하기
     public LocalTime findScheduleTime(LocalTime startTm, LocalTime finishTm) {
+        System.out.println("!! startTm : " + startTm);
+        System.out.println("!! finishTm : " + finishTm);
         if(startTm!= null && finishTm != null) {
-            int hour = startTm.getHour() - finishTm.getHour();
-            int minute = startTm.getMinute() - finishTm.getMinute();
+            int hour = finishTm.getHour() - startTm.getHour();
+            int minute = finishTm.getMinute() - startTm.getMinute();
             return LocalTime.of(hour, minute);
         }
 
