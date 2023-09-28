@@ -51,6 +51,10 @@ dependencies {
 //	implementation 'javax.mail:mail:1.4.7'
 //	implementation 'org.springframework:spring-context-support:5.3.9'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	// aws s3
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
 }
 
 tasks.named('test') {

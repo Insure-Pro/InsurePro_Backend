@@ -26,6 +26,8 @@ public enum ExceptionCode {
     EMPLOYEE_NOT_CONTAIN_CUSTOMER(401, "Emploee not contains customer"),
     TAMPERED_TOKEN(1004, "Tampered Token"), // 변조된 토큰
     FAIL_SEND_EMAIL(500, "Fail send email"),
+
+    IMAGE_UPLOAD_FAIL(400, "이미지 업로드를 실패하였습니다."),
     NOT_MATCH_AUTHNUM(400, "Not Match authNum");
 
 

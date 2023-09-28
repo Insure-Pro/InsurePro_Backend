@@ -36,8 +36,6 @@ public class CustomerService {
         CustomerType customerType = customerTypeRepository
                 .findTopByDelYnAndType(false, customerTypeName)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOM_TYPE_NOT_FOUND));
-        System.out.println("여기");
-        System.out.println(customerType.getDetail());
         customer.setCustomerType(customerType);
 
         if(liPk != 0) {
