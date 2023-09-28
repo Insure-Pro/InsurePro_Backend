@@ -36,33 +36,13 @@ public class PhotoService {
         return photoRespository.save(photo);
     }
 
-    // READ
-    public List<Photo> findPhotos(Long pk, String name) {
-
-        List<Photo> photoList;
-
-        if (pk == null && name == null) {
-            photoList = photoRespository.findAllByDelYn(false);
-        } else if (pk == null) {
-            photoList = photoRespository.findAllByDelYnAndName(false, name);
-        } else if (name == null) {
-            photoList = photoRespository.findAllByDelYnAndPk(false, pk);
-        } else {
-            photoList = photoRespository.findAllByDelYnAndPkAndName(false, pk, name);
-        }
-        return photoList;
-    }
 
     /**
-     * 직원의 가장 최신 photo
+     * 자신을 제외한 팀원들의 플래너
      *
-     * @param employee
+     * @param employeePk
      * @return
      */
-    public Photo findRecentPhotoByEmployee(Employee employee) {
-        return photoRespository.findTopByDelYnAndEmployeeOrderByCreatedAt(false, employee).orElse(null);
-    }
-
     public List<PhotoDetailResponseDto> findTeamPhotoListByEmployee(Long employeePk) {
 
         Employee employee = employeeService.verifiedEmployeeByPk(employeePk);
@@ -70,14 +50,34 @@ public class PhotoService {
 
         if (employee.getTeam() != null) {
             for (Employee teamEmployee : employee.getTeam().getEmployees()) {
-                PhotoResponseDto.Response photoResponseDto = photoMapper.photoToPhotoResponseDto(findRecentPhotoByEmployee(teamEmployee));
-                EmployeeResponseDto.Response employeeReponseDto = employeeMapper.employeeToEmployeeResponseDto(teamEmployee);
-                photoDetailList.add(new PhotoDetailResponseDto(employeeReponseDto, photoResponseDto));
+                if (teamEmployee.getPhotos().size() != 0 && !teamEmployee.equals(employee)) {
+                    photoDetailList.add(employeePhotoDetail(teamEmployee));
+                }
             }
         }
-
         return photoDetailList;
     }
+
+    /**
+     * Employee의 가장 최근 Photo(Planner)
+     * @param employeePk
+     * @return
+     */
+    public PhotoDetailResponseDto findMyPhotoByEmployee(Long employeePk) {
+        Employee employee = employeeService.verifiedEmployeeByPk(employeePk);
+        return employeePhotoDetail(employee);
+    }
+
+    /**
+     * Employee의 Photo List
+     * @param employeePk
+     * @return
+     */
+    public List<PhotoResponseDto.Response> findMyPhotoListByEmployee(Long employeePk) {
+        Employee employee = employeeService.verifiedEmployeeByPk(employeePk);
+        return photoMapper.photoToPhotoListResponseDto(photoRespository.findAllByDelYnAndEmployee(false, employee));
+    }
+
 
     public Photo findPhoto(long photoPk) {
         Photo photo = verifiedPhoto(photoPk);
@@ -87,7 +87,7 @@ public class PhotoService {
     // UPDATE
     public Photo patchPhoto(Photo photo, Long employeePk) {
         Photo findPhoto = verifiedPhoto(photo.getPk());
-        if (employeePk != null){
+        if (employeePk != null) {
             Employee employee = employeeService.verifiedEmployeeByPk(employeePk);
             findPhoto.setEmployee(employee);
         }
@@ -110,4 +110,27 @@ public class PhotoService {
         Optional<Photo> photo = photoRespository.findById(photoPk);
         return photo.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
     }
+
+    /**
+     * Employee의 가장 최근 Photo에 대한 PhotoDetailResponseDto 생성
+     *
+     * @param employee
+     * @return
+     */
+    private PhotoDetailResponseDto employeePhotoDetail(Employee employee) {
+        PhotoResponseDto.Response photoResponseDto = photoMapper.photoToPhotoResponseDto(findRecentPhotoByEmployee(employee));
+        EmployeeResponseDto.Response employeeReponseDto = employeeMapper.employeeToEmployeeResponseDto(employee);
+        return new PhotoDetailResponseDto(employeeReponseDto, photoResponseDto);
+    }
+
+    /**
+     * 직원의 가장 최신 photo
+     *
+     * @param employee
+     * @return
+     */
+    private Photo findRecentPhotoByEmployee(Employee employee) {
+        return photoRespository.findTopByDelYnAndEmployeeOrderByCreatedAt(false, employee).orElse(null);
+    }
+
 }

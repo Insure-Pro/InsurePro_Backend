@@ -1,6 +1,7 @@
 package ga.backend.photo.controller;
 
 import com.nimbusds.jose.shaded.json.JSONObject;
+import ga.backend.employee.entity.Employee;
 import ga.backend.photo.dto.PhotoDetailResponseDto;
 import ga.backend.photo.dto.PhotoRequestDto;
 import ga.backend.photo.dto.PhotoResponseDto;
@@ -30,11 +31,10 @@ public class PhotoController {
     private final ImageService imageService;
 
     /**
-     *
      * @param post
      * @return {
-     * 	"photo_pk" : 1,
-     * 	"name" : "패스파인더"
+     * "photo_pk" : 1,
+     * "name" : "패스파인더"
      * }
      */
     @PostMapping
@@ -57,35 +57,24 @@ public class PhotoController {
 
 
     /**
-     *
      * @param pk
      * @param name
      * @return {
-     *     "photos" : [
-     *         {
-     *             "photo_pk" : "1",
-     *             "name" : "ASPhoto"
-     *         },
-     *         {
-     *             "photo_pk" : "2",
-     *             "name" : "패스파인더"
-     *         },
-     *     ]
+     * "photos" : [
+     * {
+     * "photo_pk" : "1",
+     * "name" : "ASPhoto"
+     * },
+     * {
+     * "photo_pk" : "2",
+     * "name" : "패스파인더"
+     * },
+     * ]
      * }
      */
     @GetMapping
-    public ResponseEntity getPhotoList(
-            @Positive @RequestParam(value = "pk", required = false) Long pk,
-            @RequestParam(value = "name", required = false) String name) {
-
-        // 조회
-        List<Photo> findPhotos = photoService.findPhotos(pk, name);
-
-        // 응답
-        List<PhotoResponseDto.Response> photos = photoMapper.photoToPhotoListResponseDto(findPhotos);
-        JSONObject response = new JSONObject();
-        response.put("photos", photos);
-
+    public ResponseEntity getPhotoList(@Positive @RequestParam(value = "employee-pk", required = false) Long employeepPk) {
+        List<PhotoResponseDto.Response> response = photoService.findMyPhotoListByEmployee(employeepPk);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -94,23 +83,23 @@ public class PhotoController {
             @Positive @RequestParam(value = "employee-pk", required = false) Long employeepPk) {
 
         // 조회
-        List<PhotoDetailResponseDto> findPhotos = photoService.findTeamPhotoListByEmployee(employeepPk);
+        PhotoDetailResponseDto findMyPhoto = photoService.findMyPhotoByEmployee(employeepPk);
+        List<PhotoDetailResponseDto> findTeamPhotoList = photoService.findTeamPhotoListByEmployee(employeepPk);
 
         // 응답
-//        List<PhotoResponseDto.Response> photos = photoMapper.photoToPhotoListResponseDto(findPhotos);
-//        JSONObject response = new JSONObject();
-//        response.put("photos", photos);
+        JSONObject response = new JSONObject();
+        response.put("myPlanner", findMyPhoto);
+        response.put("myTeam", findTeamPhotoList);
 
-        return new ResponseEntity<>(findPhotos, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     /**
-     *
      * @param photoPk
      * @param patch
      * @return {
-     * 	"photo_pk" : 1,
-     * 	"name" : "SAMSUNG"
+     * "photo_pk" : 1,
+     * "name" : "SAMSUNG"
      * }
      */
     @PatchMapping("/{photo_pk}")
@@ -132,17 +121,16 @@ public class PhotoController {
     }
 
     /**
-     *
      * @param photoPk
      * @return {
-     *     "photo": {
-     *         "pk": 4,
-     *         "name": "photo2",
-     *         "delYn": true,
-     *         "createdAt": "2023-08-28T16:45:47.017454",
-     *         "modifiedAt": "2023-08-29T12:26:59.471178"
-     *     },
-     *     "message": "success delete"
+     * "photo": {
+     * "pk": 4,
+     * "name": "photo2",
+     * "delYn": true,
+     * "createdAt": "2023-08-28T16:45:47.017454",
+     * "modifiedAt": "2023-08-29T12:26:59.471178"
+     * },
+     * "message": "success delete"
      * }
      */
     @DeleteMapping("/{photo_pk}")

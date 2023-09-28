@@ -16,4 +16,5 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
     List<Photo> findAllByDelYn(boolean delYn);
     List<Photo> findAllByDelYnAndPkAndName(boolean delYn, Long pk, String name);
     Optional<Photo> findTopByDelYnAndEmployeeOrderByCreatedAt(boolean delYn, Employee employee);
+    List<Photo> findAllByDelYnAndEmployee(boolean delYn, Employee employee);
 }
