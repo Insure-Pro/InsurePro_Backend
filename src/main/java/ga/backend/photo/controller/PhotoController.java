@@ -6,12 +6,14 @@ import ga.backend.photo.dto.PhotoResponseDto;
 import ga.backend.photo.entity.Photo;
 import ga.backend.photo.mapper.PhotoMapper;
 import ga.backend.photo.service.PhotoService;
+import ga.backend.s3.service.ImageService;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -24,6 +26,7 @@ import java.util.List;
 public class PhotoController {
     private final PhotoService photoService;
     private final PhotoMapper photoMapper;
+    private final ImageService imageService;
 
     /**
      *
@@ -34,7 +37,13 @@ public class PhotoController {
      * }
      */
     @PostMapping
-    public ResponseEntity postPhoto(@Valid @RequestBody PhotoRequestDto.Post post) {
+    public ResponseEntity postPhoto(@RequestPart(value = "request") PhotoRequestDto.Post post,
+                                    @RequestPart(value = "image", required = false) MultipartFile file) {
+
+        // 이미지 업로드
+        if (file != null) {
+            post.setPhotoUrl(imageService.updateImage(file, "photo", "photoUrl"));
+        }
 
         // 생성
         Photo photo = photoService.createPhoto(photoMapper.photoPostDtoToPhoto(post));
@@ -90,7 +99,14 @@ public class PhotoController {
      */
     @PatchMapping("/{photo_pk}")
     public ResponseEntity patchPhoto(@Positive @PathVariable("photo_pk") long photoPk,
-                                       @Valid @RequestBody PhotoRequestDto.Patch patch) {
+                                     @RequestPart(value = "request") PhotoRequestDto.Patch patch,
+                                     @RequestPart(value = "image", required = false) MultipartFile file) {
+        if (file != null) {
+            patch.setPhotoUrl(imageService.updateImage(file, "photo", "photoUrl"));
+        }
+        System.out.println("setphotourl");
+        System.out.println(patch.getPhotoUrl());
+
         // 수정
         patch.setPk(photoPk);
         Photo photo = photoService.patchPhoto(photoMapper.photoPatchDtoToPhoto(patch));

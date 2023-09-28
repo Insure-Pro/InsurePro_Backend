@@ -6,12 +6,14 @@ import ga.backend.photo.entity.Photo;
 import ga.backend.photo.repository.PhotoRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class PhotoService {
     private final PhotoRepository photoRespository;
 
@@ -46,6 +48,7 @@ public class PhotoService {
     public Photo patchPhoto(Photo photo) {
         Photo findPhoto = verifiedPhoto(photo.getPk());
         Optional.ofNullable(photo.getName()).ifPresent(findPhoto::setName);
+        Optional.ofNullable(photo.getPhotoUrl()).ifPresent(findPhoto::setPhotoUrl);
 
         return photoRespository.save(findPhoto);
     }
