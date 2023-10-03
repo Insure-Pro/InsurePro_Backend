@@ -38,7 +38,7 @@ public class PhotoController {
      * "name" : "패스파인더"
      * }
      */
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(produces = MediaType.MULTIPART_FORM_DATA_VALUE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity postPhoto(@RequestPart(value = "request") PhotoRequestDto.Post post,
                                     @RequestPart(value = "image", required = false) MultipartFile file) {
 
