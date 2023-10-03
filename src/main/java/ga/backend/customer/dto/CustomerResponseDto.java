@@ -21,6 +21,7 @@ public class CustomerResponseDto {
         private String address; // 상세주소
         private String phone; // 연락처
         private String memo; // 메모
+        private String state; // 인수상태
         private Boolean contractYn; // 계약 체결 여부
         private Boolean delYn; // 고객 삭제 여부
         private LocalDate intensiveCareStartDate; // 집중관리시기 - 시작

@@ -137,6 +137,7 @@ public class CustomerService {
         Optional.ofNullable(customer.getAddress()).ifPresent(findCustomer::setAddress);
         Optional.ofNullable(customer.getPhone()).ifPresent(findCustomer::setPhone);
         Optional.ofNullable(customer.getMemo()).ifPresent(findCustomer::setMemo);
+        Optional.ofNullable(customer.getState()).ifPresent(findCustomer::setState);
         Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
         Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
         Optional.ofNullable(customer.getIntensiveCareStartDate()).ifPresent(findCustomer::setIntensiveCareStartDate);

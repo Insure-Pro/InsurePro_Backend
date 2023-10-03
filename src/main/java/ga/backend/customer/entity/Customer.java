@@ -61,6 +61,9 @@ public class Customer extends Auditable {
     private String memo; // 메모
 
     @Column
+    private String state; // 인수상태
+
+    @Column
     private Boolean contractYn = false; // 계약 체결 여부
 
     @Column
