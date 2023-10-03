@@ -12,6 +12,7 @@ import ga.backend.s3.service.ImageService;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class PhotoController {
      * "name" : "패스파인더"
      * }
      */
-    @PostMapping(consumes = {"multipart/form-data"})
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity postPhoto(@RequestPart(value = "request") PhotoRequestDto.Post post,
                                     @RequestPart(value = "image", required = false) MultipartFile file) {
 
