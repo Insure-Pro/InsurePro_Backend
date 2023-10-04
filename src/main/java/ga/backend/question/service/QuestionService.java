@@ -40,6 +40,6 @@ public class QuestionService {
     // 검증
     public Question verifiedQuestion(long questionPk) {
         Optional<Question> question = questionRespository.findById(questionPk);
-        return question.orElseThrow(() -> new BusinessLogicException(ExceptionCode.TEAM_NOT_FOUND));
+        return question.orElseThrow(() -> new BusinessLogicException(ExceptionCode.QUESTION_NOT_FOUND));
     }
 }
