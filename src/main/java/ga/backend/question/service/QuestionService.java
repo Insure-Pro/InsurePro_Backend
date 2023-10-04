@@ -20,22 +20,14 @@ public class QuestionService {
     private final EmployeeRepository employeeRepository;
 
     // CREATE
-    public Question createQuestion(Question question) {
+    public Question createQuestion(Question question, Employee employee) {
+        question.setEmployee(employee);
         return questionRespository.save(question);
     }
 
     // READ
-    public Question findQuestion(long questionPk) {
-        Question question = verifiedQuestion(questionPk);
-        return question;
-    }
-
-    // UPDATE
-    public Question patchQuestion(Question question) {
-        Question findQuestion = verifiedQuestion(question.getPk());
-        Optional.ofNullable(question.getContent()).ifPresent(findQuestion::setContent);
-
-        return questionRespository.save(findQuestion);
+    public List<Question> findQuestions() {
+        return questionRespository.findAll();
     }
 
     // DELETE

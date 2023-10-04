@@ -4,6 +4,7 @@ import com.nimbusds.jose.shaded.json.JSONObject;
 import ga.backend.employee.dto.EmployeeResponseDto;
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.mapper.EmployeeMapper;
+import ga.backend.employee.service.EmployeeService;
 import ga.backend.question.dto.QuestionRequestDto;
 import ga.backend.question.dto.QuestionResponseDto;
 import ga.backend.question.entity.Question;
@@ -27,12 +28,19 @@ import java.util.List;
 public class QuestionController {
     private final QuestionService questionService;
     private final QuestionMapper questionMapper;
+    private final EmployeeService employeeService;
     private final EmployeeMapper employeeMapper;
 
     // CREATE
     @PostMapping
     public ResponseEntity postQuestion(@Valid @RequestBody QuestionRequestDto.Post post) {
-        Question question = questionService.createQuestion(questionMapper.questionPostDtoToQuestion(post));
+        // 직원 정보 조회
+        Employee employee = employeeService.findEmployeeByToken();
+
+        // question 생성
+        Question question = questionService.createQuestion(questionMapper.questionPostDtoToQuestion(post), employee);
+
+        // Response
         QuestionResponseDto.Response response = questionMapper.questionToQuestionResponseDto(question);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -40,27 +48,17 @@ public class QuestionController {
 
     // READ
     @GetMapping
-    public ResponseEntity getQuestionList (@Positive @RequestParam(value = "pk", required = false) Long questionPk,
-                                       @RequestParam(value = "name", required = false) String questionName) {
-        Question question = questionService.findQuestion(questionPk);
+    public ResponseEntity getQuestionList () {
+
+        // 모든 question 찾기
+        List<Question> questions = questionService.findQuestions();
 
         // 응답
-        QuestionResponseDto.Response questionResponse = questionMapper.questionToQuestionResponseDto(question);
-        JSONObject response = new JSONObject();
-        response.put("question", questionResponse);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    // UPDATE
-    @PatchMapping("/{question-pk}")
-    public ResponseEntity patchQuestion(@Positive @PathVariable("question-pk") long questionPk,
-                                        @Valid @RequestBody QuestionRequestDto.Patch patch) {
-        patch.setPk(questionPk);
-        Question question = questionService.patchQuestion(questionMapper.questionPatchDtoToQuestion(patch));
-        QuestionResponseDto.Response response = questionMapper.questionToQuestionResponseDto(question);
+        List<QuestionResponseDto.Response> response = questionMapper.questionToQuestionListResponseDto(questions);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     // DELETE
     @DeleteMapping("/{question-pk}")

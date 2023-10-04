@@ -1,5 +1,6 @@
 package ga.backend.question.dto;
 
+import ga.backend.employee.dto.EmployeeResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,9 +13,9 @@ public class QuestionResponseDto {
     @Getter
     public static class Response {
         private Long pk;
-        private String teamName;
-        private boolean delYn;
+        private String content;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
+        private EmployeeResponseDto.Response employee;
     }
 }
