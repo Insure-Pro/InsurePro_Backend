@@ -42,6 +42,7 @@ public class CustomerRequestDto {
         private LocalDate birth; // 생년월일
         private int age; // 나이
         private String dongString; // 행정동 주소
+        private String address; // 상세주소
         @Pattern(regexp = "^010-?([0-9]{4})-?([0-9]{4})$",
                 message = "전화번호 형태는 010-1234-1234 입니다.")
         private String phone; // 연락처
