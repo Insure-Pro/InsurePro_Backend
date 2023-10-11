@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -22,4 +22,25 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     @Query("SELECT c FROM Customer c " +
             "WHERE (c.employee = :employee AND (c.intensiveCareStartDate != NULL OR c.intensiveCareFinishDate != NULL))")
     List<Customer> findByEmployeeAndIntensiveCareExists(Employee employee);
+
+    // all 계산
+    List<Customer> findByEmployeeAndCreatedAtBetween(
+            Employee employee,
+            LocalDateTime createdAtStart,
+            LocalDateTime createdAtFinish
+    );
+
+    // 성과분석 확인(다시 계산)
+//    List<Customer> findByEmployeeAndModifiedAtGreaterThanEqual(
+//            Employee employee,
+//            LocalDateTime modifiedAfter
+//    );
+
+    @Query("SELECT c FROM Customer c " +
+            "WHERE (c.employee = :employee AND (c.createdAt >= :createdAtAfter OR c.modifiedAt >= :modifiedAfter))")
+    List<Customer> findByEmployeeAndCreatedAtGreaterThanEqualOrModifiedAtGreaterThanEqual(
+            Employee employee,
+            LocalDateTime createdAtAfter,
+            LocalDateTime modifiedAfter
+    );
 }

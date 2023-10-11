@@ -59,10 +59,7 @@ public class Schedule extends Auditable {
         TA("TA"),
         AP("AP"),
         PC("PC"),
-        APC("APC"),
-        APC1("APC1"),
-        APC2("APC2"),
-        APC3("APC3");
+        PT("PT");
 
         private final String value;
 

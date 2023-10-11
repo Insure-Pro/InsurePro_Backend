@@ -32,7 +32,7 @@ public class ScheduleService {
         schedule.setEmployee(employee);
         schedule.setCustomer(customer);
 
-        // 만나는 시간(time) 자동 계싼
+        // 만나는 시간(time) 자동 계산
         LocalTime time = findScheduleTime(schedule.getStartTm(), schedule.getFinishTm());
         Optional.ofNullable(time).ifPresent(schedule::setTime);
 
