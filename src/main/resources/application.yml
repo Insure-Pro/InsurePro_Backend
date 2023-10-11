@@ -10,7 +10,7 @@ spring:
     username: ${INSUREPRO_DB_ID}
     password: ${INSUREPRO_DB_PW}
   jpa: # JPA
-    show-sql: false
+    show-sql: true
     hibernate:
       ddl-auto: update
     properties:
