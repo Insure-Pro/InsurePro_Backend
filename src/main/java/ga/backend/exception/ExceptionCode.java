@@ -20,6 +20,7 @@ public enum ExceptionCode {
     PROGRESS_NOT_FOUND(404, "Progress not found"),
     PERFORMANCE_NOT_FOUND(404, "Performance not found"),
     CUSTOM_TYPE_NOT_FOUND(404, "CustomType not found"),
+    ANALYSIS_NOT_FOUND(404, "Ananlysis not found"),
     AUTHORIZATION_NUMBER_NOT_FOUND(404, "Authorization Number not found"),
     PASSWORD_AND_REPASSWORD_NOT_SAME(400, "password and rePassword are not same"),
     INVALID_EMAIL(401, "Invalid Email"),
