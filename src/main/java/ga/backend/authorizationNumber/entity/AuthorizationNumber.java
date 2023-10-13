@@ -1,8 +1,6 @@
 package ga.backend.authorizationNumber.entity;
 
 import ga.backend.auditable.Auditable;
-import ga.backend.customerType.entity.CustomerType;
-import ga.backend.employee.entity.Employee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

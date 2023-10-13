@@ -1,6 +1,7 @@
 package ga.backend.analysis.entity;
 
 import ga.backend.auditable.Auditable;
+import ga.backend.customer.entity.Customer;
 import ga.backend.employee.entity.Employee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,6 +52,9 @@ public class Analysis extends Auditable { // 성과분석
 
     @Column
     private LocalDate date; // 성과분석(년-월-01)
+
+    @Enumerated(EnumType.STRING)
+    private Customer.CustomerType customerType;
 
     @OneToOne
     @JoinColumn(name = "employee_pk")
