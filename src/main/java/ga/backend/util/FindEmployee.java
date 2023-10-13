@@ -18,7 +18,7 @@ public class FindEmployee {
     // 로그인한 직원 가져오기
     public Employee getLoginEmployeeByToken() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal(); //SecurityContextHolder에서 회원정보 가져오기
-        Optional<Employee> employee = employeeRepository.findByEmail(principal.toString());
+        Optional<Employee> employee = employeeRepository.findByEmailAndDelYnFalse(principal.toString());
 
 //        return employee.orElse(null);
         return employee.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));

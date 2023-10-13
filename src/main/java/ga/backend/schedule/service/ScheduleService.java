@@ -10,7 +10,6 @@ import ga.backend.schedule.entity.Schedule;
 import ga.backend.schedule.repository.ScheduleRepository;
 import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalTime;
@@ -47,7 +46,7 @@ public class ScheduleService {
 
     public List<Schedule> findSchedulesByCustomer(long customerPk) {
         Customer customer = customerService.findCustomer(customerPk);
-        return scheduleRespository.findByCustomer(customer);
+        return scheduleRespository.findByCustomerAndDelYnFalse(customer);
     }
 
     // UPDATE
@@ -97,7 +96,7 @@ public class ScheduleService {
 
     // 검증
     public Schedule verifiedSchedule(long schedulePk) {
-        Optional<Schedule> schedule = scheduleRespository.findById(schedulePk);
+        Optional<Schedule> schedule = scheduleRespository.findByPkAndDelYnFalse(schedulePk);
         return schedule.orElseThrow(() -> new BusinessLogicException(ExceptionCode.SCHEDULE_NOT_FOUND));
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -41,29 +42,37 @@ public class AnalysisService {
     }
 
     public Analysis findAnalysis(LocalDate requestDate) {
-        Analysis analysis = verifiedAnalysis(requestDate);
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        LocalDateTime now = LocalDateTime.now();
+        Analysis analysis = verifiedAnalysis(employee, requestDate);
+        LocalDateTime now = LocalDateTime.now(); // 이번달일 경우 사용
         System.out.println("now : " + now);
 
-        // 1. 이번달이 아닌데, 계산이 되어있지 않은 경우
-        // 2. 이번달인데, 계산이 안되어 있는 경우
-        // 3. 이번달인데, 계산이 되어 있는 경우
+        // 시작 날짜 -> 1일 00:00
+        LocalDateTime start = requestDate.atStartOfDay().withDayOfMonth(1);
+        // 종료 날짜 -> 마지막날 23:59:99
+        LocalDateTime finish;
 
+        // 1. 계산이 되어있지 않은 경우 -> 이번달인것과 아닌것 구분 X
+        // 2. 이번달인데, 계산이 되어 있는 경우
+
+        // 성과분석이 안되어있는 달(이번달과 이전달 포함)
         if(analysis.getPk() == null) {
+            finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth());
+            System.out.println("!! finish : " + finish);
             // 성과분석 계산
-            analysis = analysisAllPercentage(now, employee, analysis);
-
-            analysis = analysisRespository.save(analysis);
-        }
-        // 요청날짜(requsetDate) == 이번달(now)
-        else if (checkMonth(requestDate, employee, now)) { // 수정해야 하는 경우 -> customer과 history 변경사항 발생시
-            if (checkAnalysis(employee, now)) {
+            analysisAllPercentage(start, finish, employee, analysis);
+        } else if (checkMonth(requestDate, now)) { // 요청날짜(requsetDate) == 이번달(now)
+            if (checkAnalysis(employee, analysis)) { // 수정해야 하는 경우 -> customer과 history 변경사항 발생 시
+                finish = now;
+                System.out.println("!! finish : " + finish);
                 // 성과분석 계산
-                analysis = analysisAllPercentage(now, employee, analysis);
-
-                analysis = analysisRespository.save(analysis);
+                analysisAllPercentage(start, finish, employee, analysis);
             }
+        } else if(analysis.getModifiedAt().isBefore(start.plusMonths(1))) { // 이전 달의 성과분석 업데이트를 해야하는 경우(수정날짜 < 다음달 1일 00:00)
+            finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth());
+            System.out.println("!! finish(이전달) : " + finish);
+            // 성과분석 계산
+            analysisAllPercentage(start, finish, employee, analysis);
         }
 
         return analysis;
@@ -83,8 +92,8 @@ public class AnalysisService {
         return analysis.orElseThrow(() -> new BusinessLogicException(ExceptionCode.ANALYSIS_NOT_FOUND));
     }
 
-    public Analysis verifiedAnalysis(LocalDate requestDate) {
-        Optional<Analysis> optionalAnalysis = analysisRespository.findByDate(requestDate.withDayOfMonth(1));
+    public Analysis verifiedAnalysis(Employee employee, LocalDate requestDate) {
+        Optional<Analysis> optionalAnalysis = analysisRespository.findByEmployeeAndDate(employee, requestDate.withDayOfMonth(1));
 
         System.out.println("!! isEmpty : " + optionalAnalysis.isEmpty());
 
@@ -99,7 +108,7 @@ public class AnalysisService {
 
     // 요청 날짜가 이번달인지 확인
     // true : 요청날짜 == 이번달, false : 요청날짜 != 이번달
-    public boolean checkMonth(LocalDate requestDate, Employee employee, LocalDateTime now) {
+    public boolean checkMonth(LocalDate requestDate, LocalDateTime now) {
         boolean check = true;
 
         if (now.getMonthValue() != requestDate.getMonthValue()) check = false;
@@ -112,14 +121,14 @@ public class AnalysisService {
 
     // 이번달일 경우 → 다시 계산해야하는지 확인
     // true : 다시 계산, false ; 계산 X
-    public boolean checkAnalysis(Employee employee, LocalDateTime now) {
+    public boolean checkAnalysis(Employee employee, Analysis analysis) {
         // now 이후 createdAt, modifiedAt된 customer과 history가 있으면 다시 계산하기
 
         // 새로 추가되거나 수정된 customer이 있는지 확인
 //        List<Customer> customers = customerRepository.findByEmployeeAndModifiedAtGreaterThanEqual(
         List<Customer> customers = customerRepository.findByEmployeeAndCreatedAtGreaterThanEqualOrModifiedAtGreaterThanEqual(
-//                employee, now, now
-                employee, LocalDateTime.parse("2023-10-10T22:08:59.20977"), LocalDateTime.parse("2023-10-10T22:08:59.20977")
+                employee, analysis.getModifiedAt(), analysis.getModifiedAt()
+//                employee, LocalDateTime.parse("2023-10-10T22:08:59.20977"), LocalDateTime.parse("2023-10-10T22:08:59.20977")
         );
         customers.forEach(customer -> System.out.println(customer.getPk()));
         System.out.println("!! analysis customer check : " + customers.size());
@@ -127,27 +136,23 @@ public class AnalysisService {
 
         // 새로 추가되거나 수정된 history이 있는지 확인
         List<Schedule> schedules = scheduleRepository.findByEmployeeAndCreatedAtGreaterThanEqualOrModifiedAtGreaterThanEqual(
-                employee, now, now
+                employee, analysis.getModifiedAt(), analysis.getModifiedAt()
         );
         System.out.println("!! analysis schedules check : " + schedules.size());
         return !schedules.isEmpty();
     }
 
-    // 계산
-    public Analysis analysisAllPercentage(LocalDateTime now, Employee employee, Analysis analysis) {
+    // 성과분석 계산
+    public Analysis analysisAllPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis) {
         // 전체(이번달에 등록한 고객 기준 고객수. 히스토리 등록 안 한 사람도 포함)
-        double all = customerRepository.findByEmployeeAndCreatedAtBetween(
-                employee,
-                now.withDayOfMonth(1),
-                now
+        double all = customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalse(
+                employee, start, finish
         ).size();
         System.out.println("!! all : " + all);
 
         // 전체 고객 대상으로 이번달에 등록한 히스토리
-        List<Schedule> all_history = scheduleRepository.findByEmployeeAndCreatedAtBetween(
-                employee,
-                now.withDayOfMonth(1),
-                now
+        List<Schedule> all_history = scheduleRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalse(
+                employee, start, finish
         );
         // 전체 고객 대상으로 이번달에 등록한 히스토리 총 개수 합
         double all_history_count = all_history.size();
@@ -192,13 +197,13 @@ public class AnalysisService {
         System.out.println("!! PC_customer.size() : " + PC_customer.size());
 
         // 청약확률
-        int all_history_customer = customerFilter(all_history).size();
-        analysis.setSubscriptionPercentage(all_history_customer != 0 ? isContractYnCount(PC_customer) / all_history_customer : 0);
+//        int all_history_customer = customerFilter(all_history).size();
+        analysis.setSubscriptionPercentage(!PC_customer.isEmpty() ? isContractYnCount(PC_customer) / PC_customer.size() : 0);
 
         // date 설정
-        analysis.setDate(now.withDayOfMonth(1).toLocalDate());
+        analysis.setDate(start.withDayOfMonth(1).toLocalDate());
 
-        return analysis;
+        return analysisRespository.save(analysis);
     }
 
     // Progress별 Schedule 개수세기

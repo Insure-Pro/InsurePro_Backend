@@ -25,12 +25,8 @@ public class AnalysisController {
     private final AnalysisMapper analysisMapper;
 
     @GetMapping("/{date}")
-    public ResponseEntity getCompanyList(
-            @Valid @RequestBody AnalysisRequestDto.Get get,
-            @PathVariable("date") String date) {
-        System.out.println("### get : " + get.getDate());
-        System.out.println("### get : " + LocalDate.parse(date));
-        Analysis analysis = analysisService.findAnalysis(get.getDate());
+    public ResponseEntity getCompanyList(@PathVariable("date") String date) {
+        Analysis analysis = analysisService.findAnalysis(LocalDate.parse(date));
         AnalysisResponseDto.Response response = analysisMapper.analysisToAnalysisResponseDto(analysis);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
