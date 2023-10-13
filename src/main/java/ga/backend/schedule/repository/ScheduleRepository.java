@@ -16,11 +16,15 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     List<Schedule> findByCustomerAndDelYnFalse(Customer customer);
     Optional<Schedule> findByPkAndDelYnFalse(long schedulePk);
 
+    // ------------------------------------------------------------------------------------
+    // analysis
+
     // all_history_count 계산
-    List<Schedule> findByEmployeeAndCreatedAtBetweenAndDelYnFalse(
+    List<Schedule> findByEmployeeAndCreatedAtBetweenAndCustomerCustomerTypeAndDelYnFalse(
             Employee employee,
             LocalDateTime createdAtStart,
-            LocalDateTime createdAtFinish
+            LocalDateTime createdAtFinish,
+            Customer.CustomerType customerType
     );
 
     // 이번달에 등록된 히스토리 유형 'Schedule.Progress' 의 개수

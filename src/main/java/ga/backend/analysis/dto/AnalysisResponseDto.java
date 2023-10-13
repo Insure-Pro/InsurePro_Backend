@@ -1,5 +1,6 @@
 package ga.backend.analysis.dto;
 
+import ga.backend.customer.entity.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class AnalysisResponseDto {
         private Double allPCRatio; // 전체 히스토리 PC 비율
         private Double subscriptionPercentage; // 청약확률
         private LocalDate date; // 성과분석(년-월-01)
+        private Customer.CustomerType customerType; // 고객 유형
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
     }

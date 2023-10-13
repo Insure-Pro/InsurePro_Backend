@@ -41,9 +41,9 @@ public class AnalysisService {
         return analysis;
     }
 
-    public Analysis findAnalysis(LocalDate requestDate) {
+    public Analysis findAnalysis(LocalDate requestDate, Customer.CustomerType customerType) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        Analysis analysis = verifiedAnalysis(employee, requestDate);
+        Analysis analysis = verifiedAnalysis(employee, requestDate, customerType);
         LocalDateTime now = LocalDateTime.now(); // 이번달일 경우 사용
         System.out.println("now : " + now);
 
@@ -60,19 +60,19 @@ public class AnalysisService {
             finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth()); // 마지막날 23:59:99
             System.out.println("!! finish : " + finish);
             // 성과분석 계산
-            analysisAllPercentage(start, finish, employee, analysis);
+            analysisAllPercentage(start, finish, employee, analysis, customerType);
         } else if (checkMonth(requestDate, now)) { // 종료날짜 -> 요청날짜(requsetDate) == 이번달(now)
             if (checkAnalysis(employee, analysis)) { // 수정해야 하는 경우 -> customer과 history 변경사항 발생 시
                 finish = now; // 종료 날짜 -> 지금
                 System.out.println("!! finish : " + finish);
                 // 성과분석 계산
-                analysisAllPercentage(start, finish, employee, analysis);
+                analysisAllPercentage(start, finish, employee, analysis, customerType);
             }
         } else if(analysis.getModifiedAt().isBefore(start.plusMonths(1))) { // 이전 달의 성과분석 업데이트를 해야하는 경우(수정날짜 < 다음달 1일 00:00)
             finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth());
             System.out.println("!! finish(이전달) : " + finish);
             // 성과분석 계산
-            analysisAllPercentage(start, finish, employee, analysis);
+            analysisAllPercentage(start, finish, employee, analysis, customerType);
         }
 
         return analysis;
@@ -92,8 +92,12 @@ public class AnalysisService {
         return analysis.orElseThrow(() -> new BusinessLogicException(ExceptionCode.ANALYSIS_NOT_FOUND));
     }
 
-    public Analysis verifiedAnalysis(Employee employee, LocalDate requestDate) {
-        Optional<Analysis> optionalAnalysis = analysisRespository.findByEmployeeAndDate(employee, requestDate.withDayOfMonth(1));
+    public Analysis verifiedAnalysis(Employee employee, LocalDate requestDate, Customer.CustomerType customerType) {
+        Optional<Analysis> optionalAnalysis = analysisRespository.findByEmployeeAndDateAndCustomerType(
+                employee,
+                requestDate.withDayOfMonth(1),
+                customerType
+        );
 
         System.out.println("!! isEmpty : " + optionalAnalysis.isEmpty());
 
@@ -101,6 +105,7 @@ public class AnalysisService {
         return optionalAnalysis.orElseGet(() -> {
             Analysis analysis = new Analysis();
             analysis.setEmployee(findEmployee.getLoginEmployeeByToken());
+            analysis.setCustomerType(customerType);
             System.out.println("!! is Empty");
             return analysis;
         });
@@ -143,16 +148,16 @@ public class AnalysisService {
     }
 
     // 성과분석 계산
-    public Analysis analysisAllPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis) {
+    public Analysis analysisAllPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis, Customer.CustomerType customerType) {
         // 전체(이번달에 등록한 고객 기준 고객수. 히스토리 등록 안 한 사람도 포함)
-        double all = customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalse(
-                employee, start, finish
+        double all = customerRepository.findByEmployeeAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+                employee, start, finish, customerType
         ).size();
         System.out.println("!! all : " + all);
 
         // 전체 고객 대상으로 이번달에 등록한 히스토리
-        List<Schedule> all_history = scheduleRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalse(
-                employee, start, finish
+        List<Schedule> all_history = scheduleRepository.findByEmployeeAndCreatedAtBetweenAndCustomerCustomerTypeAndDelYnFalse(
+                employee, start, finish, customerType
         );
         // 전체 고객 대상으로 이번달에 등록한 히스토리 총 개수 합
         double all_history_count = all_history.size();
