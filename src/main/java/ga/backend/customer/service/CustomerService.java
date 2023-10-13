@@ -2,9 +2,6 @@ package ga.backend.customer.service;
 
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.repository.CustomerRepository;
-import ga.backend.customerType.entity.CustomerType;
-import ga.backend.customerType.repository.CustomerTypeRepository;
-import ga.backend.customerType.service.CustomerTypeService;
 import ga.backend.dong.service.DongService;
 import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
@@ -25,21 +22,15 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class CustomerService {
-    private final CustomerTypeService customerTypeService;
     private final CustomerRepository customerRepository;
-    private final CustomerTypeRepository customerTypeRepository;
     private final LiService liService;
     private final DongService dongService;
     private final FindEmployee findEmployee;
 
     // CREATE
-    public Customer createCustomer(Customer customer, String customerTypeName, long liPk) {
+    public Customer createCustomer(Customer customer, long liPk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         customer.setEmployee(employee);
-        CustomerType customerType = customerTypeRepository
-                .findTopByDelYnAndType(false, customerTypeName)
-                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOM_TYPE_NOT_FOUND));
-        customer.setCustomerType(customerType);
 
         if(liPk != 0) {
             Li li = liService.findLi(liPk);
@@ -170,24 +161,19 @@ public class CustomerService {
     }
 
     // UPDATE
-    public Customer patchCustomer(Customer customer, String customerTypeName, long liPk) {
+    public Customer patchCustomer(Customer customer, long liPk) {
         Customer findCustomer = verifiedCustomer(customer.getPk());
         Employee employee = findEmployee.getLoginEmployeeByToken();
         // 직원 유효성 검사
         if(findCustomer.getEmployee().getPk() != employee.getPk())
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_CONTAIN_CUSTOMER);
-        if(customerTypeName != null) {
-            findCustomer.setCustomerType(
-                    customerTypeRepository.findTopByDelYnAndType(false, customerTypeName)
-                    .orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOM_TYPE_NOT_FOUND))
-            );
-        }
         if(liPk != 0) {
             Li li = liService.findLi(liPk);
             findCustomer.setLi(li);
             findCustomer.setDongString(liService.findDongString(li));
         }
 
+        Optional.ofNullable(customer.getCustomerType()).ifPresent(findCustomer::setCustomerType);
         Optional.ofNullable(customer.getName()).ifPresent(findCustomer::setName);
         Optional.ofNullable(customer.getBirth()).ifPresent(findCustomer::setBirth);
         if (customer.getAge() != 0) findCustomer.setAge(customer.getAge());
