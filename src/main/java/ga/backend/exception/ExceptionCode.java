@@ -22,6 +22,7 @@ public enum ExceptionCode {
     CUSTOM_TYPE_NOT_FOUND(404, "CustomType not found"),
     ANALYSIS_NOT_FOUND(404, "Ananlysis not found"),
     AUTHORIZATION_NUMBER_NOT_FOUND(404, "Authorization Number not found"),
+    CUSTOMER_AGE_FILTER_NOT_FOUND(404, "requet age is not found"),
     PASSWORD_AND_REPASSWORD_NOT_SAME(400, "password and rePassword are not same"),
     INVALID_EMAIL(401, "Invalid Email"),
     WRONG_PASSWORD(401, "Wrong Password"),

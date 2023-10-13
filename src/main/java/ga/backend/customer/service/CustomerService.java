@@ -86,11 +86,36 @@ public class CustomerService {
         else if (age.equals("3040")) start = 30;
         else if (age.equals("5060")) start = 50;
         else if (age.equals("7080")) start = 70;
+        else throw new BusinessLogicException(ExceptionCode.CUSTOMER_AGE_FILTER_NOT_FOUND);
 
         int end = start + 19;
 
         List<Customer> customers = customerRespository.findByEmployeeAndAgeBetween(
                 employee, start, end, Sort.by(Sort.Direction.DESC, "createdAt") // 오름차순
+        );
+        return customers;
+    }
+
+    // 월별 나이별 정렬(2030, 4050, 6070)
+    public List<Customer> findCustomerByAge(String age, LocalDate date) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        int start = 0;
+
+        if (age.equals("1020")) start = 10;
+        else if (age.equals("3040")) start = 30;
+        else if (age.equals("5060")) start = 50;
+        else if (age.equals("7080")) start = 70;
+        else throw new BusinessLogicException(ExceptionCode.CUSTOMER_AGE_FILTER_NOT_FOUND);
+
+        int end = start + 19;
+
+        List<Customer> customers = customerRespository.findByEmployeeAndAgeBetweenAndCreatedAtBetween(
+                employee,
+                start,
+                end,
+                Sort.by(Sort.Direction.DESC, "createdAt"), // 오름차순
+                parserStart(date),
+                parserFinish(date)
         );
         return customers;
     }

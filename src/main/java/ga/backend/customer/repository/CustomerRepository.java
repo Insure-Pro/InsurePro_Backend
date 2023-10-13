@@ -17,7 +17,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findAllByEmployee(Employee employee, Sort sort);
     List<Customer> findAllByEmployeeAndCreatedAtBetween(Employee employee, Sort sort, LocalDateTime start, LocalDateTime finish);
 
-    List<Customer> findByEmployeeAndAgeBetween(Employee employee, int start, int end, Sort sort);
+    List<Customer> findByEmployeeAndAgeBetween(Employee employee, int startAge, int endAge, Sort sort);
+    List<Customer> findByEmployeeAndAgeBetweenAndCreatedAtBetween(Employee employee, int startAge, int endAge, Sort sort, LocalDateTime start, LocalDateTime finish);
 
     List<Customer> findByEmployeeAndDongStringContains(Employee employee, String dongName, Sort sort);
     List<Customer> findByEmployeeAndContractYn(Employee employee, boolean contractYn);
