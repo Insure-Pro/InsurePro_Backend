@@ -70,12 +70,6 @@ public class Customer extends Auditable {
     private Boolean delYn = false; // 고객 삭제 여부
 
     @Column
-    private LocalDate intensiveCareStartDate; // 집중관리시기 - 시작
-
-    @Column
-    private LocalDate intensiveCareFinishDate; // 집중관리시기 - 끝
-
-    @Column
     private LocalDate registerDate; // 고객 등록 날짜
 
 }

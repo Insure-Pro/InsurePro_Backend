@@ -101,17 +101,6 @@ public class CustomerService {
         return customers;
     }
 
-    // 관리 고객 정렬
-    public List<Customer> findCustomerByIntensiveCare() {
-        Employee employee = findEmployee.getLoginEmployeeByToken();
-
-        List<Customer> customers =
-                customerRespository.findByEmployeeAndIntensiveCareExists(
-                        employee
-                );
-        return customers;
-    }
-
     // UPDATE
     public Customer patchCustomer(Customer customer, String customerTypeName, long liPk) {
         Customer findCustomer = verifiedCustomer(customer.getPk());
@@ -140,8 +129,6 @@ public class CustomerService {
         Optional.ofNullable(customer.getState()).ifPresent(findCustomer::setState);
         Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
         Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
-        Optional.ofNullable(customer.getIntensiveCareStartDate()).ifPresent(findCustomer::setIntensiveCareStartDate);
-        Optional.ofNullable(customer.getIntensiveCareFinishDate()).ifPresent(findCustomer::setIntensiveCareFinishDate);
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
 
         return customerRespository.save(findCustomer);
