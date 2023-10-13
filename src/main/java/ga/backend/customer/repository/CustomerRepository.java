@@ -15,6 +15,7 @@ import java.util.Optional;
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
     // CustomerService
     List<Customer> findAllByEmployee(Employee employee, Sort sort);
+    List<Customer> findAllByEmployeeAndCreatedAtBetween(Employee employee, Sort sort, LocalDateTime start, LocalDateTime finish);
 
     List<Customer> findByEmployeeAndAgeBetween(Employee employee, int start, int end, Sort sort);
 

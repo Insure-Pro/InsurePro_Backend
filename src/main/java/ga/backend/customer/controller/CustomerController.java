@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -54,6 +55,15 @@ public class CustomerController {
     @GetMapping("/customers/latest")
     public ResponseEntity getCustomers() {
         List<Customer> customers = customerService.findCustomerByLatest();
+        List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    // 월별 최신순 정렬 - 생성일 기준
+    @GetMapping("/customers/latest/{date}")
+    public ResponseEntity getCustomersByMonth(@PathVariable("date") String date) {
+        List<Customer> customers = customerService.findCustomerByLatest(LocalDate.parse(date));
         List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);

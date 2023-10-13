@@ -16,6 +16,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,6 +61,18 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         List<Customer> customers = customerRespository.findAllByEmployee(
                 employee, Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
+        );
+        return customers;
+    }
+
+    // 월별 최신순 정렬 - 생성일 기준
+    public List<Customer> findCustomerByLatest(LocalDate date) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        List<Customer> customers = customerRespository.findAllByEmployeeAndCreatedAtBetween(
+                employee,
+                Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                parserStart(date),
+                parserFinish(date)
         );
         return customers;
     }
@@ -150,5 +165,15 @@ public class CustomerService {
     public Customer verifiedCustomer(long customerPk) {
         Optional<Customer> customer = customerRespository.findById(customerPk);
         return customer.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOMER_NOT_FOUND));
+    }
+
+    // parser - 달의 첫번째날
+    public LocalDateTime parserStart(LocalDate start) {
+        return start.atStartOfDay().withDayOfMonth(1);
+    }
+
+    // parser - 달의 마지막날
+    public LocalDateTime parserFinish(LocalDate finish) {
+        return finish.atTime(LocalTime.MAX).withDayOfMonth(finish.lengthOfMonth());
     }
 }
