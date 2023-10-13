@@ -50,7 +50,7 @@ public class CustomerService {
     // 최신순 정렬 - 생성일 기준
     public List<Customer> findCustomerByLatest() {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        List<Customer> customers = customerRespository.findByEmployeeAndDelYnFalse(
+        return customerRepository.findByEmployeeAndDelYnFalse(
                 employee, Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
         );
     }
@@ -80,7 +80,7 @@ public class CustomerService {
 
         int end = start + 19;
 
-        List<Customer> customers = customerRespository.findByEmployeeAndAgeBetweenAndDelYnFalse(
+        return customerRepository.findByEmployeeAndAgeBetweenAndDelYnFalse(
                 employee, start, end, Sort.by(Sort.Direction.DESC, "createdAt") // 오름차순
         );
     }
@@ -98,7 +98,7 @@ public class CustomerService {
 
         int end = start + 19;
 
-        return customerRepository.findByEmployeeAndAgeBetweenAndCreatedAtBetween(
+        return customerRepository.findByEmployeeAndAgeBetweenAndCreatedAtBetweenAndDelYnFalse(
                 employee,
                 start,
                 end,
@@ -113,7 +113,7 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         String dongName = dongService.verifiedDong(dongPk).getDongName();
 
-        List<Customer> customers = customerRespository.findByEmployeeAndDongStringContainsAndDelYnFalse(
+        return customerRepository.findByEmployeeAndDongStringContainsAndDelYnFalse(
                 employee, dongName, Sort.by(Sort.Direction.ASC, "li_pk") // 오름차순
         );
     }
@@ -123,7 +123,7 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         String dongName = dongService.verifiedDong(dongPk).getDongName();
 
-        return customerRepository.findByEmployeeAndDongStringContainsAndCreatedAtBetween(
+        return customerRepository.findByEmployeeAndDongStringContainsAndCreatedAtBetweenAndDelYnFalse(
                 employee,
                 dongName,
                 Sort.by(Sort.Direction.ASC, "li_pk"), // 오름차순
@@ -136,7 +136,7 @@ public class CustomerService {
     public List<Customer> findCustomerByContractYn(boolean contractYn) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
-        List<Customer> customers = customerRespository.findByEmployeeAndContractYnAndDelYnFalse(
+        return customerRepository.findByEmployeeAndContractYnAndDelYnFalse(
                 employee, contractYn
         );
     }
@@ -145,7 +145,7 @@ public class CustomerService {
     public List<Customer> findCustomerByContractYn(boolean contractYn, LocalDate date) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
-        return customerRepository.findByEmployeeAndContractYnAndCreatedAtBetween(
+        return customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndDelYnFalse(
                 employee,
                 contractYn,
                 parserStart(date),
@@ -195,7 +195,7 @@ public class CustomerService {
 
     // 검증
     public Customer verifiedCustomer(long customerPk) {
-        Optional<Customer> customer = customerRespository.findByPkAndDelYnFalse(customerPk);
+        Optional<Customer> customer = customerRepository.findByPkAndDelYnFalse(customerPk);
         return customer.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOMER_NOT_FOUND));
     }
 
