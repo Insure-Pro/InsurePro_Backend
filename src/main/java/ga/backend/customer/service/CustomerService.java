@@ -26,7 +26,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class CustomerService {
     private final CustomerTypeService customerTypeService;
-    private final CustomerRepository customerRespository;
+    private final CustomerRepository customerRepository;
     private final CustomerTypeRepository customerTypeRepository;
     private final LiService liService;
     private final DongService dongService;
@@ -47,7 +47,7 @@ public class CustomerService {
             customer.setDongString(liService.findDongString(li));
         }
 
-        return customerRespository.save(customer);
+        return customerRepository.save(customer);
     }
 
     // READ
@@ -59,22 +59,22 @@ public class CustomerService {
     // 최신순 정렬 - 생성일 기준
     public List<Customer> findCustomerByLatest() {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        List<Customer> customers = customerRespository.findAllByEmployee(
+
+        return customerRepository.findAllByEmployee(
                 employee, Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
         );
-        return customers;
     }
 
     // 월별 최신순 정렬 - 생성일 기준
     public List<Customer> findCustomerByLatest(LocalDate date) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        List<Customer> customers = customerRespository.findAllByEmployeeAndCreatedAtBetween(
+
+        return customerRepository.findAllByEmployeeAndCreatedAtBetween(
                 employee,
                 Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
                 parserStart(date),
                 parserFinish(date)
         );
-        return customers;
     }
 
     // 나이별 정렬(2030, 4050, 6070)
@@ -90,10 +90,9 @@ public class CustomerService {
 
         int end = start + 19;
 
-        List<Customer> customers = customerRespository.findByEmployeeAndAgeBetween(
+        return customerRepository.findByEmployeeAndAgeBetween(
                 employee, start, end, Sort.by(Sort.Direction.DESC, "createdAt") // 오름차순
         );
-        return customers;
     }
 
     // 월별 나이별 정렬(2030, 4050, 6070)
@@ -109,7 +108,7 @@ public class CustomerService {
 
         int end = start + 19;
 
-        List<Customer> customers = customerRespository.findByEmployeeAndAgeBetweenAndCreatedAtBetween(
+        return customerRepository.findByEmployeeAndAgeBetweenAndCreatedAtBetween(
                 employee,
                 start,
                 end,
@@ -117,7 +116,6 @@ public class CustomerService {
                 parserStart(date),
                 parserFinish(date)
         );
-        return customers;
     }
 
     // 지역별 정렬
@@ -125,10 +123,9 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         String dongName = dongService.verifiedDong(dongPk).getDongName();
 
-        List<Customer> customers = customerRespository.findByEmployeeAndDongStringContains(
+        return customerRepository.findByEmployeeAndDongStringContains(
                 employee, dongName, Sort.by(Sort.Direction.ASC, "li_pk") // 오름차순
         );
-        return customers;
     }
 
     // 월별 지역별 정렬
@@ -136,30 +133,40 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         String dongName = dongService.verifiedDong(dongPk).getDongName();
 
-        List<Customer> customers = customerRespository.findByEmployeeAndDongStringContainsAndCreatedAtBetween(
+        return customerRepository.findByEmployeeAndDongStringContainsAndCreatedAtBetween(
                 employee,
                 dongName,
                 Sort.by(Sort.Direction.ASC, "li_pk"), // 오름차순
                 parserStart(date),
                 parserFinish(date)
         );
-        return customers;
     }
 
     // 계약여부 정렬
     public List<Customer> findCustomerByContractYn(boolean contractYn) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
-        List<Customer> customers = customerRespository.findByEmployeeAndContractYn(
+        return customerRepository.findByEmployeeAndContractYn(
                 employee, contractYn
         );
-        return customers;
+    }
+
+    // 월별 계약여부 정렬
+    public List<Customer> findCustomerByContractYn(boolean contractYn, LocalDate date) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+
+        return customerRepository.findByEmployeeAndContractYnAndCreatedAtBetween(
+                employee,
+                contractYn,
+                parserStart(date),
+                parserFinish(date)
+        );
     }
 
     // 이름 검색
     public List<Customer> findCustomerByName(String name) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        return customerRespository.findByEmployeeAndName(employee, name);
+        return customerRepository.findByEmployeeAndName(employee, name);
     }
 
     // UPDATE
@@ -192,18 +199,18 @@ public class CustomerService {
         Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
 
-        return customerRespository.save(findCustomer);
+        return customerRepository.save(findCustomer);
     }
 
     // DELETE
     public void deleteCustomer(long customerPk) {
         Customer customer = verifiedCustomer(customerPk);
-        customerRespository.delete(customer);
+        customerRepository.delete(customer);
     }
 
     // 검증
     public Customer verifiedCustomer(long customerPk) {
-        Optional<Customer> customer = customerRespository.findById(customerPk);
+        Optional<Customer> customer = customerRepository.findById(customerPk);
         return customer.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOMER_NOT_FOUND));
     }
 

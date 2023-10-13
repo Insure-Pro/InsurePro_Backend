@@ -116,6 +116,16 @@ public class CustomerController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
+    // 월별 계약여부 정렬
+    @GetMapping("/customers/contractYn/{contractYn}/{date}")
+    public ResponseEntity findCustomersByContractYnAndMonth(@PathVariable("contractYn") boolean contractYn,
+                                                            @PathVariable("date") String date) {
+        List<Customer> customers = customerService.findCustomerByContractYn(contractYn, LocalDate.parse(date));
+        List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     // 고객 이름 검색
     @GetMapping("/customers/name/{name}")
     public ResponseEntity findCustomerByname(@PathVariable("name") String name) {
