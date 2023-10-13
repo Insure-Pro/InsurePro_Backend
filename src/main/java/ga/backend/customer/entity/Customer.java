@@ -1,12 +1,9 @@
 package ga.backend.customer.entity;
 
 import ga.backend.auditable.Auditable;
-import ga.backend.customerType.entity.CustomerType;
-import ga.backend.dong.entity.Dong;
 import ga.backend.employee.entity.Employee;
 import ga.backend.li.entity.Li;
 import ga.backend.schedule.entity.Schedule;
-import lombok.Cleanup;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,15 +26,14 @@ public class Customer extends Auditable {
     private Li li;
 
     @ManyToOne
-    @JoinColumn(name = "customer_type_pk")
-    private CustomerType customerType;
-
-    @ManyToOne
     @JoinColumn(name = "employee_pk")
     private Employee employee;
 
     @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Schedule> schedules = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private CustomerType customerType;
 
     @Column
     private String name; // 이름
@@ -70,12 +66,24 @@ public class Customer extends Auditable {
     private Boolean delYn = false; // 고객 삭제 여부
 
     @Column
-    private LocalDate intensiveCareStartDate; // 집중관리시기 - 시작
-
-    @Column
-    private LocalDate intensiveCareFinishDate; // 집중관리시기 - 끝
-
-    @Column
     private LocalDate registerDate; // 고객 등록 날짜
 
+    @Getter
+    public static enum CustomerType {
+        OD("OD"),
+        AD("AD"),
+        CP("CP"),
+        CD("CD"),
+        JD("JD"),
+        H("H"),
+        X("X"),
+        Y("Y"),
+        Z("Z");
+
+        private final String value;
+
+        CustomerType(String value) {
+            this.value = value;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package ga.backend.customer.dto;
 
+import ga.backend.customer.entity.Customer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,7 +15,7 @@ public class CustomerRequestDto {
     @Getter
     public static class Post {
         private Long pk;
-        private String customerTypeName; // 고객 유형
+        private Customer.CustomerType customerType; // 고객 유형
         private long liPk; // 리 식별자
         private String name; // 이름
         private LocalDate birth; // 생년월일
@@ -26,8 +27,6 @@ public class CustomerRequestDto {
         private String memo; // 메모
         private String state; // 인수상태
         private Boolean contractYn;
-        private LocalDate intensiveCareStartDate; // 집중관리시기 - 시작
-        private LocalDate intensiveCareFinishDate; // 집중관리시기 - 끝
         private LocalDate registerDate; // 고객 등록 날짜
     }
 
@@ -36,7 +35,7 @@ public class CustomerRequestDto {
     @Getter
     public static class Patch {
         private Long pk;
-        private String customerTypeName; // 고객 유형 식별자
+        private Customer.CustomerType customerType; // 고객 유형
         private long liPk; // 리 식별자
         private String name; // 이름
         private LocalDate birth; // 생년월일
@@ -50,8 +49,6 @@ public class CustomerRequestDto {
         private String state; // 인수상태
         private Boolean contractYn; // 계약 체결 여부
         private Boolean delYn; // 고객 삭제 여부
-        private LocalDate intensiveCareStartDate; // 집중관리시기 - 시작
-        private LocalDate intensiveCareFinishDate; // 집중관리시기 - 끝
         private LocalDate registerDate; // 고객 등록 날짜
     }
 }

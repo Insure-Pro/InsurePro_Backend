@@ -49,7 +49,7 @@ public class AnalysisService {
 
         // 시작 날짜 -> 1일 00:00
         LocalDateTime start = requestDate.atStartOfDay().withDayOfMonth(1);
-        // 종료 날짜 -> 마지막날 23:59:99
+        // 종료 날짜
         LocalDateTime finish;
 
         // 1. 계산이 되어있지 않은 경우 -> 이번달인것과 아닌것 구분 X
@@ -57,13 +57,13 @@ public class AnalysisService {
 
         // 성과분석이 안되어있는 달(이번달과 이전달 포함)
         if(analysis.getPk() == null) {
-            finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth());
+            finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth()); // 마지막날 23:59:99
             System.out.println("!! finish : " + finish);
             // 성과분석 계산
             analysisAllPercentage(start, finish, employee, analysis);
-        } else if (checkMonth(requestDate, now)) { // 요청날짜(requsetDate) == 이번달(now)
+        } else if (checkMonth(requestDate, now)) { // 종료날짜 -> 요청날짜(requsetDate) == 이번달(now)
             if (checkAnalysis(employee, analysis)) { // 수정해야 하는 경우 -> customer과 history 변경사항 발생 시
-                finish = now;
+                finish = now; // 종료 날짜 -> 지금
                 System.out.println("!! finish : " + finish);
                 // 성과분석 계산
                 analysisAllPercentage(start, finish, employee, analysis);
