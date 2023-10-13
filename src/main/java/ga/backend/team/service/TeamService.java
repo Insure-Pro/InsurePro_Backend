@@ -35,11 +35,11 @@ public class TeamService {
         if (teamPk == null && teamName==null){
             teams = teamRespository.findAll();
         } else if (teamPk == null) {
-            teams = teamRespository.findAllByTeamName(teamName);
+            teams = teamRespository.findAllByTeamNameAndDelYnFalse(teamName);
         } else if(teamName == null) {
-            teams = teamRespository.findAllByPk(teamPk);
+            teams = teamRespository.findAllByPkAndDelYnFalse(teamPk);
         } else {
-            teams = teamRespository.findAllByPkAndTeamName(teamPk, teamName);
+            teams = teamRespository.findAllByPkAndTeamNameAndDelYnFalse(teamPk, teamName);
         }
         return teams;
     }
@@ -61,12 +61,12 @@ public class TeamService {
     // team에 소속된 직원 찾기
     public List<Employee> findEmployeeListByTeam(long teamPk) {
         Team team = verifiedTeam(teamPk);
-        return employeeRepository.findEmployeesByTeam(team);
+        return employeeRepository.findEmployeesByTeamAndDelYnFalse(team);
     }
 
     // 검증
     public Team verifiedTeam(long teamPk) {
-        Optional<Team> team = teamRespository.findById(teamPk);
+        Optional<Team> team = teamRespository.findByPkAndDelYnFalse(teamPk);
         return team.orElseThrow(() -> new BusinessLogicException(ExceptionCode.TEAM_NOT_FOUND));
     }
 }

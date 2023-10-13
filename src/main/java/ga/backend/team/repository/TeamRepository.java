@@ -5,10 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long> {
-    List<Team> findAllByPk(Long pk);
-    List<Team> findAllByTeamName(String teamName);
-    List<Team> findAllByPkAndTeamName(Long pk, String teamName);
+    Optional<Team> findByPkAndDelYnFalse(Long pk);
+    List<Team> findAllByPkAndDelYnFalse(Long pk);
+    List<Team> findAllByTeamNameAndDelYnFalse(String teamName);
+    List<Team> findAllByPkAndTeamNameAndDelYnFalse(Long pk, String teamName);
 }

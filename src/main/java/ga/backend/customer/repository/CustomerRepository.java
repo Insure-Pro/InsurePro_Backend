@@ -28,20 +28,28 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     // -----------------------------------------------------------------------------
     // 성과분석(analysis)
+    Optional<Customer> findByPkAndDelYnFalse(long customerPk);
+
+    List<Customer> findByEmployeeAndDelYnFalse(Employee employee, Sort sort);
+
+    List<Customer> findByEmployeeAndAgeBetweenAndDelYnFalse(Employee employee, int start, int end, Sort sort);
+
+    List<Customer> findByEmployeeAndDongStringContainsAndDelYnFalse(Employee employee, String dongName, Sort sort);
+
+    List<Customer> findByEmployeeAndContractYnAndDelYnFalse(Employee employee, boolean contractYn);
+
+    @Query("SELECT c FROM Customer c " +
+            "WHERE (c.employee = :employee AND c.delYn = false AND (c.intensiveCareStartDate != NULL OR c.intensiveCareFinishDate != NULL))")
+    List<Customer> findByEmployeeAndIntensiveCareExists(Employee employee);
 
     // all 계산
-    List<Customer> findByEmployeeAndCreatedAtBetween(
+    List<Customer> findByEmployeeAndCreatedAtBetweenAndDelYnFalse(
             Employee employee,
             LocalDateTime createdAtStart,
             LocalDateTime createdAtFinish
     );
 
-    // 성과분석 확인(다시 계산)
-//    List<Customer> findByEmployeeAndModifiedAtGreaterThanEqual(
-//            Employee employee,
-//            LocalDateTime modifiedAfter
-//    );
-
+    // 성과분석 확인(다시 계산할지 여부 확인)
     @Query("SELECT c FROM Customer c " +
             "WHERE (c.employee = :employee AND (c.createdAt >= :createdAtAfter OR c.modifiedAt >= :modifiedAfter))")
     List<Customer> findByEmployeeAndCreatedAtGreaterThanEqualOrModifiedAtGreaterThanEqual(

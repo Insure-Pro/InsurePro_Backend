@@ -99,19 +99,19 @@ public class EmployeeService {
 
     // 검증 - pk
     public Employee verifiedEmployeeByPk(long employeePk) {
-         Optional<Employee> employee = employeeRespository.findById(employeePk);
+         Optional<Employee> employee = employeeRespository.findByPkAndDelYnFalse(employeePk);
         return employee.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
     }
 
     // 검증 - 이메일
     public Employee verifiedEmployeeByEmail(String email) {
-        Optional<Employee> employee = employeeRespository.findByEmail(email);
+        Optional<Employee> employee = employeeRespository.findByEmailAndDelYnFalse(email);
         return employee.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
     }
 
     // 검증 - 사번
     public Employee verifiedEmployeeById(String id) {
-        Optional<Employee> employee = employeeRespository.findById(id);
+        Optional<Employee> employee = employeeRespository.findByIdAndDelYnFalse(id);
         return employee.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
     }
 }

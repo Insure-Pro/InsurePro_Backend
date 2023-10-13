@@ -50,8 +50,7 @@ public class CustomerService {
     // 최신순 정렬 - 생성일 기준
     public List<Customer> findCustomerByLatest() {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-
-        return customerRepository.findAllByEmployee(
+        List<Customer> customers = customerRespository.findByEmployeeAndDelYnFalse(
                 employee, Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
         );
     }
@@ -81,7 +80,7 @@ public class CustomerService {
 
         int end = start + 19;
 
-        return customerRepository.findByEmployeeAndAgeBetween(
+        List<Customer> customers = customerRespository.findByEmployeeAndAgeBetweenAndDelYnFalse(
                 employee, start, end, Sort.by(Sort.Direction.DESC, "createdAt") // 오름차순
         );
     }
@@ -114,7 +113,7 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         String dongName = dongService.verifiedDong(dongPk).getDongName();
 
-        return customerRepository.findByEmployeeAndDongStringContains(
+        List<Customer> customers = customerRespository.findByEmployeeAndDongStringContainsAndDelYnFalse(
                 employee, dongName, Sort.by(Sort.Direction.ASC, "li_pk") // 오름차순
         );
     }
@@ -137,7 +136,7 @@ public class CustomerService {
     public List<Customer> findCustomerByContractYn(boolean contractYn) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
-        return customerRepository.findByEmployeeAndContractYn(
+        List<Customer> customers = customerRespository.findByEmployeeAndContractYnAndDelYnFalse(
                 employee, contractYn
         );
     }
@@ -196,7 +195,7 @@ public class CustomerService {
 
     // 검증
     public Customer verifiedCustomer(long customerPk) {
-        Optional<Customer> customer = customerRepository.findById(customerPk);
+        Optional<Customer> customer = customerRespository.findByPkAndDelYnFalse(customerPk);
         return customer.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOMER_NOT_FOUND));
     }
 

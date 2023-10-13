@@ -145,13 +145,13 @@ public class AnalysisService {
     // 성과분석 계산
     public Analysis analysisAllPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis) {
         // 전체(이번달에 등록한 고객 기준 고객수. 히스토리 등록 안 한 사람도 포함)
-        double all = customerRepository.findByEmployeeAndCreatedAtBetween(
+        double all = customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalse(
                 employee, start, finish
         ).size();
         System.out.println("!! all : " + all);
 
         // 전체 고객 대상으로 이번달에 등록한 히스토리
-        List<Schedule> all_history = scheduleRepository.findByEmployeeAndCreatedAtBetween(
+        List<Schedule> all_history = scheduleRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalse(
                 employee, start, finish
         );
         // 전체 고객 대상으로 이번달에 등록한 히스토리 총 개수 합
