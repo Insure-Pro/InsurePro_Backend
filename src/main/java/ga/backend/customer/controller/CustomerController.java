@@ -97,6 +97,16 @@ public class CustomerController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
+    // 월별 지역별 정렬
+    @GetMapping("/customers/{date}")
+    public ResponseEntity findCustomersByDongAndMonth(@RequestParam("dongPk") long dongPk,
+                                                      @PathVariable("date") String date) {
+        List<Customer> customers = customerService.findCustomerByLi(dongPk, LocalDate.parse(date));
+        List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     // 계약여부 정렬
     @GetMapping("/customers/contractYn/{contractYn}")
     public ResponseEntity findCustomersByContractYn(@PathVariable("contractYn") boolean contractYn) {
@@ -134,7 +144,7 @@ public class CustomerController {
     // 고객 수정(contractYn 수정)
     @PatchMapping("/customer/{customer-pk}/contractYn")
     public ResponseEntity patchCustomerByContractYn(@Positive @PathVariable("customer-pk") long customerPk,
-                                        @Valid @RequestBody CustomerRequestDto.Patch patch) {
+                                                    @Valid @RequestBody CustomerRequestDto.Patch patch) {
         patch.setPk(customerPk);
         Customer customer = customerService.patchCustomer(
                 customerMapper.customerPatchDtoToCustomer(patch),

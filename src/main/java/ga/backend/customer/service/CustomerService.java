@@ -131,6 +131,21 @@ public class CustomerService {
         return customers;
     }
 
+    // 월별 지역별 정렬
+    public List<Customer> findCustomerByLi(Long dongPk, LocalDate date) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        String dongName = dongService.verifiedDong(dongPk).getDongName();
+
+        List<Customer> customers = customerRespository.findByEmployeeAndDongStringContainsAndCreatedAtBetween(
+                employee,
+                dongName,
+                Sort.by(Sort.Direction.ASC, "li_pk"), // 오름차순
+                parserStart(date),
+                parserFinish(date)
+        );
+        return customers;
+    }
+
     // 계약여부 정렬
     public List<Customer> findCustomerByContractYn(boolean contractYn) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
