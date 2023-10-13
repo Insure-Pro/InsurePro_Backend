@@ -87,10 +87,13 @@ public class CustomerController {
     }
 
     // 고객 이름 검색
-//    @GetMapping("/customers/{customer-name}")
-//    public ResponseEntity findCustomerByname(@PathVariable("customer-name") long name) {
-//        Customer customer = customerService.
-//    }
+    @GetMapping("/customers/name/{name}")
+    public ResponseEntity findCustomerByname(@PathVariable("name") String name) {
+        List<Customer> customers = customerService.findCustomerByName(name);
+        List<CustomerResponseDto.Response> responses = customerMapper.customerToCustomerResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
 
     // UPDATE
     // 고객 수정(모든 값 수정 가능)

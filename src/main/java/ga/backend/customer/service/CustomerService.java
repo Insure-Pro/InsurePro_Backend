@@ -101,6 +101,12 @@ public class CustomerService {
         return customers;
     }
 
+    // 이름 검색
+    public List<Customer> findCustomerByName(String name) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        return customerRespository.findByEmployeeAndName(employee, name);
+    }
+
     // UPDATE
     public Customer patchCustomer(Customer customer, String customerTypeName, long liPk) {
         Customer findCustomer = verifiedCustomer(customer.getPk());

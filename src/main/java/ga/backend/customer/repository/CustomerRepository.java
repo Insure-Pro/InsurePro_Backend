@@ -9,15 +9,21 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, Long> {
+    // CustomerService
     List<Customer> findAllByEmployee(Employee employee, Sort sort);
 
     List<Customer> findByEmployeeAndAgeBetween(Employee employee, int start, int end, Sort sort);
 
     List<Customer> findByEmployeeAndDongStringContains(Employee employee, String dongName, Sort sort);
     List<Customer> findByEmployeeAndContractYn(Employee employee, boolean contractYn);
+    List<Customer> findByEmployeeAndName(Employee employee, String name);
+
+    // -----------------------------------------------------------------------------
+    // 성과분석(analysis)
 
     // all 계산
     List<Customer> findByEmployeeAndCreatedAtBetween(
