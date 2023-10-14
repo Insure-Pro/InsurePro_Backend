@@ -66,14 +66,13 @@ public class PhotoController {
 
         // 이미지 업로드
         if (post.getPhotoBinary() != null) {
-
-
             Path currentPath = Paths.get("");
             String path = currentPath.toAbsolutePath().toString();
             byte[] data = DatatypeConverter.parseBase64Binary(post.getPhotoBinary());
             File file = new File(path + "/src/main/resources/photo/hello.jpg");
             try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
                 outputStream.write(data);
+                outputStream.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -81,6 +80,9 @@ public class PhotoController {
             FileInputStream input = new FileInputStream(file);
             MultipartFile multipartFile2 = new MockMultipartFile("file",
                     file.getName(), "image/jpg", IOUtils.toByteArray(input));
+            input.close();
+            System.gc();
+            System.runFinalization();
             Boolean result = file.delete();
             System.out.println(result);
             post.setPhotoUrl(imageService.updateImage(multipartFile2, "photo", "photoUrl"));
@@ -100,8 +102,7 @@ public class PhotoController {
 
 
     /**
-     * @param pk
-     * @param name
+     * @param employeePk
      * @return {
      * "photos" : [
      * {
@@ -116,8 +117,8 @@ public class PhotoController {
      * }
      */
     @GetMapping
-    public ResponseEntity getPhotoList(@Positive @RequestParam(value = "employee-pk", required = false) Long employeepPk) {
-        List<PhotoResponseDto.Response> response = photoService.findMyPhotoListByEmployee(employeepPk);
+    public ResponseEntity getPhotoList(@Positive @RequestParam(value = "employee-pk", required = false) Long employeePk) {
+        List<PhotoResponseDto.Response> response = photoService.findMyPhotoListByEmployee(employeePk);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
