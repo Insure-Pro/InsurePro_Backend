@@ -1,5 +1,6 @@
 package ga.backend.photo.controller;
 
+import com.amazonaws.util.IOUtils;
 import com.nimbusds.jose.shaded.json.JSONObject;
 import ga.backend.employee.entity.Employee;
 import ga.backend.photo.dto.PhotoDetailResponseDto;
@@ -13,13 +14,24 @@ import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.imageio.ImageIO;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import javax.xml.bind.DatatypeConverter;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
 import java.util.List;
+
 
 @RestController
 @RequestMapping(Version.currentUrl + "/photos")
@@ -48,6 +60,43 @@ public class PhotoController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @PostMapping("/binary")
+    public ResponseEntity postBinaryPhoto(@Valid @RequestBody PhotoRequestDto.Post post) throws IOException {
+
+        // 이미지 업로드
+        if (post.getPhotoBinary() != null) {
+
+
+            Path currentPath = Paths.get("");
+            String path = currentPath.toAbsolutePath().toString();
+            byte[] data = DatatypeConverter.parseBase64Binary(post.getPhotoBinary());
+            File file = new File(path + "/src/main/resources/photo/hello.jpg");
+            try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+                outputStream.write(data);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            FileInputStream input = new FileInputStream(file);
+            MultipartFile multipartFile2 = new MockMultipartFile("file",
+                    file.getName(), "image/jpg", IOUtils.toByteArray(input));
+            Boolean result = file.delete();
+            System.out.println(result);
+            post.setPhotoUrl(imageService.updateImage(multipartFile2, "photo", "photoUrl"));
+
+        }
+
+        // 생성
+        Photo photo = photoService.createPhoto(photoMapper.photoPostDtoToPhoto(post), post.getEmployeePk());
+
+        // 응답
+        PhotoResponseDto.Response response = photoMapper.photoToPhotoResponseDto(photo);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
 
 
     /**

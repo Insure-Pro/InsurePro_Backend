@@ -17,6 +17,7 @@ public class PhotoRequestDto {
         private Long pk;
         private String name;
         private String photoUrl;
+        private String photoBinary;
         private Long employeePk;
     }
 
