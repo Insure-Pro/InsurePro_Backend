@@ -72,7 +72,6 @@ public class PhotoController {
             File file = new File(path + "/src/main/resources/photo/hello.jpg");
             try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
                 outputStream.write(data);
-                outputStream.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -81,10 +80,6 @@ public class PhotoController {
             MultipartFile multipartFile2 = new MockMultipartFile("file",
                     file.getName(), "image/jpg", IOUtils.toByteArray(input));
             input.close();
-            System.gc();
-            System.runFinalization();
-            Boolean result = file.delete();
-            System.out.println(result);
             post.setPhotoUrl(imageService.updateImage(multipartFile2, "photo", "photoUrl"));
 
         }
