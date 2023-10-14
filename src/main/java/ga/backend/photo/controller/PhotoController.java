@@ -81,10 +81,6 @@ public class PhotoController {
             MultipartFile multipartFile2 = new MockMultipartFile("file",
                     file.getName(), "image/jpg", IOUtils.toByteArray(input));
             input.close();
-            System.gc();
-            System.runFinalization();
-            Boolean result = file.delete();
-            System.out.println(result);
             post.setPhotoUrl(imageService.updateImage(multipartFile2, "photo", "photoUrl"));
 
         }
