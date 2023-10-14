@@ -30,14 +30,8 @@ public class PhotoController {
     private final PhotoMapper photoMapper;
     private final ImageService imageService;
 
-    /**
-     * @param post
-     * @return {
-     * "photo_pk" : 1,
-     * "name" : "패스파인더"
-     * }
-     */
-    @PostMapping
+
+    @RequestMapping(method=RequestMethod.POST, consumes="multipart/forn-data")
     public ResponseEntity postPhoto(@RequestPart(value = "request") PhotoRequestDto.Post post,
                                     @RequestPart(value = "image", required = false) MultipartFile file) {
 
