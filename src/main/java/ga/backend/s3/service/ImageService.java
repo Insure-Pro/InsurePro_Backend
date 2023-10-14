@@ -41,7 +41,7 @@ public class ImageService {
         metadata.setContentLength(file.getSize());
 
         try (InputStream inputStream = file.getInputStream()) {
-            String keyName = uploadFilePath + "/" + uploadFileName;
+            String keyName = uploadFilePath + "/" + uploadFileName + ".jpg";
 
             // S3에 폴더 및 파일 업로드
             amazonS3Client.putObject(new PutObjectRequest(bucket, keyName, inputStream, metadata));

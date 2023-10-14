@@ -75,7 +75,7 @@ public class PhotoService {
      */
     public List<PhotoResponseDto.Response> findMyPhotoListByEmployee(Long employeePk) {
         Employee employee = employeeService.verifiedEmployeeByPk(employeePk);
-        return photoMapper.photoToPhotoListResponseDto(photoRespository.findAllByDelYnAndEmployee(false, employee));
+        return photoMapper.photoToPhotoListResponseDto(photoRespository.findAllByDelYnAndEmployeeOrderByCreatedAtDesc(false, employee));
     }
 
 
@@ -130,7 +130,7 @@ public class PhotoService {
      * @return
      */
     private Photo findRecentPhotoByEmployee(Employee employee) {
-        return photoRespository.findTopByDelYnAndEmployeeOrderByCreatedAt(false, employee).orElse(null);
+        return photoRespository.findTopByDelYnAndEmployeeOrderByCreatedAtDesc(false, employee).orElse(null);
     }
 
 }
