@@ -31,7 +31,7 @@ public class PhotoController {
     private final ImageService imageService;
 
 
-    @RequestMapping(method=RequestMethod.POST, consumes="multipart/forn-data")
+    @RequestMapping(method=RequestMethod.POST, consumes="multipart/form-data")
     public ResponseEntity postPhoto(@RequestPart(value = "request") PhotoRequestDto.Post post,
                                     @RequestPart(value = "image", required = false) MultipartFile file) {
 
