@@ -72,7 +72,6 @@ public class PhotoController {
             File file = new File(path + "/src/main/resources/photo/hello.jpg");
             try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
                 outputStream.write(data);
-                outputStream.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
