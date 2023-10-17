@@ -8,6 +8,7 @@ import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.li.entity.Li;
 import ga.backend.li.service.LiService;
+import ga.backend.schedule.entity.Schedule;
 import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -181,15 +182,26 @@ public class CustomerService {
         Optional.ofNullable(customer.getMemo()).ifPresent(findCustomer::setMemo);
         Optional.ofNullable(customer.getState()).ifPresent(findCustomer::setState);
         Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
-        Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
+        Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
+        if(Optional.ofNullable(customer.getDelYn()).orElse(false)) {
+            changeSchduleDelYnTrue(findCustomer);
+        }
 
         return customerRepository.save(findCustomer);
     }
 
     // DELETE
+//    public void deleteCustomer(long customerPk) {
+//        Customer customer = verifiedCustomer(customerPk);
+//        customerRepository.delete(customer);
+//    }
+
+    // delYn=true 변경 후 customer과 관련된 schedule.delYn=true로 변경
     public void deleteCustomer(long customerPk) {
         Customer customer = verifiedCustomer(customerPk);
+        customer.setDelYn(true);
+        changeSchduleDelYnTrue(customer);
         customerRepository.delete(customer);
     }
 
@@ -207,5 +219,12 @@ public class CustomerService {
     // parser - 달의 마지막날
     public LocalDateTime parserFinish(LocalDate finish) {
         return finish.atTime(LocalTime.MAX).withDayOfMonth(finish.lengthOfMonth());
+    }
+
+    // customer의 delYn=false 할 때, 관련 schedule(history)의 delYn=false로 변경
+    public void changeSchduleDelYnTrue(Customer customer) {
+        for(Schedule schedule : customer.getSchedules()) {
+            schedule.setDelYn(true);
+        }
     }
 }

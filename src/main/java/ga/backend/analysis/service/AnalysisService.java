@@ -150,8 +150,8 @@ public class AnalysisService {
     // 성과분석 계산
     public Analysis analysisAllPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis, Customer.CustomerType customerType) {
         // 전체(이번달에 등록한 고객 기준 고객수. 히스토리 등록 안 한 사람도 포함)
-        double all = customerRepository.findByEmployeeAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
-                employee, start, finish, customerType
+        double all = customerRepository.findByEmployeeAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
+                employee, start.toLocalDate(), finish.toLocalDate(), customerType
         ).size();
         System.out.println("!! all : " + all);
 
@@ -220,7 +220,8 @@ public class AnalysisService {
     // Schedule의 Customer 추출하기
     public Set<Customer> customerFilter(List<Schedule> schedules) {
         Set<Customer> set = new HashSet<>();
-        schedules.forEach(schedule -> set.add(schedule.getCustomer()));
+        schedules.stream().filter(schedule -> !schedule.getDelYn())
+                .forEach(schedule -> set.add(schedule.getCustomer()));
         return set;
     }
 

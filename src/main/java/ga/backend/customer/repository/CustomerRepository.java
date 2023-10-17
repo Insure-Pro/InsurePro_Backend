@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -31,12 +32,12 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByEmployeeAndName(Employee employee, String name);
 
     // -----------------------------------------------------------------------------
-    // 성과분석(analysis)
+    // 성과분석(analysis) RegisterDate
     // all 계산
-    List<Customer> findByEmployeeAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+    List<Customer> findByEmployeeAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
             Employee employee,
-            LocalDateTime createdAtStart,
-            LocalDateTime createdAtFinish,
+            LocalDate createdAtStart,
+            LocalDate createdAtFinish,
             Customer.CustomerType customerType
     );
 

@@ -159,6 +159,12 @@ public class CustomerController {
     }
 
     // DELETE
+//    @DeleteMapping("/customer/{customer-pk}")
+//    public ResponseEntity deleteCustomer(@Positive @PathVariable("customer-pk") long customerPk) {
+//        customerService.deleteCustomer(customerPk);
+//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//    }
+
     @DeleteMapping("/customer/{customer-pk}")
     public ResponseEntity deleteCustomer(@Positive @PathVariable("customer-pk") long customerPk) {
         customerService.deleteCustomer(customerPk);
