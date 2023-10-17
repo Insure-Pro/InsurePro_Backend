@@ -202,7 +202,7 @@ public class CustomerService {
         Customer customer = verifiedCustomer(customerPk);
         customer.setDelYn(true);
         changeSchduleDelYnTrue(customer);
-        customerRepository.delete(customer);
+        customerRepository.save(customer);
     }
 
     // 검증
