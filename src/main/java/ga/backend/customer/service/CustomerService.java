@@ -10,7 +10,6 @@ import ga.backend.li.entity.Li;
 import ga.backend.li.service.LiService;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.util.FindEmployee;
-import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -21,19 +20,40 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final LiService liService;
     private final DongService dongService;
+
     private final FindEmployee findEmployee;
+
+    private final List<Customer.CustomerType> customerTypesRegisterDate = List.of(
+            Customer.CustomerType.OD,
+            Customer.CustomerType.AD,
+            Customer.CustomerType.CP,
+            Customer.CustomerType.CD,
+            Customer.CustomerType.JD
+    );
+    private final List<Customer.CustomerType> customerTypesCreatedAt = List.of(
+            Customer.CustomerType.H,
+            Customer.CustomerType.X,
+            Customer.CustomerType.Y,
+            Customer.CustomerType.Z
+    );
+
+    public CustomerService(CustomerRepository customerRepository, LiService liService, DongService dongService, FindEmployee findEmployee) {
+        this.customerRepository = customerRepository;
+        this.liService = liService;
+        this.dongService = dongService;
+        this.findEmployee = findEmployee;
+    }
 
     // CREATE
     public Customer createCustomer(Customer customer, long liPk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         customer.setEmployee(employee);
 
-        if(liPk != 0) {
+        if (liPk != 0) {
             Li li = liService.findLi(liPk);
             customer.setLi(li);
             customer.setDongString(liService.findDongString(li));
@@ -60,12 +80,24 @@ public class CustomerService {
     public List<Customer> findCustomerByLatest(LocalDate date) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
-        return customerRepository.findAllByEmployeeAndCreatedAtBetween(
+        // registerDate 기준으로 월별 필터링 & 정렬
+        List<Customer> customers = customerRepository.findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeIn(
+                    employee,
+                    Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                    parserStart(date),
+                    parserFinish(date),
+                    customerTypesRegisterDate
+            );
+        // createdAt 기준으로 월별 필터링 & 정렬 → customers에 추가하기
+        customers.addAll(customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeIn(
                 employee,
                 Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
-                parserStart(date),
-                parserFinish(date)
-        );
+                parserStart(date).toLocalDate(),
+                parserFinish(date).toLocalDate(),
+                customerTypesCreatedAt
+        ));
+
+        return customers;
     }
 
     // 나이별 정렬(2030, 4050, 6070)
@@ -165,9 +197,9 @@ public class CustomerService {
         Customer findCustomer = verifiedCustomer(customer.getPk());
         Employee employee = findEmployee.getLoginEmployeeByToken();
         // 직원 유효성 검사
-        if(findCustomer.getEmployee().getPk() != employee.getPk())
+        if (findCustomer.getEmployee().getPk() != employee.getPk())
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_CONTAIN_CUSTOMER);
-        if(liPk != 0) {
+        if (liPk != 0) {
             Li li = liService.findLi(liPk);
             findCustomer.setLi(li);
             findCustomer.setDongString(liService.findDongString(li));
@@ -184,7 +216,7 @@ public class CustomerService {
         Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
         Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
-        if(Optional.ofNullable(customer.getDelYn()).orElse(false)) {
+        if (Optional.ofNullable(customer.getDelYn()).orElse(false)) {
             changeSchduleDelYnTrue(findCustomer);
         }
 
@@ -223,7 +255,7 @@ public class CustomerService {
 
     // customer의 delYn=false 할 때, 관련 schedule(history)의 delYn=false로 변경
     public void changeSchduleDelYnTrue(Customer customer) {
-        for(Schedule schedule : customer.getSchedules()) {
+        for (Schedule schedule : customer.getSchedules()) {
             schedule.setDelYn(true);
         }
     }
