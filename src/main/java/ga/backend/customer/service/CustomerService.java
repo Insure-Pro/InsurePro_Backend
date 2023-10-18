@@ -81,19 +81,19 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
         // registerDate 기준으로 월별 필터링 & 정렬
-        List<Customer> customers = customerRepository.findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeIn(
+        List<Customer> customers = customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeIn(
                     employee,
                     Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
-                    parserStart(date),
-                    parserFinish(date),
+                    parserStart(date).toLocalDate(),
+                    parserFinish(date).toLocalDate(),
                     customerTypesRegisterDate
             );
         // createdAt 기준으로 월별 필터링 & 정렬 → customers에 추가하기
-        customers.addAll(customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeIn(
+        customers.addAll(customerRepository.findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeIn(
                 employee,
                 Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
-                parserStart(date).toLocalDate(),
-                parserFinish(date).toLocalDate(),
+                parserStart(date),
+                parserFinish(date),
                 customerTypesCreatedAt
         ));
 
@@ -121,24 +121,38 @@ public class CustomerService {
     // 월별 나이별 정렬(2030, 4050, 6070)
     public List<Customer> findCustomerByAge(String age, LocalDate date) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        int start = 0;
+        int ageStart = 0;
 
-        if (age.equals("1020")) start = 10;
-        else if (age.equals("3040")) start = 30;
-        else if (age.equals("5060")) start = 50;
-        else if (age.equals("7080")) start = 70;
+        if (age.equals("1020")) ageStart = 10;
+        else if (age.equals("3040")) ageStart = 30;
+        else if (age.equals("5060")) ageStart = 50;
+        else if (age.equals("7080")) ageStart = 70;
         else throw new BusinessLogicException(ExceptionCode.CUSTOMER_AGE_FILTER_NOT_FOUND);
 
-        int end = start + 19;
+        int ageEnd = ageStart + 19;
 
-        return customerRepository.findByEmployeeAndAgeBetweenAndCreatedAtBetweenAndDelYnFalse(
+        // registerDate 기준으로 월별 필터링 & 정렬
+        List<Customer> customers = customerRepository.findByEmployeeAndAgeBetweenAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
                 employee,
-                start,
-                end,
+                ageStart,
+                ageEnd,
+                Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 오름차순
+                parserStart(date).toLocalDate(),
+                parserFinish(date).toLocalDate(),
+                customerTypesRegisterDate
+        );
+        // createdAt 기준으로 월별 필터링 & 정렬 → customers에 추가하기
+        customers.addAll(customerRepository.findByEmployeeAndAgeBetweenAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(
+                employee,
+                ageStart,
+                ageEnd,
                 Sort.by(Sort.Direction.DESC, "createdAt"), // 오름차순
                 parserStart(date),
-                parserFinish(date)
-        );
+                parserFinish(date),
+                customerTypesCreatedAt
+        ));
+
+        return customers;
     }
 
     // 지역별 정렬

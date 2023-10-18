@@ -63,7 +63,7 @@ public class CustomerController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
-    // 나이별 정렬(2030, 4050, 6070)
+    // 나이별 정렬(1020, 3040, 5060, 7080)
     @GetMapping("/customers/age/{age}")
     public ResponseEntity getCustomersByAge(@PathVariable("age") String age) {
         List<Customer> customers = customerService.findCustomerByAge(age);
@@ -72,7 +72,7 @@ public class CustomerController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
-    // 월별 나이별 정렬(2030, 4050, 6070)
+    // 월별 나이별 정렬(1020, 3040, 5060, 7080)
     @GetMapping("/customers/age/{age}/{date}")
     public ResponseEntity getCustomersByAgeAndMonth(@PathVariable("age") String age,
                                                     @PathVariable("date") String date) {
