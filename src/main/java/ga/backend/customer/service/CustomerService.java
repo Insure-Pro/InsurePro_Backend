@@ -113,7 +113,7 @@ public class CustomerService {
 
         int end = start + 19;
 
-        return customerRepository.findByEmployeeAndAgeBetweenAndDelYnFalse(
+        return customerRepository.findByEmployeeAndAgeBetweenAndDelYnFalseOrderByAge(
                 employee, start, end, Sort.by(Sort.Direction.DESC, "createdAt") // 오름차순
         );
     }
@@ -132,7 +132,7 @@ public class CustomerService {
         int ageEnd = ageStart + 19;
 
         // registerDate 기준으로 월별 필터링 & 정렬
-        List<Customer> customers = customerRepository.findByEmployeeAndAgeBetweenAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
+        List<Customer> customers = customerRepository.findByEmployeeAndAgeBetweenAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalseOrderByAge(
                 employee,
                 ageStart,
                 ageEnd,
@@ -142,7 +142,7 @@ public class CustomerService {
                 customerTypesRegisterDate
         );
         // createdAt 기준으로 월별 필터링 & 정렬 → customers에 추가하기
-        customers.addAll(customerRepository.findByEmployeeAndAgeBetweenAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(
+        customers.addAll(customerRepository.findByEmployeeAndAgeBetweenAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalseOrderByAge(
                 employee,
                 ageStart,
                 ageEnd,
