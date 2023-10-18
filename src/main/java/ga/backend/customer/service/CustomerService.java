@@ -100,7 +100,7 @@ public class CustomerService {
         return customers;
     }
 
-    // 나이별 정렬(2030, 4050, 6070)
+    // 나이별 정렬(1020, 3040, 5060, 7080)
     public List<Customer> findCustomerByAge(String age) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         int start = 0;
@@ -114,11 +114,11 @@ public class CustomerService {
         int end = start + 19;
 
         return customerRepository.findByEmployeeAndAgeBetweenAndDelYnFalseOrderByAge(
-                employee, start, end, Sort.by(Sort.Direction.DESC, "createdAt") // 오름차순
+                employee, start, end, Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
         );
     }
 
-    // 월별 나이별 정렬(2030, 4050, 6070)
+    // 월별 나이별 정렬(1020, 3040, 5060, 7080)
     public List<Customer> findCustomerByAge(String age, LocalDate date) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         int ageStart = 0;
@@ -136,7 +136,7 @@ public class CustomerService {
                 employee,
                 ageStart,
                 ageEnd,
-                Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 오름차순
+                Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
                 parserStart(date).toLocalDate(),
                 parserFinish(date).toLocalDate(),
                 customerTypesRegisterDate
@@ -146,7 +146,7 @@ public class CustomerService {
                 employee,
                 ageStart,
                 ageEnd,
-                Sort.by(Sort.Direction.DESC, "createdAt"), // 오름차순
+                Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
                 parserStart(date),
                 parserFinish(date),
                 customerTypesCreatedAt
@@ -200,6 +200,28 @@ public class CustomerService {
                 employee,
                 contractYn,
                 Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
+        );
+    }
+
+    // 계약여부 정렬(나이대별)
+    public List<Customer> findCustomerByContractYnByLatest(boolean contractYn, String age) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        int ageStart = 0;
+
+        if (age.equals("1020")) ageStart = 10;
+        else if (age.equals("3040")) ageStart = 30;
+        else if (age.equals("5060")) ageStart = 50;
+        else if (age.equals("7080")) ageStart = 70;
+        else throw new BusinessLogicException(ExceptionCode.CUSTOMER_AGE_FILTER_NOT_FOUND);
+
+        int ageEnd = ageStart + 19;
+
+        return customerRepository.findByEmployeeAndContractYnAndAgeBetweenAndDelYnFalseOrderByAge(
+                employee,
+                contractYn,
+                Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                ageStart,
+                ageEnd
         );
     }
 

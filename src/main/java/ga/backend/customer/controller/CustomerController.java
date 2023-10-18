@@ -9,6 +9,7 @@ import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -103,8 +104,18 @@ public class CustomerController {
 
     // 계약여부 정렬(최신순)
     @GetMapping("/customers/contractYn/{contractYn}/latest")
-    public ResponseEntity findCustomersByContractYn(@PathVariable("contractYn") boolean contractYn) {
+    public ResponseEntity findCustomersByContractYnByLatest(@PathVariable("contractYn") boolean contractYn) {
         List<Customer> customers = customerService.findCustomerByContractYnByLatest(contractYn);
+        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    // 계약여부 정렬(나이대별)
+    @GetMapping("/customers/contractYn/{contractYn}/age/{age}")
+    public ResponseEntity findCustomersByContractYnByAge(@PathVariable("contractYn") boolean contractYn,
+                                                         @PathVariable("age") String age) {
+        List<Customer> customers = customerService.findCustomerByContractYnByLatest(contractYn, age);
         List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
