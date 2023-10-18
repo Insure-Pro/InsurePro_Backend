@@ -161,7 +161,7 @@ public class CustomerService {
         String dongName = dongService.verifiedDong(dongPk).getDongName();
 
         return customerRepository.findByEmployeeAndDongStringContainsAndDelYnFalse(
-                employee, dongName, Sort.by(Sort.Direction.ASC, "li_pk") // 오름차순
+                employee, dongName, Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")) // 지역 오름차순, createdAt 내림차순
         );
     }
 
@@ -170,13 +170,26 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         String dongName = dongService.verifiedDong(dongPk).getDongName();
 
-        return customerRepository.findByEmployeeAndDongStringContainsAndCreatedAtBetweenAndDelYnFalse(
+        // registerDate 기준으로 월별 필터링 & 정렬
+        List<Customer> customers = customerRepository.findByEmployeeAndDongStringContainsAndRegisterDateBetweenAndDelYnFalse(
                 employee,
                 dongName,
-                Sort.by(Sort.Direction.ASC, "li_pk"), // 오름차순
-                parserStart(date),
-                parserFinish(date)
+                Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("registerDate"), Sort.Order.desc("createdAt")), // 지역 오름차순, registerDate와 createdAt 내림차순
+                parserStart(date).toLocalDate(),
+                parserFinish(date).toLocalDate(),
+                customerTypesRegisterDate
         );
+        // createdAt 기준으로 월별 필터링 & 정렬 → customers에 추가하기
+        customers.addAll(customerRepository.findByEmployeeAndDongStringContainsAndCreatedAtBetweenAndDelYnFalse(
+                employee,
+                dongName,
+                Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")), // 지역 오름차순, createdAt 내림차순
+                parserStart(date),
+                parserFinish(date),
+                customerTypesCreatedAt
+        ));
+
+        return customers;
     }
 
     // 계약여부 정렬
