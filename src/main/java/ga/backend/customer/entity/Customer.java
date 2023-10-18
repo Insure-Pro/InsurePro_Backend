@@ -32,6 +32,7 @@ public class Customer extends Auditable {
     @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Schedule> schedules = new ArrayList<>();
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CustomerType customerType;
 

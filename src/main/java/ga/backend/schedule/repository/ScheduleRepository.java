@@ -28,12 +28,12 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
     );
 
     // 이번달에 등록된 히스토리 유형 'Schedule.Progress' 의 개수
-    List<Schedule> findByEmployeeAndCreatedAtBetweenAndProgressAndDelYnFalse(
-            Employee employee,
-            LocalDateTime createdAtStart,
-            LocalDateTime createdAtFinish,
-            Schedule.Progress progress
-    );
+//    List<Schedule> findByEmployeeAndCreatedAtBetweenAndProgressAndDelYnFalse(
+//            Employee employee,
+//            LocalDateTime createdAtStart,
+//            LocalDateTime createdAtFinish,
+//            Schedule.Progress progress
+//    );
 
     // 성과분석 확인(다시 계산할지 여부 확인)
     @Query("SELECT s FROM Schedule s " +
