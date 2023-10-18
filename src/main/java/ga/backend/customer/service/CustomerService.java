@@ -192,12 +192,14 @@ public class CustomerService {
         return customers;
     }
 
-    // 계약여부 정렬
-    public List<Customer> findCustomerByContractYn(boolean contractYn) {
+    // 계약여부 정렬(최신순)
+    public List<Customer> findCustomerByContractYnByLatest(boolean contractYn) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
         return customerRepository.findByEmployeeAndContractYnAndDelYnFalse(
-                employee, contractYn
+                employee,
+                contractYn,
+                Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
         );
     }
 

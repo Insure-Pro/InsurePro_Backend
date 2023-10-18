@@ -33,7 +33,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByEmployeeAndDongStringContainsAndRegisterDateBetweenAndDelYnFalse(Employee employee, String dongName, Sort sort, LocalDate start, LocalDate finish, List<Customer.CustomerType> customerTypes);
 
     // 계약 완려 여부
-    List<Customer> findByEmployeeAndContractYnAndDelYnFalse(Employee employee, boolean contractYn);
+    List<Customer> findByEmployeeAndContractYnAndDelYnFalse(Employee employee, boolean contractYn, Sort sort);
     List<Customer> findByEmployeeAndContractYnAndCreatedAtBetweenAndDelYnFalse(Employee employee, boolean contractYn, LocalDateTime start, LocalDateTime finish);
 
     // 이름 검색

@@ -101,10 +101,10 @@ public class CustomerController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
-    // 계약여부 정렬
-    @GetMapping("/customers/contractYn/{contractYn}")
+    // 계약여부 정렬(최신순)
+    @GetMapping("/customers/contractYn/{contractYn}/latest")
     public ResponseEntity findCustomersByContractYn(@PathVariable("contractYn") boolean contractYn) {
-        List<Customer> customers = customerService.findCustomerByContractYn(contractYn);
+        List<Customer> customers = customerService.findCustomerByContractYnByLatest(contractYn);
         List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
