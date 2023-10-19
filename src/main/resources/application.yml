@@ -1,48 +1,3 @@
-spring:
-
-  servlet:
-    multipart:
-      max-file-size: 20MB
-      max-request-size: 20MB
-
-  datasource: # DATABASE
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${INSUREPRO_DB_HOST}
-    username: ${INSUREPRO_DB_ID}
-    password: ${INSUREPRO_DB_PW}
-  jpa: # JPA
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        format_sql: true
-    database: mysql
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-
-  mail: # 메일 전송 설정
-    host: smtp.gmail.com
-    port: 587 # 465 또는 587 포트 사용 가능(SMTP)
-    username: ${EMAIL_USERNAME} # 전송할 이메일
-    password: ${EMAIL_PW} # 생성된 비밀번호 (참고 사이트 : https://hyunmin1906.tistory.com/276)
-    properties.mail.smtp:
-      auth: true
-      timeout: 25000
-      starttls.enable: true
-    protocol: smtp
-
-
-mail:
-  address:
-    admin: utest3912@gmail.com # admin mail address
-
-jwt:
-  key: ${JWT_SECRET_KEY}                # 민감한 정보는 시스템 환경 변수에서 로드한다.
-  #  access-token-expiration-minutes: 30   # access-token 유효시간 : 30분
-  access-token-expiration-minutes: 10000   # access-token 유효시간 : 10000분 -> 테스로 변경
-  refresh-token-expiration-minutes: 420 # sercret-token 유효시간 : 420분(7시간)
-
-# 에러 처리
 server:
   port: 443
 
@@ -61,14 +16,57 @@ server:
       enabled: true             # 서버 오류 발생시 브라우저에 보여줄 기본 페이지 생성 여부
     include-message: always
 
+spring:
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+
+  datasource: # DATABASE
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${INSUREPRO_DB_HOSTS}
+    username: ${INSUREPRO_DB_IDS}
+    password: ${INSUREPRO_DB_PWS}
+  jpa: # JPA
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+
+  mail: # 메일 전송 설정
+    host: smtp.gmail.com
+    port: 587 # 465 또는 587 포트 사용 가능(SMTP)
+    username: ${EMAIL_USERNAMES} # 전송할 이메일
+    password: ${EMAIL_PWS} # 생성된 비밀번호 (참고 사이트 : https://hyunmin1906.tistory.com/276)
+    properties.mail.smtp:
+      auth: true
+      timeout: 25000
+      starttls.enable: true
+    protocol: smtp
+
+
+mail:
+  address:
+    admin: utest3912@gmail.com # admin mail address
+
+jwt:
+  key: ${JWT_SECRET_KEYS}                # 민감한 정보는 시스템 환경 변수에서 로드한다.
+  #  access-token-expiration-minutes: 30   # access-token 유효시간 : 30분
+  access-token-expiration-minutes: 10000   # access-token 유효시간 : 10000분 -> 테스로 변경
+  refresh-token-expiration-minutes: 420 # sercret-token 유효시간 : 420분(7시간)
+
 
 cloud:
   aws:
     s3:
-      bucket: ${INSUREPRO_S3_BUCKET}
+      bucket: ${INSUREPRO_S3_BUCKETS}
     credentials:
-      access-key: ${INSUREPRO_S3_KEY}
-      secret-key: ${INSUREPRO_S3_SECRET_KEY}
+      access-key: ${INSUREPRO_S3_KEYS}
+      secret-key: ${INSUREPRO_S3_SECRET_KEYS}
     region:
       static: ap-northeast-2
       auto: false
