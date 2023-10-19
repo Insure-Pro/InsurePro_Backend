@@ -81,7 +81,7 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
         // registerDate 기준으로 월별 필터링 & 정렬
-        List<Customer> customers = customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeIn(
+        List<Customer> customers = customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
                     employee,
                     Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
                     parserStart(date).toLocalDate(),
@@ -89,7 +89,7 @@ public class CustomerService {
                     customerTypesRegisterDate
             );
         // createdAt 기준으로 월별 필터링 & 정렬 → customers에 추가하기
-        customers.addAll(customerRepository.findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeIn(
+        customers.addAll(customerRepository.findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(
                 employee,
                 Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
                 parserStart(date),
@@ -240,7 +240,7 @@ public class CustomerService {
     // 이름 검색
     public List<Customer> findCustomerByName(String name) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        return customerRepository.findByEmployeeAndName(employee, name);
+        return customerRepository.findByEmployeeAndNameAndDelYnFalse(employee, name);
     }
 
     // UPDATE

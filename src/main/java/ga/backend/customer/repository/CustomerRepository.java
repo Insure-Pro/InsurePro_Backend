@@ -19,8 +19,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     // 최신순
     List<Customer> findByEmployeeAndDelYnFalse(Employee employee, Sort sort);
-    List<Customer> findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeIn(Employee employee, Sort sort, LocalDateTime start, LocalDateTime finish, List<Customer.CustomerType> customerTypes);
-    List<Customer> findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeIn(Employee employee, Sort sort, LocalDate start, LocalDate finish, List<Customer.CustomerType> customerTypes);
+    List<Customer> findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(Employee employee, Sort sort, LocalDateTime start, LocalDateTime finish, List<Customer.CustomerType> customerTypes);
+    List<Customer> findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(Employee employee, Sort sort, LocalDate start, LocalDate finish, List<Customer.CustomerType> customerTypes);
 
     // 나이별
     List<Customer> findByEmployeeAndAgeBetweenAndDelYnFalseOrderByAge(Employee employee, int start, int end, Sort sort);
@@ -38,7 +38,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByEmployeeAndContractYnAndCreatedAtBetweenAndDelYnFalse(Employee employee, boolean contractYn, LocalDateTime start, LocalDateTime finish);
 
     // 이름 검색
-    List<Customer> findByEmployeeAndName(Employee employee, String name);
+    List<Customer> findByEmployeeAndNameAndDelYnFalse(Employee employee, String name);
 
     // -----------------------------------------------------------------------------
     // 성과분석(analysis) RegisterDate
