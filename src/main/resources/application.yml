@@ -1,4 +1,5 @@
 spring:
+
   servlet:
     multipart:
       max-file-size: 20MB
@@ -43,6 +44,15 @@ jwt:
 
 # 에러 처리
 server:
+  port: 443
+
+  ssl:
+    key-store: ${INSUREPRO_KEYSTORE}
+    key-store-type: PKCS12
+    key-alias: ${INSUREPRO_ALIAS}
+    key-store-password: ${INSUREPRO_PW}
+    enabled: true
+
   error:
     include-exception: true     # 응답에 exception의 내용을 포함할지 여부
     #    include-stacktrace: always  # 응답에 stacktrace 내용을 포함할 지 여부
@@ -50,6 +60,7 @@ server:
     whitelabel:
       enabled: true             # 서버 오류 발생시 브라우저에 보여줄 기본 페이지 생성 여부
     include-message: always
+
 
 cloud:
   aws:
