@@ -1,20 +1,17 @@
 server:
   port: 443
-
-  ssl:
-    key-store: ${INSUREPRO_KEYSTORE}
-    key-store-type: PKCS12
-    key-alias: ${INSUREPRO_ALIAS}
-    key-store-password: ${INSUREPRO_PW}
-    enabled: true
-
   error:
     include-exception: true     # 응답에 exception의 내용을 포함할지 여부
-    #    include-stacktrace: always  # 응답에 stacktrace 내용을 포함할 지 여부
     path: '/error'               # 응답을 처리할 Handler의 경로
     whitelabel:
       enabled: true             # 서버 오류 발생시 브라우저에 보여줄 기본 페이지 생성 여부
-    include-message: always
+  #    include-message: always
+  ssl:
+    key-store: ${DX_KS}
+    key-store-type: PKCS12
+    key-alias: insurepro
+    key-store-password: ${DX_KS_PW}
+    enabled: true
 
 spring:
   servlet:
@@ -24,9 +21,10 @@ spring:
 
   datasource: # DATABASE
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${INSUREPRO_DB_HOSTS}
-    username: ${INSUREPRO_DB_IDS}
-    password: ${INSUREPRO_DB_PWS}
+    url: jdbc:mysql://ls-8e9c7ce5ba63f8ce7dc860020e9887eaff60bae9.cuwgajafrk25.ap-northeast-2.rds.amazonaws.com:3306/insureprodb
+    username: ${DX_DB_NM}
+    password: ${DX_DB_PW}
+
   jpa: # JPA
     show-sql: true
     hibernate:
@@ -40,8 +38,8 @@ spring:
   mail: # 메일 전송 설정
     host: smtp.gmail.com
     port: 587 # 465 또는 587 포트 사용 가능(SMTP)
-    username: ${EMAIL_USERNAMES} # 전송할 이메일
-    password: ${EMAIL_PWS} # 생성된 비밀번호 (참고 사이트 : https://hyunmin1906.tistory.com/276)
+    username: ${DX_MAIL_NAME} # 전송할 이메일
+    password: ${DX_MAIL_PW} # 생성된 비밀번호 (참고 사이트 : https://hyunmin1906.tistory.com/276)
     properties.mail.smtp:
       auth: true
       timeout: 25000
@@ -51,10 +49,10 @@ spring:
 
 mail:
   address:
-    admin: utest3912@gmail.com # admin mail address
+    admin: ${DX_MAIL_ADMIN} # admin mail address
 
 jwt:
-  key: ${JWT_SECRET_KEYS}                # 민감한 정보는 시스템 환경 변수에서 로드한다.
+  key: ${DX_JWT_KEY}              # 민감한 정보는 시스템 환경 변수에서 로드한다.
   #  access-token-expiration-minutes: 30   # access-token 유효시간 : 30분
   access-token-expiration-minutes: 10000   # access-token 유효시간 : 10000분 -> 테스로 변경
   refresh-token-expiration-minutes: 420 # sercret-token 유효시간 : 420분(7시간)
@@ -63,10 +61,10 @@ jwt:
 cloud:
   aws:
     s3:
-      bucket: ${INSUREPRO_S3_BUCKETS}
+      bucket: insureprobucket
     credentials:
-      access-key: ${INSUREPRO_S3_KEYS}
-      secret-key: ${INSUREPRO_S3_SECRET_KEYS}
+      access-key: ${DX_S3_AK}
+      secret-key: ${DX_S3_SK}
     region:
       static: ap-northeast-2
       auto: false
