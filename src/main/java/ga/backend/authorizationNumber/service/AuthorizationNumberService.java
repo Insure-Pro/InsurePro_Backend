@@ -82,7 +82,7 @@ public class AuthorizationNumberService {
             helper.setTo(toMail);
             helper.setSubject(title);
             helper.setText(content,true); // true 전달 > html 형식으로 전송 , 작성하지 않으면 단순 텍스트로 전달됨
-//            mailSender.send(message); // 이메일 전송
+            mailSender.send(message); // 이메일 전송
         } catch (MessagingException e) {
             throw new BusinessLogicException(ExceptionCode.FAIL_SEND_EMAIL);
         }
