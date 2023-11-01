@@ -22,7 +22,7 @@ public class ScheduleRequestDto {
         private LocalTime finishTm;
         private String address;
         private Boolean meetYn;
-        private Boolean delYn;
+        private boolean delYn;
         private String color;
         private String progress;
     }

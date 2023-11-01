@@ -4,6 +4,7 @@ import ga.backend.auditable.Auditable;
 import ga.backend.employee.entity.Employee;
 import ga.backend.li.entity.Li;
 import ga.backend.schedule.entity.Schedule;
+import ga.backend.util.CustomerType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -68,23 +69,4 @@ public class Customer extends Auditable {
 
     @Column
     private LocalDate registerDate; // 고객 등록 날짜
-
-    @Getter
-    public static enum CustomerType {
-        OD("OD"),
-        AD("AD"),
-        CP("CP"),
-        CD("CD"),
-        JD("JD"),
-        H("H"),
-        X("X"),
-        Y("Y"),
-        Z("Z");
-
-        private final String value;
-
-        CustomerType(String value) {
-            this.value = value;
-        }
-    }
 }
