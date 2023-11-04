@@ -1,8 +1,8 @@
 package ga.backend.analysis.entity;
 
 import ga.backend.auditable.Auditable;
-import ga.backend.customer.entity.Customer;
 import ga.backend.employee.entity.Employee;
+import ga.backend.util.CustomerType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,42 +21,24 @@ public class Analysis extends Auditable { // 성과분석
     private Long pk; // 식별자
 
     @Column
-    private Double allTAPercentage; // 전체 대비 TA 확률
+    private Double TARatio; // 이번달 히스토리 TA 비율
 
     @Column
-    private Double allAPPercentage; // 전체 대비 AP 확률
+    private Double APRatio; // 이번달 히스토리 AP 비율
 
     @Column
-    private Double allPCPercentage; // 전체 대비 PC 확률
+    private Double PCRatio; // 이번달 히스토리 PC 비율
 
     @Column
-    private Double TAPercentage; // TA 진행확률
-
-    @Column
-    private Double APPercentage; // AP 진행확률
-
-    @Column
-    private Double PCPercentage; // PC 진행확률
-
-    @Column
-    private Double allTARatio; // 전체 히스토리 TA 비율
-
-    @Column
-    private Double allAPRatio; // 전체 히스토리 AP 비율
-
-    @Column
-    private Double allPCRatio; // 전체 히스토리 PC 비율
-
-    @Column
-    private Double subscriptionPercentage; // 청약확률
+    private int subscriptionCount; // 이범달 청약 개수
 
     @Column
     private LocalDate date; // 성과분석(년-월-01)
 
     @Enumerated(EnumType.STRING)
-    private Customer.CustomerType customerType;
+    private CustomerType customerType;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "employee_pk")
     private Employee employee;
 }

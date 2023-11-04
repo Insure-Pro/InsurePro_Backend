@@ -68,9 +68,9 @@ public class Schedule extends Auditable {
         }
     }
 
-    @Column
+    @Column(nullable = false)
     private Boolean meetYn = false;
 
-    @Column
+    @Column(nullable = false)
     private Boolean delYn = false;
 }

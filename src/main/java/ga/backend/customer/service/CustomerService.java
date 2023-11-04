@@ -9,6 +9,7 @@ import ga.backend.exception.ExceptionCode;
 import ga.backend.li.entity.Li;
 import ga.backend.li.service.LiService;
 import ga.backend.schedule.entity.Schedule;
+import ga.backend.util.CustomerType;
 import ga.backend.util.FindEmployee;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -27,18 +28,18 @@ public class CustomerService {
 
     private final FindEmployee findEmployee;
 
-    private final List<Customer.CustomerType> customerTypesRegisterDate = List.of(
-            Customer.CustomerType.OD,
-            Customer.CustomerType.AD,
-            Customer.CustomerType.CP,
-            Customer.CustomerType.CD,
-            Customer.CustomerType.JD
+    private final List<CustomerType> customerTypesRegisterDate = List.of(
+            CustomerType.OD,
+            CustomerType.AD,
+            CustomerType.CP,
+            CustomerType.CD,
+            CustomerType.JD
     );
-    private final List<Customer.CustomerType> customerTypesCreatedAt = List.of(
-            Customer.CustomerType.H,
-            Customer.CustomerType.X,
-            Customer.CustomerType.Y,
-            Customer.CustomerType.Z
+    private final List<CustomerType> customerTypesCreatedAt = List.of(
+            CustomerType.H,
+            CustomerType.X,
+            CustomerType.Y,
+            CustomerType.Z
     );
 
     public CustomerService(CustomerRepository customerRepository, LiService liService, DongService dongService, FindEmployee findEmployee) {
