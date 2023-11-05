@@ -7,7 +7,6 @@ import ga.backend.customer.repository.CustomerRepository;
 import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
-import ga.backend.li.entity.Li;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.schedule.repository.ScheduleRepository;
 import ga.backend.util.CustomerType;
@@ -19,7 +18,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -28,6 +26,14 @@ public class AnalysisService {
     private final CustomerRepository customerRepository;
     private final ScheduleRepository scheduleRepository;
     private final FindEmployee findEmployee;
+
+    private final List<CustomerType> customerTypesRegisterDate = List.of(
+            CustomerType.OD,
+            CustomerType.AD,
+            CustomerType.CP,
+            CustomerType.CD,
+            CustomerType.JD
+    );
 
     // CREATE
     public Analysis createAnalysis(Analysis analysis) {
@@ -47,7 +53,8 @@ public class AnalysisService {
         // 분석하기
         LocalDateTime start = requestDate.atStartOfDay().withDayOfMonth(1); // 요청한 달의 첫째낫 00:00:00
         LocalDateTime finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날 23:59:99
-        analysisAllPercentage(start, finish, employee, analysis, customerType);
+        analysisPercentage(start, finish, employee, analysis, customerType);
+        analysisAllPercentage(start, finish, employee, analysis);
 
         // 다시 분석할지 여부 -> 구현할지 말지 고민중
         // 다시 분석할지 확인한 코드
@@ -134,25 +141,21 @@ public class AnalysisService {
         // now 이후 createdAt, modifiedAt된 customer과 history가 있으면 다시 계산하기
 
         // 새로 추가되거나 수정된 customer이 있는지 확인
-//        List<Customer> customers = customerRepository.findByEmployeeAndModifiedAtGreaterThanEqual(
         List<Customer> customers = customerRepository.findByEmployeeAndCreatedAtGreaterThanEqualOrModifiedAtGreaterThanEqual(
                 employee, analysis.getModifiedAt(), analysis.getModifiedAt()
-//                employee, LocalDateTime.parse("2023-10-10T22:08:59.20977"), LocalDateTime.parse("2023-10-10T22:08:59.20977")
         );
         customers.forEach(customer -> System.out.println(customer.getPk()));
-        System.out.println("!! analysis customer check : " + customers.size());
         if (!customers.isEmpty()) return true;
 
         // 새로 추가되거나 수정된 history이 있는지 확인
         List<Schedule> schedules = scheduleRepository.findByEmployeeAndCreatedAtGreaterThanEqualOrModifiedAtGreaterThanEqual(
                 employee, analysis.getModifiedAt(), analysis.getModifiedAt()
         );
-        System.out.println("!! analysis schedules check : " + schedules.size());
         return !schedules.isEmpty();
     }
 
     // 성과분석 계산
-    public Analysis analysisAllPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis, CustomerType customerType) {
+    public Analysis analysisPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis, CustomerType customerType) {
         // 이번달에 DB에 등록한 고객들
         List<Customer> customers = customerRepository.findByEmployeeAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
                 employee, start.toLocalDate(), finish.toLocalDate(), customerType
@@ -163,11 +166,44 @@ public class AnalysisService {
             analysis.setTARatio(0.0); // TA 확률
             analysis.setAPRatio(0.0); // AP 확률
             analysis.setPCRatio(0.0); // PC 확률
-        } else { // 이번달에 DB에 등록한 고객들이 없는 경우
+            analysis.setSubscriptionCount(0); // 청약 개수
+        } else { // 이번달에 DB에 등록한 고객들이 있는 경우
             Map<String, Double> schedule_count = progressFilter(customers); // 이번달에 등록된 히스토리별 고객들(Progree별)
             analysis.setTARatio(schedule_count.get("TA") / customer_count); // TA 확률
             analysis.setAPRatio(schedule_count.get("AP") / customer_count); // AP 확률
             analysis.setPCRatio(schedule_count.get("PC") / customer_count); // PC 확률
+            analysis.setSubscriptionCount(isContractYnCount(customers)); // 청약 개수
+        }
+
+        return analysisRespository.save(analysis);
+    }
+
+    // 성과분석 계산(ALL)
+    public Analysis analysisAllPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis) {
+        // 이번달에 DB에 등록한 고객들
+        List<Customer> customers = customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
+                employee, start.toLocalDate(), finish.toLocalDate(), customerTypesRegisterDate
+        );
+        double customer_count = customers.size();
+
+        System.out.println("!! customerCount : " + customer_count);
+        System.out.println("!! : " + isExistHistory(customers));
+
+        if(customer_count == 0) { // 이번달에 DB에 등록한 고객들이 없는 경우
+            analysis.setAllTARatio(0.0); // 모든 TA 확률
+            analysis.setAllAPRatio(0.0); // 모든 AP 확률
+            analysis.setAllPCRatio(0.0); // 모든 PC 확률
+            analysis.setAllHistoryRatio(0.0); // history 비율
+        } else { // 이번달에 DB에 등록한 고객들이 있는 경우
+            Map<String, Double> schedule_count = progressFilter(customers); // 이번달에 등록된 히스토리별 고객들(Progree별)
+            analysis.setAllTARatio(schedule_count.get("TA") / customer_count); // 모든 TA 확률
+            analysis.setAllAPRatio(schedule_count.get("AP") / customer_count); // 모든 AP 확률
+            analysis.setAllPCRatio(schedule_count.get("PC") / customer_count); // 모든 PC 확률
+            analysis.setAllHistoryRatio(isExistHistory(customers) / customer_count); // history 비율
+
+            System.out.println("!! count : " + schedule_count.get("TA"));
+            System.out.println("!! count : " + schedule_count.get("AP"));
+            System.out.println("!! count : " + schedule_count.get("PC"));
         }
 
         // 청약확률
@@ -176,7 +212,7 @@ public class AnalysisService {
         return analysisRespository.save(analysis);
     }
 
-    // Progress별 Schedule 개수세기
+    // Progress별 Schedule 개수세기(TA, AP, PC)
     public Map<String, Double> progressFilter(List<Customer> customers) {
         // 고객별 TA, AP, PC는 1개만 세기
 
@@ -202,8 +238,13 @@ public class AnalysisService {
         return map;
     }
 
-    // 이번달에 PC 히스토리를 등록한 사람 중에서 계약을 한 고객을 count
+    // 계약을 한 고객들 count
     public int isContractYnCount(List<Customer> customers) {
         return (int) customers.stream().filter(Customer::getContractYn).count();
+    }
+
+    // history가 없는 고객들 count
+    public double isExistHistory(List<Customer> customers) {
+        return customers.stream().filter(customer -> customer.getSchedules().isEmpty()).count();
     }
 }
