@@ -25,6 +25,7 @@ public enum ExceptionCode {
     INVALID_EMAIL(401, "Invalid Email"),
     WRONG_PASSWORD(401, "Wrong Password"),
     EMPLOYEE_NOT_CONTAIN_CUSTOMER(401, "Emploee not contains customer"),
+    CUSTOMER_AND_EMPLOYEE_NOT_MATCH(403, "Customer's Employee & JWT Employee Is Not Match"),
     TAMPERED_TOKEN(1004, "Tampered Token"), // 변조된 토큰
     FAIL_SEND_EMAIL(500, "Fail send email"),
 

@@ -43,13 +43,21 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     // -----------------------------------------------------------------------------
     // 성과분석(analysis) RegisterDate
-    // all 계산
+    // 계산
     List<Customer> findByEmployeeAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
             Employee employee,
             LocalDate createdAtStart,
             LocalDate createdAtFinish,
             CustomerType customerType
     );
+    // all 계산
+    List<Customer> findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
+            Employee employee,
+            LocalDate start,
+            LocalDate finish,
+            List<CustomerType> customerTypes
+    );
+
 
     // 성과분석 확인(다시 계산할지 여부 확인)
     @Query("SELECT c FROM Customer c " +

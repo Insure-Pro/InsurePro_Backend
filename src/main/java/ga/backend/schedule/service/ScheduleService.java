@@ -35,6 +35,10 @@ public class ScheduleService {
         LocalTime time = findScheduleTime(schedule.getStartTm(), schedule.getFinishTm());
         Optional.ofNullable(time).ifPresent(schedule::setTime);
 
+        // 고객의 employee와 token의 employee가 같은지 확인하기
+        if(employee.getPk() != customer.getEmployee().getPk())
+            throw new BusinessLogicException(ExceptionCode.CUSTOMER_AND_EMPLOYEE_NOT_MATCH);
+
         return scheduleRespository.save(schedule);
     }
 

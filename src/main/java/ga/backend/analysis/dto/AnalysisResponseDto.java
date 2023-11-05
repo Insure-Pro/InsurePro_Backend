@@ -19,7 +19,11 @@ public class AnalysisResponseDto {
         private Double TARatio; // 이번달 히스토리 TA 비율
         private Double APRatio; // 이번달 히스토리 AP 비율
         private Double PCRatio; // 이번달 히스토리 PC 비율
-        private int subscriptionCount; // 이범달 청약 개수
+        private int subscriptionCount; // 이번달 청약 개수
+        private Double allTARatio; // 고객 all(AD+OD+CD+CP+JD)에 관한 이번달 히스토리 TA 비율
+        private Double allAPRatio; // 고객 all(AD+OD+CD+CP+JD)에 관한 이번달 히스토리 AP 비율
+        private Double allPCRatio; // 고객 all(AD+OD+CD+CP+JD)에 관한 이번달 히스토리 PC 비율
+        private Double allHistoryRatio; // 이번달 분배만 받고 히스토리 아예없는 Db개수 /전체 이번달Db분배 받은 개수
         private LocalDate date; // 성과분석(년-월-01)
         private CustomerType customerType; // 고객 유형
         private LocalDateTime createdAt;
