@@ -166,12 +166,18 @@ public class AnalysisService {
             analysis.setTARatio(0.0); // TA 확률
             analysis.setAPRatio(0.0); // AP 확률
             analysis.setPCRatio(0.0); // PC 확률
+            analysis.setTA(0L); // TA 개수
+            analysis.setAP(0L); // AP 개수
+            analysis.setPC(0L); // PC 개수
             analysis.setSubscriptionCount(0); // 청약 개수
         } else { // 이번달에 DB에 등록한 고객들이 있는 경우
-            Map<String, Double> schedule_count = progressFilter(customers); // 이번달에 등록된 히스토리별 고객들(Progree별)
+            Map<String, Long> schedule_count = progressFilter(customers); // 이번달에 등록된 히스토리별 고객들(Progree별)
             analysis.setTARatio(schedule_count.get("TA") / customer_count); // TA 확률
             analysis.setAPRatio(schedule_count.get("AP") / customer_count); // AP 확률
             analysis.setPCRatio(schedule_count.get("PC") / customer_count); // PC 확률
+            analysis.setTA(schedule_count.get("TA")); // TA 개수
+            analysis.setAP(schedule_count.get("AP")); // AP 개수
+            analysis.setPC(schedule_count.get("PC")); // PC 개수
             analysis.setSubscriptionCount(isContractYnCount(customers)); // 청약 개수
         }
 
@@ -195,7 +201,7 @@ public class AnalysisService {
             analysis.setAllPCRatio(0.0); // 모든 PC 확률
             analysis.setAllHistoryRatio(0.0); // history 비율
         } else { // 이번달에 DB에 등록한 고객들이 있는 경우
-            Map<String, Double> schedule_count = progressFilter(customers); // 이번달에 등록된 히스토리별 고객들(Progree별)
+            Map<String, Long> schedule_count = progressFilter(customers); // 이번달에 등록된 히스토리별 고객들(Progree별)
             analysis.setAllTARatio(schedule_count.get("TA") / customer_count); // 모든 TA 확률
             analysis.setAllAPRatio(schedule_count.get("AP") / customer_count); // 모든 AP 확률
             analysis.setAllPCRatio(schedule_count.get("PC") / customer_count); // 모든 PC 확률
@@ -213,7 +219,7 @@ public class AnalysisService {
     }
 
     // Progress별 Schedule 개수세기(TA, AP, PC)
-    public Map<String, Double> progressFilter(List<Customer> customers) {
+    public Map<String, Long> progressFilter(List<Customer> customers) {
         // 고객별 TA, AP, PC는 1개만 세기
 
         Set<Customer> TA = new HashSet<>();
@@ -230,10 +236,10 @@ public class AnalysisService {
             );
         });
 
-        Map<String, Double> map = new HashMap<>();
-        map.put("TA", (double) TA.size());
-        map.put("AP", (double) AP.size());
-        map.put("PC", (double) PC.size());
+        Map<String, Long> map = new HashMap<>();
+        map.put("TA", (long) TA.size());
+        map.put("AP", (long) AP.size());
+        map.put("PC", (long) PC.size());
 
         return map;
     }

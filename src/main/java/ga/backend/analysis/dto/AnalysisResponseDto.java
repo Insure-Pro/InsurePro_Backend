@@ -19,6 +19,9 @@ public class AnalysisResponseDto {
         private Double TARatio; // 이번달 히스토리 TA 비율
         private Double APRatio; // 이번달 히스토리 AP 비율
         private Double PCRatio; // 이번달 히스토리 PC 비율
+        private long TA; // 이번달 히스토리 TA 개수
+        private long AP; // 이번달 히스토리 AP 개수
+        private long PC; // 이번달 히스토리 PC 개수
         private int subscriptionCount; // 이번달 청약 개수
         private Double allTARatio; // 고객 all(AD+OD+CD+CP+JD)에 관한 이번달 히스토리 TA 비율
         private Double allAPRatio; // 고객 all(AD+OD+CD+CP+JD)에 관한 이번달 히스토리 AP 비율
