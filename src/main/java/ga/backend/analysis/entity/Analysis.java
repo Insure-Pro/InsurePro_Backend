@@ -31,6 +31,15 @@ public class Analysis extends Auditable { // 성과분석
     private Double PCRatio; // 이번달 히스토리 PC 비율
 
     @Column
+    private Long TA; // 이번달 히스토리 TA 개수
+
+    @Column
+    private Long AP; // 이번달 히스토리 AP 개수
+
+    @Column
+    private Long PC; // 이번달 히스토리 PC 개수
+
+    @Column
     private int subscriptionCount; // 이번달 청약 개수
 
     // 모든 고객별(AD+OD+CD+CP+JD)
