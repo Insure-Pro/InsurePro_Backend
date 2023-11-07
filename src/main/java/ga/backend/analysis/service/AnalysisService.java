@@ -212,9 +212,6 @@ public class AnalysisService {
             System.out.println("!! count : " + schedule_count.get("PC"));
         }
 
-        // 청약확률
-        analysis.setSubscriptionCount(isContractYnCount(customers));
-
         return analysisRespository.save(analysis);
     }
 
