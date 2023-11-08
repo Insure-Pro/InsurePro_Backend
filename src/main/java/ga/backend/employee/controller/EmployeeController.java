@@ -5,6 +5,7 @@ import ga.backend.employee.dto.EmployeeResponseDto;
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.mapper.EmployeeMapper;
 import ga.backend.employee.service.EmployeeService;
+import ga.backend.oauth2.filter.JwtVerificationFilter;
 import ga.backend.team.dto.TeamResponseDto;
 import ga.backend.team.mapper.TeamMapper;
 import ga.backend.team.repository.TeamRepository;
@@ -15,6 +16,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
@@ -26,6 +29,7 @@ public class EmployeeController {
     private final EmployeeService employeeService;
     private final EmployeeMapper employeeMapper;
     private final TeamMapper teamMapper;
+    private final JwtVerificationFilter jwtVerificationFilter;
 
     // CREATE - 회원가입
     @PostMapping("/signin")
@@ -61,6 +65,14 @@ public class EmployeeController {
         response.setTeamResponseDto(teamResponse);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // access-token으로 refresh-token 재발행
+    @PatchMapping("/authorization")
+    public ResponseEntity patchToken(HttpServletRequest request, HttpServletResponse response) {
+        jwtVerificationFilter.assignAccessToken(request, response);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     // 가입한 이메일 찾기
