@@ -29,8 +29,11 @@ public class CustomerController {
     // CREATE
     @PostMapping("/customer")
     public ResponseEntity postCustomer(@Valid @RequestBody CustomerRequestDto.Post post) {
-        Customer customer = customerService.createCustomer(customerMapper.customerPostDtoToCustomer(post),
-                post.getLiPk());
+        Customer customer = customerService.createCustomer(
+                customerMapper.customerPostDtoToCustomer(post),
+                post.getLiPk(),
+                post.getMetroGuDong()
+        );
 
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
 
