@@ -1,13 +1,20 @@
 package ga.backend.customer.service;
 
+import ga.backend.customer.dto.CustomerRequestDto;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.repository.CustomerRepository;
 import ga.backend.dong.service.DongService;
+import ga.backend.dong2.entity.Dong2;
+import ga.backend.dong2.service.Dong2Service;
 import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
+import ga.backend.gu2.entity.Gu2;
+import ga.backend.gu2.service.Gu2Service;
 import ga.backend.li.entity.Li;
 import ga.backend.li.service.LiService;
+import ga.backend.metro2.entity.Metro2;
+import ga.backend.metro2.service.Metro2Service;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.util.CustomerType;
 import ga.backend.util.FindEmployee;
@@ -25,8 +32,27 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final LiService liService;
     private final DongService dongService;
+    private final Dong2Service dong2Service;
+    private final Gu2Service gu2Service;
+    private final Metro2Service metro2Service;
 
     private final FindEmployee findEmployee;
+
+    public CustomerService(CustomerRepository customerRepository,
+                           LiService liService,
+                           DongService dongService,
+                           Dong2Service dong2Service,
+                           Gu2Service gu2Service,
+                           Metro2Service metro2Service,
+                           FindEmployee findEmployee) {
+        this.customerRepository = customerRepository;
+        this.liService = liService;
+        this.dongService = dongService;
+        this.dong2Service = dong2Service;
+        this.gu2Service = gu2Service;
+        this.metro2Service = metro2Service;
+        this.findEmployee = findEmployee;
+    }
 
     private final List<CustomerType> customerTypesRegisterDate = List.of(
             CustomerType.OD,
@@ -42,22 +68,50 @@ public class CustomerService {
             CustomerType.Z
     );
 
-    public CustomerService(CustomerRepository customerRepository, LiService liService, DongService dongService, FindEmployee findEmployee) {
-        this.customerRepository = customerRepository;
-        this.liService = liService;
-        this.dongService = dongService;
-        this.findEmployee = findEmployee;
-    }
-
     // CREATE
-    public Customer createCustomer(Customer customer, long liPk) {
+    public Customer createCustomer(Customer customer, long liPk, CustomerRequestDto.MetroGuDong metroGuDong) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         customer.setEmployee(employee);
 
-        if (liPk != 0) {
-            Li li = liService.findLi(liPk);
-            customer.setLi(li);
-            customer.setDongString(liService.findDongString(li));
+        // liPk를 이용한 dongString 자동 설정
+//        if (liPk != 0) {
+//            Li li = liService.findLi(liPk);
+//            customer.setLi(li);
+//            customer.setDongString(liService.findDongString(li));
+//        }
+
+        if(metroGuDong != null) {
+            // metro, gu, dong을 이용한 dongString 자동 설정
+            String dongString = "";
+            String metroName = metroGuDong.getMetroName();
+            Metro2 metro2 = null;
+            if(metroName != null) {
+                dongString += metroName + " ";
+                // metro, gu, dong 자동 설정
+                metro2 = metro2Service.findMetroByMetroName(metroName);
+                if(metro2 == null) metro2 = metro2Service.createMetro(metroName);
+            }
+
+            String guName = metroGuDong.getGuName();
+            Gu2 gu2 = null;
+            if(guName != null) {
+                dongString += guName + " ";
+                // metro, gu, dong 자동 설정
+                gu2 = gu2Service.findGuByGuName(guName);
+                if(gu2 == null) gu2Service.createGu(guName, metro2);
+            }
+
+            String dongName = metroGuDong.getDongName();
+            if(dongName != null) {
+                dongString += dongName + " ";
+                // metro, gu, dong 자동 설정
+                Dong2 dong2 = dong2Service.findDongByDongName(dongName);
+                if(dong2 == null) dong2Service.createDong(dongName, gu2);
+            }
+
+            // metro, gu, dong을 이용한 dongString 자동 설정
+            if(customer.getAddress() != null) dongString += customer.getAddress();
+            customer.setDongString(dongString);
         }
 
         return customerRepository.save(customer);
@@ -83,12 +137,12 @@ public class CustomerService {
 
         // registerDate 기준으로 월별 필터링 & 정렬
         List<Customer> customers = customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
-                    employee,
-                    Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
-                    parserStart(date).toLocalDate(),
-                    parserFinish(date).toLocalDate(),
-                    customerTypesRegisterDate
-            );
+                employee,
+                Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                parserStart(date).toLocalDate(),
+                parserFinish(date).toLocalDate(),
+                customerTypesRegisterDate
+        );
         // createdAt 기준으로 월별 필터링 & 정렬 → customers에 추가하기
         customers.addAll(customerRepository.findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(
                 employee,

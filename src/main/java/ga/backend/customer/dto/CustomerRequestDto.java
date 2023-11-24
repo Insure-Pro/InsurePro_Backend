@@ -29,6 +29,7 @@ public class CustomerRequestDto {
         private String state; // 인수상태
         private Boolean contractYn;
         private LocalDate registerDate; // 고객 등록 날짜
+        private MetroGuDong metroGuDong; // metro, gu, dong에 대한 이름 설정
     }
 
     @AllArgsConstructor
@@ -51,5 +52,16 @@ public class CustomerRequestDto {
         private Boolean contractYn; // 계약 체결 여부
         private Boolean delYn; // 고객 삭제 여부
         private LocalDate registerDate; // 고객 등록 날짜
+        private MetroGuDong metroGuDong; // metro, gu, dong에 대한 이름 설정
+    }
+
+    // metro, gu, dong에 대한 이름 설정
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class MetroGuDong {
+        private String metroName;
+        private String guName;
+        private String dongName;
     }
 }
