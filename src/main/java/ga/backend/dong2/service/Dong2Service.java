@@ -71,6 +71,11 @@ public class Dong2Service {
         return dong.orElse(null);
     }
 
+    public Dong2 findDongByDongNameAndGu(String dongName, Gu2 gu2) {
+        Optional<Dong2> dong = dongRespository.findByDongNameAndGu2(dongName, gu2);
+        return dong.orElse(null);
+    }
+
     // UPDATE
     public Dong2 patchDong(Dong2 dong) {
         Dong2 findDong = verifiedDong(dong.getPk());
