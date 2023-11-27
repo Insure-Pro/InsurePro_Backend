@@ -71,6 +71,11 @@ public class Gu2Service {
         return gu.orElse(null);
     }
 
+    public Gu2 findGuByGuNameAndMetro(String guName, Metro2 metro2) {
+        Optional<Gu2> gu = guRespository.findByGuNameAndMetro2(guName, metro2);
+        return gu.orElse(null);
+    }
+
     // UPDATE
     public Gu2 patchGu(Gu2 gu) {
         Gu2 findGu = verifiedGu(gu.getPk());
