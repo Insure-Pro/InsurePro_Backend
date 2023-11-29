@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(Version.currentUrl)
@@ -43,7 +44,7 @@ public class CustomerController {
     @GetMapping("/customer/{customer-pk}")
     public ResponseEntity getCustomer(@Positive @PathVariable("customer-pk") long customerPk) {
         Customer customer = customerService.findCustomer(customerPk);
-        CustomerResponseDto.metroGuDongResponse response = customerMapper.customerToCustomerResponseMetroGuDongDtoCustom(customer);
+        CustomerResponseDto.MetroGuDongResponse response = customerMapper.customerToCustomerResponseMetroGuDongDtoCustom(customer);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -61,7 +62,9 @@ public class CustomerController {
     @GetMapping("/customers/latest-2")
     public ResponseEntity getCustomersAddMetro() {
         List<Customer> customers = customerService.findCustomerByLatest();
-        List<CustomerResponseDto.metroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDtoCustom(customers);
+        List<Map<String, Double>> coordinates = customerService.findCoordinate(customers);
+        List<CustomerResponseDto.CoordinateResponse> responses =
+                customerMapper.customersToCustomerResponseCoordiateDtoCustom(customers, coordinates);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }

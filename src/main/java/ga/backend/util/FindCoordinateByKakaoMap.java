@@ -19,13 +19,13 @@ public class FindCoordinateByKakaoMap {
     @Value("${kakao.key}")
     private String KAKAO_KEY;
 
-    public Map<String, Double> findCoordinate(String query) throws UnsupportedEncodingException {
-        // kakaoMap 연결 URL
-        String addr = "https://dapi.kakao.com/v2/local/search/address.json?";
-        String encode = URLEncoder.encode(query, "UTF-8");
-        addr += "query=" + encode;
-
+    public Map<String, Double> findCoordinate(String query) {
         try {
+            // kakaoMap 연결 URL
+            String addr = "https://dapi.kakao.com/v2/local/search/address.json?";
+            String encode = URLEncoder.encode(query, "UTF-8");
+            addr += "query=" + encode;
+
             //위의 주소를 가지고 URL 객체를 생성
             URL url = new URL(addr);
 
