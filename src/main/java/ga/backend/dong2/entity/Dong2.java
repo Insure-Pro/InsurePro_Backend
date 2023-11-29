@@ -29,5 +29,11 @@ public class Dong2 extends Auditable {
     private String dongName;
 
     @Column
+    private Long x;
+
+    @Column
+    private Long y;
+
+    @Column
     private Boolean delYn = false;
 }
