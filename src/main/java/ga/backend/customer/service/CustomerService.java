@@ -81,8 +81,7 @@ public class CustomerService {
 //        }
 
         // metro, gu, dong을 이용한 dongString 자동 설정
-        String dongString = makeDongString(metroGuDong, customer);
-        customer.setDongString(dongString);
+        makeDongString(metroGuDong, customer);
 
         return customerRepository.save(customer);
     }
@@ -269,7 +268,7 @@ public class CustomerService {
     }
 
     // UPDATE
-    public Customer patchCustomer(Customer customer, long liPk, CustomerRequestDto.MetroGuDong metroGuDong) {
+    public Customer patchCustomer(Customer customer, CustomerRequestDto.MetroGuDong metroGuDong) {
         Customer findCustomer = verifiedCustomer(customer.getPk());
         Employee employee = findEmployee.getLoginEmployeeByToken();
         // 직원 유효성 검사
@@ -284,8 +283,7 @@ public class CustomerService {
 //        }
 
         // metro, gu, dong을 이용한 dongString 자동 설정
-        String dongString = makeDongString(metroGuDong, customer);
-        findCustomer.setDongString(dongString);
+        makeDongString(metroGuDong, findCustomer);
 
         Optional.ofNullable(customer.getCustomerType()).ifPresent(findCustomer::setCustomerType);
         Optional.ofNullable(customer.getName()).ifPresent(findCustomer::setName);
@@ -343,7 +341,7 @@ public class CustomerService {
     }
 
     // metro, gu, dong을 이용한 dongString 자동 설정
-    public String makeDongString(CustomerRequestDto.MetroGuDong metroGuDong, Customer customer) {
+    public Customer makeDongString(CustomerRequestDto.MetroGuDong metroGuDong, Customer customer) {
         String dongString = "";
 
         // metro, gu, dong을 이용한 dongString 생성
@@ -355,6 +353,7 @@ public class CustomerService {
                 // metro, gu, dong 자동 설정
                 metro2 = metro2Service.findMetroByMetroName(metroName);
                 if(metro2 == null) metro2 = metro2Service.createMetro(metroName);
+                customer.setMetro2(metro2);
             }
 
             String guName = metroGuDong.getGuName();
@@ -364,6 +363,7 @@ public class CustomerService {
                 // metro, gu, dong 자동 설정
                 gu2 = gu2Service.findGuByGuNameAndMetro(guName, metro2);
                 if(gu2 == null) gu2 = gu2Service.createGu(guName, metro2);
+                customer.setGu2(gu2);
             }
 
             String dongName = metroGuDong.getDongName();
@@ -371,12 +371,15 @@ public class CustomerService {
                 dongString += dongName + " ";
                 // metro, gu, dong 자동 설정
                 Dong2 dong2 = dong2Service.findDongByDongNameAndGu(dongName, gu2);
-                if(dong2 == null) dong2Service.createDong(dongName, gu2);
+                if(dong2 == null) dong2 = dong2Service.createDong(dongName, gu2);
+                customer.setDong2(dong2);
             }
         }
 
         // 상세주소를 dongStirng에 추가
-        if(customer.getAddress() != null) dongString += customer.getAddress();
-        return dongString;
+//        if(customer.getAddress() != null) dongString += customer.getAddress();
+        if(!dongString.equals("")) customer.setDongString(dongString);
+
+        return customer;
     }
 }

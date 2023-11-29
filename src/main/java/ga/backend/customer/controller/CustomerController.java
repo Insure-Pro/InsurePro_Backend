@@ -151,7 +151,6 @@ public class CustomerController {
         patch.setPk(customerPk);
         Customer customer = customerService.patchCustomer(
                 customerMapper.customerPatchDtoToCustomer(patch),
-                patch.getLiPk(),
                 patch.getMetroGuDong()
         );
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
@@ -166,7 +165,6 @@ public class CustomerController {
         patch.setPk(customerPk);
         Customer customer = customerService.patchCustomer(
                 customerMapper.customerPatchDtoToCustomer(patch),
-                patch.getLiPk(),
                 patch.getMetroGuDong()
         );
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
