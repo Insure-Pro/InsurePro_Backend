@@ -9,7 +9,6 @@ import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,7 +43,7 @@ public class CustomerController {
     @GetMapping("/customer/{customer-pk}")
     public ResponseEntity getCustomer(@Positive @PathVariable("customer-pk") long customerPk) {
         Customer customer = customerService.findCustomer(customerPk);
-        CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
+        CustomerResponseDto.metroGuDongResponse response = customerMapper.customerToCustomerResponseMetroGuDongDtoCustom(customer);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -54,6 +53,15 @@ public class CustomerController {
     public ResponseEntity getCustomers() {
         List<Customer> customers = customerService.findCustomerByLatest();
         List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    // 최신순 정렬 - 생성일 기준 (+ metroGuDong 추가)
+    @GetMapping("/customers/latest-2")
+    public ResponseEntity getCustomersAddMetro() {
+        List<Customer> customers = customerService.findCustomerByLatest();
+        List<CustomerResponseDto.metroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDtoCustom(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
