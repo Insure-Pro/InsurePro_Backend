@@ -17,15 +17,16 @@ import ga.backend.metro2.entity.Metro2;
 import ga.backend.metro2.service.Metro2Service;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.util.CustomerType;
+import ga.backend.util.FindCoordinateByKakaoMap;
 import ga.backend.util.FindEmployee;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class CustomerService {
@@ -37,6 +38,7 @@ public class CustomerService {
     private final Metro2Service metro2Service;
 
     private final FindEmployee findEmployee;
+    private final FindCoordinateByKakaoMap findCoordinateByKakaoMap;
 
     public CustomerService(CustomerRepository customerRepository,
                            LiService liService,
@@ -44,7 +46,8 @@ public class CustomerService {
                            Dong2Service dong2Service,
                            Gu2Service gu2Service,
                            Metro2Service metro2Service,
-                           FindEmployee findEmployee) {
+                           FindEmployee findEmployee,
+                           FindCoordinateByKakaoMap findCoordinateByKakaoMap) {
         this.customerRepository = customerRepository;
         this.liService = liService;
         this.dongService = dongService;
@@ -52,6 +55,7 @@ public class CustomerService {
         this.gu2Service = gu2Service;
         this.metro2Service = metro2Service;
         this.findEmployee = findEmployee;
+        this.findCoordinateByKakaoMap = findCoordinateByKakaoMap;
     }
 
     private final List<CustomerType> customerTypesRegisterDate = List.of(
@@ -90,6 +94,59 @@ public class CustomerService {
     public Customer findCustomer(long customerPk) {
         Customer customer = verifiedCustomer(customerPk);
         return customer;
+    }
+
+    public List<Map<String, Double>> findCoordinate(List<Customer> customers) {
+        List<Map<String, Double>> list = new ArrayList<>();
+
+        for(Customer customer : customers) {
+            Map<String, Double> map = new HashMap<>();
+
+            if(customer.getDong2() != null) { // dong이 있는 경우
+                Dong2 dong2 = customer.getDong2();
+
+                // 좌표값이 없는 경우 -> 구하기
+                if(dong2.getX() == null) {
+                    map = findCoordinateByKakaoMap.findCoordinate(dong2.getDongName());
+                    dong2.setX(map.get("x"));
+                    dong2.setY(map.get("y"));
+                    dong2Service.createDong(dong2);
+                } else {
+                    map.put("x", dong2.getX());
+                    map.put("y", dong2.getY());
+                }
+            } else if(customer.getGu2() != null) { // gu가 있는 경우
+                Gu2 gu2 = customer.getGu2();
+
+                // 좌표값이 없는 경우 -> 구하기
+                if(gu2.getX() == null) {
+                    map = findCoordinateByKakaoMap.findCoordinate(gu2.getGuName());
+                    gu2.setX(map.get("x"));
+                    gu2.setY(map.get("y"));
+                    gu2Service.createGu(gu2);
+                } else {
+                    map.put("x", gu2.getX());
+                    map.put("y", gu2.getY());
+                }
+            } else if(customer.getMetro2() != null) { // metro가 있는 경우
+                Metro2 metro2 = customer.getMetro2();
+
+                // 좌표값이 없는 경우 -> 구하기
+                if(metro2.getX() == null) {
+                    map = findCoordinateByKakaoMap.findCoordinate(metro2.getMetroName());
+                    metro2.setX(map.get("x"));
+                    metro2.setY(map.get("y"));
+                    metro2Service.createMetro(metro2);
+                } else {
+                    map.put("x", metro2.getX());
+                    map.put("y", metro2.getY());
+                }
+            }
+
+            list.add(map);
+        }
+
+        return list;
     }
 
     // 최신순 정렬 - 생성일 기준

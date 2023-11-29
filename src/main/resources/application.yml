@@ -70,3 +70,6 @@ cloud:
       auto: false
     stack:
       auto: false
+
+kakao:
+  key: ${DX_KAKAO_KEY}

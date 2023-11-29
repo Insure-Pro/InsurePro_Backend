@@ -29,10 +29,10 @@ public class Metro2 extends Auditable {
     private String metroName;
 
     @Column
-    private Long x;
+    private Double x;
 
     @Column
-    private Long y;
+    private Double y;
 
     @Column
     private Boolean delYn = false;

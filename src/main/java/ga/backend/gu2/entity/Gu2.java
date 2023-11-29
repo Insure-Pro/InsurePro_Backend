@@ -34,10 +34,10 @@ public class Gu2 extends Auditable {
     private String guName;
 
     @Column
-    private Long x;
+    private Double x;
 
     @Column
-    private Long y;
+    private Double y;
 
     @Column
     private Boolean delYn = false;
