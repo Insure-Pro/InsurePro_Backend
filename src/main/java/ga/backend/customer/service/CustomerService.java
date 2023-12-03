@@ -73,7 +73,7 @@ public class CustomerService {
     );
 
     // CREATE
-    public Customer createCustomer(Customer customer, long liPk, CustomerRequestDto.MetroGuDong metroGuDong) {
+    public Customer createCustomer(Customer customer, CustomerRequestDto.MetroGuDong metroGuDong) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         customer.setEmployee(employee);
 
@@ -89,6 +89,21 @@ public class CustomerService {
 
         return customerRepository.save(customer);
     }
+
+    public List<Customer> createCustomers(List<Customer> customers, List<CustomerRequestDto.MetroGuDong> metroGuDongs) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+
+        for(int i=0; i<customers.size(); i++) {
+            customers.get(i).setEmployee(employee);
+
+            // metro, gu, dong을 이용한 dongString 자동 설정
+            makeDongString(metroGuDongs.get(i), customers.get(i));
+            customerRepository.save(customers.get(i));
+        }
+
+        return customers;
+    }
+
 
     // READ
     public Customer findCustomer(long customerPk) {

@@ -17,6 +17,7 @@ import javax.validation.constraints.Positive;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(Version.currentUrl)
@@ -31,13 +32,24 @@ public class CustomerController {
     public ResponseEntity postCustomer(@Valid @RequestBody CustomerRequestDto.Post post) {
         Customer customer = customerService.createCustomer(
                 customerMapper.customerPostDtoToCustomer(post),
-                post.getLiPk(),
                 post.getMetroGuDong()
         );
 
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/customers")
+    public ResponseEntity postCustomers(@Valid @RequestBody List<CustomerRequestDto.Post> posts) {
+        List<Customer> customers = customerService.createCustomers(
+                customerMapper.customersPostDtoToCustomers(posts),
+                customerMapper.customersPostDtoToCustomersPostMetroGuDong(posts)
+        );
+
+        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomerResponseDtos(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.CREATED);
     }
 
     // READ
