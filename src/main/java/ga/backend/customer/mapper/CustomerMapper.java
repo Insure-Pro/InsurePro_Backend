@@ -15,10 +15,13 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
     Customer customerPostDtoToCustomer(CustomerRequestDto.Post post);
+    List<Customer> customersPostDtoToCustomers(List<CustomerRequestDto.Post> posts);
+    List<CustomerRequestDto.MetroGuDong> customersPostDtoToCustomersPostMetroGuDong(List<CustomerRequestDto.Post> posts);
 
     Customer customerPatchDtoToCustomer(CustomerRequestDto.Patch patch);
 
     CustomerResponseDto.Response customerToCustomerResponseDto(Customer customer);
+    List<CustomerResponseDto.Response> customersToCustomerResponseDtos(List<Customer> customer);
 
     List<CustomerResponseDto.Response> customersToCustomersResponseDto(List<Customer> customers);
 
