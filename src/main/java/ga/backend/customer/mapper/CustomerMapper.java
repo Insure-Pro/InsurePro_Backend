@@ -16,7 +16,9 @@ import java.util.stream.Collectors;
 public interface CustomerMapper {
     Customer customerPostDtoToCustomer(CustomerRequestDto.Post post);
     List<Customer> customersPostDtoToCustomers(List<CustomerRequestDto.Post> posts);
-    List<CustomerRequestDto.MetroGuDong> customersPostDtoToCustomersPostMetroGuDong(List<CustomerRequestDto.Post> posts);
+    default List<CustomerRequestDto.MetroGuDong> customersPostDtoToCustomersPostMetroGuDong(List<CustomerRequestDto.Post> posts) {
+        return posts.stream().map(CustomerRequestDto.Post::getMetroGuDong).collect(Collectors.toList());
+    }
 
     Customer customerPatchDtoToCustomer(CustomerRequestDto.Patch patch);
 
