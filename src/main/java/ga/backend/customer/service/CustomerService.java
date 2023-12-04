@@ -84,6 +84,9 @@ public class CustomerService {
 //            customer.setDongString(liService.findDongString(li));
 //        }
 
+        if(customer.getContractYn() == null) customer.setContractYn(false);
+        System.out.println("!! contractYn : " + customer.getContractYn());
+
         // metro, gu, dong을 이용한 dongString 자동 설정
         makeDongString(metroGuDong, customer);
 
@@ -95,6 +98,8 @@ public class CustomerService {
 
         for(int i=0; i<customers.size(); i++) {
             customers.get(i).setEmployee(employee);
+
+            if(customers.get(i).getContractYn() == null) customers.get(i).setContractYn(false);
 
             // metro, gu, dong을 이용한 dongString 자동 설정
             makeDongString(metroGuDongs.get(i), customers.get(i));
