@@ -4,6 +4,7 @@ import ga.backend.customer.entity.Customer;
 import ga.backend.util.CustomerType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -21,6 +22,7 @@ public class CustomerRequestDto {
         private String name; // 이름
         private LocalDate birth; // 생년월일
         private int age; // 나이
+        private String dongString; // 행정동 주소
         private String address; // 상세주소
         @Pattern(regexp = "^010-?([0-9]{4})-?([0-9]{4})$",
                 message = "전화번호 형태는 010-1234-1234 입니다.")
@@ -57,6 +59,7 @@ public class CustomerRequestDto {
 
     // metro, gu, dong에 대한 이름 설정
     @AllArgsConstructor
+    @NoArgsConstructor
     @Setter
     @Getter
     public static class MetroGuDong {

@@ -29,15 +29,15 @@ public interface CustomerMapper {
 
     default CustomerResponseDto.MetroGuDong customerToCustomerResponse(Customer customer) {
         CustomerResponseDto.MetroGuDong metroGuDong = new CustomerResponseDto.MetroGuDong();
-        String[] dongString = customer.getDongString().split(" ");
-        metroGuDong.setMetroName(dongString[0]);
-        if (dongString.length >= 2) metroGuDong.setGuName(dongString[1]);
-        if (dongString.length >= 3) metroGuDong.setDongName(dongString[2]);
+        if(customer.getDongString() != null) {
+            String[] dongString = customer.getDongString().split(" ");
+            metroGuDong.setMetroName(dongString[0]);
+            if (dongString.length >= 2) metroGuDong.setGuName(dongString[1]);
+            if (dongString.length >= 3) metroGuDong.setDongName(dongString[2]);
+        }
 
         return metroGuDong;
     }
-
-    ;
 
     CustomerResponseDto.MetroGuDongResponse customerToCustomerResponseMetroGuDongDto(Customer customer);
 

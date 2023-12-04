@@ -93,7 +93,7 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
-    public List<Customer> createCustomers(List<Customer> customers, List<CustomerRequestDto.MetroGuDong> metroGuDongs) {
+    public List<Customer> createCustomers(List<Customer> customers) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
         for(int i=0; i<customers.size(); i++) {
@@ -102,7 +102,10 @@ public class CustomerService {
             if(customers.get(i).getContractYn() == null) customers.get(i).setContractYn(false);
 
             // metro, gu, dong을 이용한 dongString 자동 설정
-            makeDongString(metroGuDongs.get(i), customers.get(i));
+            if(customers.get(i).getDongString() != null) {
+                makeDongString(customers.get(i).getDongString(), customers.get(i));
+            }
+
             customerRepository.save(customers.get(i));
         }
 
@@ -416,6 +419,18 @@ public class CustomerService {
             schedule.setDelYn(true);
         }
     }
+
+    // metro, gu, dong을 이용한 dongString 자동 설정
+    public Customer makeDongString(String dongString, Customer customer) {
+        CustomerRequestDto.MetroGuDong metroGuDong = new CustomerRequestDto.MetroGuDong();
+        String[] dongStrings = dongString.split(" ");
+        if(dongStrings.length >= 1) metroGuDong.setMetroName(dongStrings[0]);
+        if(dongStrings.length >= 2) metroGuDong.setGuName(dongStrings[1]);
+        if(dongStrings.length >= 3) metroGuDong.setDongName(dongStrings[2]);
+
+        return makeDongString(metroGuDong, customer);
+    }
+
 
     // metro, gu, dong을 이용한 dongString 자동 설정
     public Customer makeDongString(CustomerRequestDto.MetroGuDong metroGuDong, Customer customer) {

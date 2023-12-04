@@ -43,8 +43,7 @@ public class CustomerController {
     @PostMapping("/customers")
     public ResponseEntity postCustomers(@Valid @RequestBody List<CustomerRequestDto.Post> posts) {
         List<Customer> customers = customerService.createCustomers(
-                customerMapper.customersPostDtoToCustomers(posts),
-                customerMapper.customersPostDtoToCustomersPostMetroGuDong(posts)
+                customerMapper.customersPostDtoToCustomers(posts)
         );
 
         List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomerResponseDtos(customers);
