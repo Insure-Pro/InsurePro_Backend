@@ -90,6 +90,10 @@ public class Dong2Service {
         dongRespository.delete(dong);
     }
 
+    public void deleteDong(Dong2 dong2) {
+        dongRespository.delete(dong2);
+    }
+
     // 검증
     public Dong2 verifiedDong(long dongPk) {
         Optional<Dong2> dong = dongRespository.findById(dongPk);

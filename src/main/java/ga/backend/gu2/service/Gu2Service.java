@@ -90,6 +90,10 @@ public class Gu2Service {
         guRespository.delete(gu);
     }
 
+    public void deleteGu(Gu2 gu) {
+        guRespository.delete(gu);
+    }
+
     // 검증
     public Gu2 verifiedGu(long guPk) {
         Optional<Gu2> gu = guRespository.findById(guPk);

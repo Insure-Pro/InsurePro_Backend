@@ -58,6 +58,10 @@ public class Metro2Service {
         metroRespository.delete(metro);
     }
 
+    public void deleteMetro(Metro2 metro) {
+        metroRespository.delete(metro);
+    }
+
     // 검증
     public Metro2 verifiedMetro(long metroPk) {
         Optional<Metro2> metro = metroRespository.findById(metroPk);

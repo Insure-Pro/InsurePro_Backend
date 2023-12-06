@@ -128,21 +128,23 @@ public class CustomerService {
             if(customer.getDong2() != null) { // dong이 있는 경우
                 Dong2 dong2 = customer.getDong2();
 
-                // 좌표값이 없는 경우 -> 구하기
-                if(dong2.getX() == null) {
+                if(dong2.getDongName().isEmpty()) { // dong 이름이 없는 경우 삭제하기
+                    dong2Service.deleteDong(dong2);
+                } else if(dong2.getX() == null) { // 좌표값이 없는 경우 -> 구하기
                     map = findCoordinateByKakaoMap.findCoordinate(dong2.getDongName());
                     dong2.setX(map.get("x"));
                     dong2.setY(map.get("y"));
                     dong2Service.createDong(dong2);
-                } else {
+                } else { // 좌표값이 있는 경우에는 그대로 사용하기
                     map.put("x", dong2.getX());
                     map.put("y", dong2.getY());
                 }
             } else if(customer.getGu2() != null) { // gu가 있는 경우
                 Gu2 gu2 = customer.getGu2();
 
-                // 좌표값이 없는 경우 -> 구하기
-                if(gu2.getX() == null) {
+                if(gu2.getGuName().isEmpty()) { // gu 이름이 없는 경우 삭제하기
+                    gu2Service.deleteGu(gu2);
+                } else if(gu2.getX() == null) { // 좌표값이 없는 경우 -> 구하기
                     map = findCoordinateByKakaoMap.findCoordinate(gu2.getGuName());
                     gu2.setX(map.get("x"));
                     gu2.setY(map.get("y"));
@@ -154,8 +156,9 @@ public class CustomerService {
             } else if(customer.getMetro2() != null) { // metro가 있는 경우
                 Metro2 metro2 = customer.getMetro2();
 
-                // 좌표값이 없는 경우 -> 구하기
-                if(metro2.getX() == null) {
+                if(metro2.getMetroName().isEmpty()) { // metro 이름이 없는 경우 삭제하기
+                    metro2Service.deleteMetro(metro2);
+                } else if(metro2.getX() == null) { // 좌표값이 없는 경우 -> 구하기
                     map = findCoordinateByKakaoMap.findCoordinate(metro2.getMetroName());
                     metro2.setX(map.get("x"));
                     metro2.setY(map.get("y"));
@@ -440,7 +443,7 @@ public class CustomerService {
         if(metroGuDong != null) {
             String metroName = metroGuDong.getMetroName();
             Metro2 metro2 = null;
-            if(metroName != null) {
+            if(metroName != null && !metroName.isEmpty()) {
                 dongString += metroName + " ";
                 // metro, gu, dong 자동 설정
                 metro2 = metro2Service.findMetroByMetroName(metroName);
@@ -450,7 +453,7 @@ public class CustomerService {
 
             String guName = metroGuDong.getGuName();
             Gu2 gu2 = null;
-            if(guName != null) {
+            if(guName != null && !guName.isEmpty()) {
                 dongString += guName + " ";
                 // metro, gu, dong 자동 설정
                 gu2 = gu2Service.findGuByGuNameAndMetro(guName, metro2);
@@ -459,7 +462,7 @@ public class CustomerService {
             }
 
             String dongName = metroGuDong.getDongName();
-            if(dongName != null) {
+            if(dongName != null && !dongName.isEmpty()) {
                 dongString += dongName + " ";
                 // metro, gu, dong 자동 설정
                 Dong2 dong2 = dong2Service.findDongByDongNameAndGu(dongName, gu2);
