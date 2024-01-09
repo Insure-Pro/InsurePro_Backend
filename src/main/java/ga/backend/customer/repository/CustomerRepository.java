@@ -39,7 +39,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByEmployeeAndContractYnAndCreatedAtBetweenAndDelYnFalse(Employee employee, boolean contractYn, LocalDateTime start, LocalDateTime finish);
 
     // 이름 검색
-    List<Customer> findByEmployeeAndNameAndDelYnFalse(Employee employee, String name);
+    List<Customer> findByEmployeeAndNameContainsAndDelYnFalse(Employee employee, String name);
 
     // -----------------------------------------------------------------------------
     // 성과분석(analysis) RegisterDate

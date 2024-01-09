@@ -11,7 +11,6 @@ import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.gu2.entity.Gu2;
 import ga.backend.gu2.service.Gu2Service;
-import ga.backend.li.entity.Li;
 import ga.backend.li.service.LiService;
 import ga.backend.metro2.entity.Metro2;
 import ga.backend.metro2.service.Metro2Service;
@@ -20,7 +19,6 @@ import ga.backend.util.CustomerType;
 import ga.backend.util.FindCoordinateByKakaoMap;
 import ga.backend.util.FindEmployee;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -262,6 +260,15 @@ public class CustomerService {
         return customers;
     }
 
+    // 지역이름으로 정렬
+    public List<Customer> findCustomerByDongName(String dongName) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+
+        return customerRepository.findByEmployeeAndDongStringContainsAndDelYnFalse(
+                employee, dongName, Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")) // 지역 오름차순, createdAt 내림차순
+        );
+    }
+
     // 지역별 정렬
     public List<Customer> findCustomerByLi(Long dongPk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
@@ -347,7 +354,7 @@ public class CustomerService {
     // 이름 검색
     public List<Customer> findCustomerByName(String name) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        return customerRepository.findByEmployeeAndNameAndDelYnFalse(employee, name);
+        return customerRepository.findByEmployeeAndNameContainsAndDelYnFalse(employee, name);
     }
 
     // UPDATE
