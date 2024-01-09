@@ -1,13 +1,11 @@
 package ga.backend.customer.dto;
 
-import ga.backend.customer.entity.Customer;
 import ga.backend.util.CustomerType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
@@ -66,5 +64,12 @@ public class CustomerRequestDto {
         private String metroName;
         private String guName;
         private String dongName;
+    }
+
+    // customer 이름 조회를 위한 dto
+    @Getter
+    public static class Name {
+        private long id;
+        private String name;
     }
 }
