@@ -108,9 +108,9 @@ public class CustomerController {
     }
 
     // 지역이름으로 정렬
-    @GetMapping("/customers/dongName")
-    public ResponseEntity findCustomersByDongName(@Valid @RequestBody CustomerRequestDto.MetroGuDong metroGuDong) {
-        List<Customer> customers = customerService.findCustomerByDongName(metroGuDong.getDongName());
+    @GetMapping("/customers/dongName/{dongName}")
+    public ResponseEntity findCustomersByDongName(@PathVariable("dongName") String dongName) {
+        List<Customer> customers = customerService.findCustomerByDongName(dongName);
         List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
@@ -165,9 +165,9 @@ public class CustomerController {
     }
 
     // 고객 이름 검색
-    @GetMapping("/customers/name")
-    public ResponseEntity findCustomerByname(@RequestBody CustomerRequestDto.Name customerName) {
-        List<Customer> customers = customerService.findCustomerByName(customerName.getName());
+    @GetMapping("/customers/name/{name}")
+    public ResponseEntity findCustomerByname(@PathVariable("name") String name) {
+        List<Customer> customers = customerService.findCustomerByName(name);
         List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);

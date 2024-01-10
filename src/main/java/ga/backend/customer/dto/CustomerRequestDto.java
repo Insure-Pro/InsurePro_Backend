@@ -65,11 +65,4 @@ public class CustomerRequestDto {
         private String guName;
         private String dongName;
     }
-
-    // customer 이름 조회를 위한 dto
-    @Getter
-    public static class Name {
-        private long id;
-        private String name;
-    }
 }
