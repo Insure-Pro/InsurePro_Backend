@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
@@ -32,13 +33,11 @@ public class QuestionController {
     private final EmployeeMapper employeeMapper;
 
     // CREATE
-    @PostMapping
-    public ResponseEntity postQuestion(@Valid @RequestBody QuestionRequestDto.Post post) {
-        // 직원 정보 조회
-        Employee employee = employeeService.findEmployeeByToken();
-
+    @PostMapping(consumes="multipart/form-data")
+    public ResponseEntity postQuestion(@RequestPart(value = "content") String content,
+                                       @RequestPart(value = "image", required = false) MultipartFile photo) {
         // question 생성
-        Question question = questionService.createQuestion(questionMapper.questionPostDtoToQuestion(post), employee);
+        Question question = questionService.createQuestion(content, photo);
 
         // Response
         QuestionResponseDto.Response response = questionMapper.questionToQuestionResponseDto(question);
