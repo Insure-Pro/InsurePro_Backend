@@ -16,7 +16,11 @@ public class Question extends Auditable {
     @Column(name="question_pk")
     private Long pk;
 
-    private String content;
+    @Column
+    private String content; // 문의 내용
+
+    @Column
+    private String imageUrl; // 문의 사진 url
 
     @ManyToOne
     @JoinColumn(name = "employee_pk")

@@ -14,6 +14,7 @@ public class QuestionResponseDto {
     public static class Response {
         private Long pk;
         private String content;
+        private String imageUrl;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
         private EmployeeResponseDto.Response employee;

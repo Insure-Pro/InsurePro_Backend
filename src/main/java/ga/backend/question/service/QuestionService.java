@@ -7,8 +7,11 @@ import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.question.entity.Question;
 import ga.backend.question.repository.QuestionRepository;
+import ga.backend.s3.service.ImageService;
+import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,11 +20,24 @@ import java.util.Optional;
 @AllArgsConstructor
 public class QuestionService {
     private final QuestionRepository questionRespository;
-    private final EmployeeRepository employeeRepository;
+    private final ImageService imageService;
+    private final FindEmployee findEmployee;
 
     // CREATE
-    public Question createQuestion(Question question, Employee employee) {
+    public Question createQuestion(String content, MultipartFile photo) {
+        // 문의사항 생성
+        Question question = new Question();
+        question.setContent(content);
+
+        // 직원 정보 조회
+        Employee employee = findEmployee.getLoginEmployeeByToken();
         question.setEmployee(employee);
+
+        // 이미지 업로드
+        if (photo != null) {
+            question.setImageUrl(imageService.updateImage(photo, "photo", "imageUrl"));
+        }
+
         return questionRespository.save(question);
     }
 
