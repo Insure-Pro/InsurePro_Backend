@@ -54,6 +54,11 @@ dependencies {
 
 	// aws s3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+	// kakao 메세지 보내기
+//	implementation group: 'net.nurigo', name: 'sdk', version: '4.2.4'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

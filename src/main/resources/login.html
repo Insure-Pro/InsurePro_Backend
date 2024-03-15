@@ -1,0 +1,14 @@
+<!-- kakao button -->
+<div class="text-center">
+    <a href="https://kauth.kakao.com/oauth/authorize"
+       th:href="@{https://kauth.kakao.com/oauth/authorize(client_id='e426558528f8e9954d1490f3995d95c9', redirect_uri='https://127.0.0.1/login/oauth2/code/kakao', response_type='code')}">
+        <img src="/images/kakao_login_medium_narrow.png">
+    </a>
+</div>
+
+<div>
+    Kakao API Key: <span th:text="${kakaoApiKey}"></span>
+</div>
+<div>
+    Redirect URI: <span th:text="${@environment.getProperty('kakao.redirect_uri')}"></span>
+</div>

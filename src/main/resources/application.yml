@@ -46,6 +46,8 @@ spring:
       starttls.enable: true
     protocol: smtp
 
+  profiles:
+    include: private
 
 mail:
   address:
@@ -73,3 +75,14 @@ cloud:
 
 kakao:
   key: ${DX_KAKAO_KEY}
+  api:
+#    key: ${DX_KAKAO_KEY}
+#    key: ${DX_KAKAO_KEY} # 나
+    key: ${DX_KAKAO_KEY_FROM} # 형
+#  api_key: ${DX_KAKAO_KEY} # 나
+  api_key: ${DX_KAKAO_KEY_FROM} # 형
+  redirect_uri: https://127.0.0.1/login/oauth2/code/kakao
+
+#kakaoApiKey: ${DX_KAKAO_KEY} # 나
+kakaoApiKey: ${DX_KAKAO_KEY_FROM} # 형
+redirectUri: https://127.0.0.1/login/oauth2/code/kakao
