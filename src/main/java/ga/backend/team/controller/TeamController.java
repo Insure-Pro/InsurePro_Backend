@@ -24,7 +24,7 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
-@RequestMapping(Version.currentUrl + "/teams")
+@RequestMapping(Version.currentUrl)
 @Validated
 @AllArgsConstructor
 public class TeamController {
@@ -33,16 +33,16 @@ public class TeamController {
     private final EmployeeMapper employeeMapper;
 
     // CREATE
-    @PostMapping
+    @PostMapping("/team")
     public ResponseEntity postTeam(@Valid @RequestBody TeamRequestDto.Post post) {
         Team team = teamService.createTeam(teamMapper.teamPostDtoToTeam(post), post.getCompanyPk());
-        TeamResponseDto.Response response = teamMapper.teamToTeamResponseDto(team, team.getPk());
+        TeamResponseDto.Response response = teamMapper.teamToTeamResponseDto(team, team.getCompany().getPk());
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    // READ
-    @GetMapping
+    // READ : 모든 팀 조회
+    @GetMapping("/teams")
     public ResponseEntity getTeamList (@Positive @RequestParam(value = "pk", required = false) Long teamPk,
                                        @RequestParam(value = "name", required = false) String teamName) {
         List<Team> teams = teamService.findTeams(teamPk, teamName);
@@ -54,26 +54,8 @@ public class TeamController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // UPDATE
-    @PatchMapping("/{team-pk}")
-    public ResponseEntity patchTeam(@Positive @PathVariable("team-pk") long teamPk,
-                                        @Valid @RequestBody TeamRequestDto.Patch patch) {
-        patch.setPk(teamPk);
-        Team team = teamService.patchTeam(teamMapper.teamPatchDtoToTeam(patch), patch.getCompanyPk());
-        TeamResponseDto.Response response = teamMapper.teamToTeamResponseDto(team, team.getPk());
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    // DELETE
-    @DeleteMapping("/{team-pk}")
-    public ResponseEntity deleteTeam(@Positive @PathVariable("team-pk") long teamPk) {
-        teamService.deleteTeam(teamPk);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    // GET : 팀별 직원 조회
-    @GetMapping("/employees/{team-pk}")
+    // READ : 팀별 직원 조회
+    @GetMapping("/team/employees/{team-pk}")
     public ResponseEntity getEmployeeListByTeam (@Positive @PathVariable(value = "team-pk") long teamPk) {
 
         List<Employee> employees = teamService.findEmployeeListByTeam(teamPk);
@@ -81,5 +63,23 @@ public class TeamController {
         // 응답
         List<EmployeeResponseDto.Response> employeeResponse = employeeMapper.employeeToEmployeeListResponseDto(employees);
         return new ResponseEntity<>(employeeResponse, HttpStatus.OK);
+    }
+
+    // UPDATE
+    @PatchMapping("/team/{team-pk}")
+    public ResponseEntity patchTeam(@Positive @PathVariable("team-pk") long teamPk,
+                                        @Valid @RequestBody TeamRequestDto.Patch patch) {
+        patch.setPk(teamPk);
+        Team team = teamService.patchTeam(teamMapper.teamPatchDtoToTeam(patch), patch.getCompanyPk());
+        TeamResponseDto.Response response = teamMapper.teamToTeamResponseDto(team, team.getCompany().getPk());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // DELETE
+    @DeleteMapping("/team/{team-pk}")
+    public ResponseEntity deleteTeam(@Positive @PathVariable("team-pk") long teamPk) {
+        teamService.deleteTeam(teamPk);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
