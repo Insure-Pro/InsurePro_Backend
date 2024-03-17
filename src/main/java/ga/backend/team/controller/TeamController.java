@@ -35,8 +35,8 @@ public class TeamController {
     // CREATE
     @PostMapping
     public ResponseEntity postTeam(@Valid @RequestBody TeamRequestDto.Post post) {
-        Team team = teamService.createTeam(teamMapper.teamPostDtoToTeam(post));
-        TeamResponseDto.Response response = teamMapper.teamToTeamResponseDto(team);
+        Team team = teamService.createTeam(teamMapper.teamPostDtoToTeam(post), post.getCompanyPk());
+        TeamResponseDto.Response response = teamMapper.teamToTeamResponseDto(team, team.getPk());
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -59,8 +59,8 @@ public class TeamController {
     public ResponseEntity patchTeam(@Positive @PathVariable("team-pk") long teamPk,
                                         @Valid @RequestBody TeamRequestDto.Patch patch) {
         patch.setPk(teamPk);
-        Team team = teamService.patchTeam(teamMapper.teamPatchDtoToTeam(patch));
-        TeamResponseDto.Response response = teamMapper.teamToTeamResponseDto(team);
+        Team team = teamService.patchTeam(teamMapper.teamPatchDtoToTeam(patch), patch.getCompanyPk());
+        TeamResponseDto.Response response = teamMapper.teamToTeamResponseDto(team, team.getPk());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

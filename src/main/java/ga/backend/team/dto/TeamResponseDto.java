@@ -14,6 +14,7 @@ public class TeamResponseDto {
     @Getter
     public static class Response {
         private Long pk;
+        private Long companyPk;
         private String teamName;
         private boolean delYn;
         private LocalDateTime createdAt;

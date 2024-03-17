@@ -37,8 +37,6 @@ public class CompanyRequestDto {
         @NotBlank(message = "회사명은 필수 입력 값입니다.")
         @Size(min=2, message = "회사명은 2자 이상이어야 합니다.")
         private String name; // 회사명
-
         private boolean delYn; // 회사 삭제 여부
-
     }
 }

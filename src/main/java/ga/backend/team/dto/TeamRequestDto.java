@@ -18,6 +18,7 @@ public class TeamRequestDto {
         @NotBlank(message = "팀명은 필수 입력 값입니다.")
         @Size(min=2, message = "팀명은 2자 이상이어야 합니다.")
         private String teamName;
+        private long companyPk; // 회사 식별자
     }
 
     @AllArgsConstructor
@@ -29,5 +30,6 @@ public class TeamRequestDto {
         @NotBlank(message = "팀명은 필수 입력 값입니다.")
         @Size(min=2, message = "팀명은 2자 이상이어야 합니다.")
         private String teamName;
+        private long companyPk; // 회사 식별자
     }
 }

@@ -11,6 +11,6 @@ import java.util.List;
 public interface TeamMapper {
     Team teamPostDtoToTeam(TeamRequestDto.Post post);
     Team teamPatchDtoToTeam(TeamRequestDto.Patch patch);
-    TeamResponseDto.Response teamToTeamResponseDto(Team team);
+    TeamResponseDto.Response teamToTeamResponseDto(Team team, Long companyPk);
     List<TeamResponseDto.Response> teamToTeamListResponseDto(List<Team> teams);
 }

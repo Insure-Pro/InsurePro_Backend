@@ -39,8 +39,7 @@ public class CompanyService {
     }
 
     public Company findCompany(long companyPk) {
-        Company company = verifiedCompany(companyPk);
-        return company;
+        return verifiedCompany(companyPk);
     }
 
     // UPDATE
