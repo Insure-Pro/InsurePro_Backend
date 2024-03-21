@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 public enum ExceptionCode {
     COMPANY_NOT_FOUND(404, "Company not found"),
+    CUSTOMERTYPE_NOT_FOUND(404, "CustomerType not found"),
     TEAM_NOT_FOUND(404, "Team not found"),
     QUESTION_NOT_FOUND(404, "Question not found"),
     METRO_NOT_FOUND(404, "Metro not found"),
@@ -26,6 +27,7 @@ public enum ExceptionCode {
     WRONG_PASSWORD(401, "Wrong Password"),
     EMPLOYEE_NOT_CONTAIN_CUSTOMER(401, "Emploee not contains customer"),
     CUSTOMER_AND_EMPLOYEE_NOT_MATCH(403, "Customer's Employee & JWT Employee Is Not Match"),
+    CUSTOMERTYP_IS_USED(403, "CustomerType is used"),
     TAMPERED_TOKEN(1004, "Tampered Token"), // 변조된 토큰
     FAIL_SEND_EMAIL(500, "Fail send email"),
 

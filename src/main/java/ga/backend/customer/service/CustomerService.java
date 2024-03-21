@@ -15,7 +15,7 @@ import ga.backend.li.service.LiService;
 import ga.backend.metro2.entity.Metro2;
 import ga.backend.metro2.service.Metro2Service;
 import ga.backend.schedule.entity.Schedule;
-import ga.backend.util.CustomerType;
+import ga.backend.customer.entity.CustomerTType;
 import ga.backend.util.FindCoordinateByKakaoMap;
 import ga.backend.util.FindEmployee;
 import org.springframework.data.domain.Sort;
@@ -56,18 +56,18 @@ public class CustomerService {
         this.findCoordinateByKakaoMap = findCoordinateByKakaoMap;
     }
 
-    private final List<CustomerType> customerTypesRegisterDate = List.of(
-            CustomerType.OD,
-            CustomerType.AD,
-            CustomerType.CP,
-            CustomerType.CD,
-            CustomerType.JD
+    private final List<CustomerTType> customerTypesRegisterDate = List.of(
+            CustomerTType.OD,
+            CustomerTType.AD,
+            CustomerTType.CP,
+            CustomerTType.CD,
+            CustomerTType.JD
     );
-    private final List<CustomerType> customerTypesCreatedAt = List.of(
-            CustomerType.H,
-            CustomerType.X,
-            CustomerType.Y,
-            CustomerType.Z
+    private final List<CustomerTType> customerTypesCreatedAt = List.of(
+            CustomerTType.H,
+            CustomerTType.X,
+            CustomerTType.Y,
+            CustomerTType.Z
     );
 
     // CREATE
@@ -375,7 +375,7 @@ public class CustomerService {
         // metro, gu, dong을 이용한 dongString 자동 설정
         makeDongString(metroGuDong, findCustomer);
 
-        Optional.ofNullable(customer.getCustomerType()).ifPresent(findCustomer::setCustomerType);
+        Optional.ofNullable(customer.getCustomerTType()).ifPresent(findCustomer::setCustomerTType);
         Optional.ofNullable(customer.getName()).ifPresent(findCustomer::setName);
         Optional.ofNullable(customer.getBirth()).ifPresent(findCustomer::setBirth);
         if (customer.getAge() != 0) findCustomer.setAge(customer.getAge());

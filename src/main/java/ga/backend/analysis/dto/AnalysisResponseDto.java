@@ -1,12 +1,10 @@
 package ga.backend.analysis.dto;
 
-import ga.backend.customer.entity.Customer;
-import ga.backend.util.CustomerType;
+import ga.backend.customer.entity.CustomerTType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -28,7 +26,7 @@ public class AnalysisResponseDto {
         private Double allPCRatio; // 고객 all(AD+OD+CD+CP+JD)에 관한 이번달 히스토리 PC 비율
         private Double allHistoryRatio; // 이번달 분배만 받고 히스토리 아예없는 Db개수 /전체 이번달Db분배 받은 개수
         private LocalDate date; // 성과분석(년-월-01)
-        private CustomerType customerType; // 고객 유형
+        private CustomerTType customerType; // 고객 유형
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
     }

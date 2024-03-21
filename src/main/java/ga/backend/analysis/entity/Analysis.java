@@ -2,7 +2,7 @@ package ga.backend.analysis.entity;
 
 import ga.backend.auditable.Auditable;
 import ga.backend.employee.entity.Employee;
-import ga.backend.util.CustomerType;
+import ga.backend.customer.entity.CustomerTType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -59,7 +59,7 @@ public class Analysis extends Auditable { // 성과분석
     private LocalDate date; // 성과분석(년-월-01)
 
     @Enumerated(EnumType.STRING)
-    private CustomerType customerType;
+    private CustomerTType customerType;
 
     @ManyToOne
     @JoinColumn(name = "employee_pk")

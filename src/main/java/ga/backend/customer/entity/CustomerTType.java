@@ -1,9 +1,9 @@
-package ga.backend.util;
+package ga.backend.customer.entity;
 
 import lombok.Getter;
 
 @Getter
-public enum CustomerType {
+public enum CustomerTType {
     OD("OD"),
     AD("AD"),
     CP("CP"),
@@ -16,7 +16,7 @@ public enum CustomerType {
 
     private final String value;
 
-    CustomerType(String value) {
+    CustomerTType(String value) {
         this.value = value;
     }
 }

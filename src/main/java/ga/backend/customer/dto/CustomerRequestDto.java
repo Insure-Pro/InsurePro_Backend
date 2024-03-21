@@ -1,6 +1,6 @@
 package ga.backend.customer.dto;
 
-import ga.backend.util.CustomerType;
+import ga.backend.customer.entity.CustomerTType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ public class CustomerRequestDto {
     @Getter
     public static class Post {
         private Long pk;
-        private CustomerType customerType; // 고객 유형
+        private CustomerTType customerTType; // 고객 유형
         private long liPk; // 리 식별자
         private String name; // 이름
         private LocalDate birth; // 생년월일
@@ -37,7 +37,7 @@ public class CustomerRequestDto {
     @Getter
     public static class Patch {
         private Long pk;
-        private CustomerType customerType; // 고객 유형
+        private CustomerTType customerTType; // 고객 유형
         private long liPk; // 리 식별자
         private String name; // 이름
         private LocalDate birth; // 생년월일

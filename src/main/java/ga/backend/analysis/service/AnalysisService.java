@@ -9,7 +9,7 @@ import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.schedule.repository.ScheduleRepository;
-import ga.backend.util.CustomerType;
+import ga.backend.customer.entity.CustomerTType;
 import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,12 +27,12 @@ public class AnalysisService {
     private final ScheduleRepository scheduleRepository;
     private final FindEmployee findEmployee;
 
-    private final List<CustomerType> customerTypesRegisterDate = List.of(
-            CustomerType.OD,
-            CustomerType.AD,
-            CustomerType.CP,
-            CustomerType.CD,
-            CustomerType.JD
+    private final List<CustomerTType> customerTypesRegisterDate = List.of(
+            CustomerTType.OD,
+            CustomerTType.AD,
+            CustomerTType.CP,
+            CustomerTType.CD,
+            CustomerTType.JD
     );
 
     // CREATE
@@ -46,7 +46,7 @@ public class AnalysisService {
         return analysis;
     }
 
-    public Analysis findAnalysis(LocalDate requestDate, CustomerType customerType) {
+    public Analysis findAnalysis(LocalDate requestDate, CustomerTType customerType) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         Analysis analysis = verifiedAnalysis(employee, requestDate, customerType); // 이전에 구현된 analysis가 있는지 확인
 
@@ -105,7 +105,7 @@ public class AnalysisService {
         return analysis.orElseThrow(() -> new BusinessLogicException(ExceptionCode.ANALYSIS_NOT_FOUND));
     }
 
-    public Analysis verifiedAnalysis(Employee employee, LocalDate requestDate, CustomerType customerType) {
+    public Analysis verifiedAnalysis(Employee employee, LocalDate requestDate, CustomerTType customerType) {
         Optional<Analysis> optionalAnalysis = analysisRespository.findByEmployeeAndDateAndCustomerType(
                 employee,
                 requestDate.withDayOfMonth(1),
@@ -155,7 +155,7 @@ public class AnalysisService {
     }
 
     // 성과분석 계산
-    public Analysis analysisPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis, CustomerType customerType) {
+    public Analysis analysisPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis, CustomerTType customerType) {
         // 이번달에 DB에 등록한 고객들
         List<Customer> customers = customerRepository.findByEmployeeAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
                 employee, start.toLocalDate(), finish.toLocalDate(), customerType
