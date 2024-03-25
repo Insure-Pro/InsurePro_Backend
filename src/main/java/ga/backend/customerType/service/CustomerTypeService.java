@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -35,6 +36,12 @@ public class CustomerTypeService {
     // READ
     public CustomerType findCustomerType(long customerTypePk) {
         return verifiedCustomerType(customerTypePk);
+    }
+
+    // 회사별 고객유형 조회
+    public List<CustomerType> findCustomerTypeByCompanyPk(long companyPk) {
+        Company company = companyService.findCompany(companyPk);
+        return customerTypeRepository.findByCompany(company);
     }
 
     // UPDATE

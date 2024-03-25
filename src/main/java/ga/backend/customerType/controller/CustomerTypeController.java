@@ -7,6 +7,7 @@ import ga.backend.customerType.mapper.CustomerTypeMapper;
 import ga.backend.customerType.service.CustomerTypeService;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
+import org.hibernate.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping(Version.currentUrl)
@@ -33,12 +35,21 @@ public class CustomerTypeController {
     }
 
     // READ
-    @GetMapping("/customertypes/{customerType-pk}")
+    @GetMapping("/customertype/{customerType-pk}")
     public ResponseEntity getCustomerType(@Positive @PathVariable("customerType-pk") long customerTypePk) {
         CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
         CustomerTypeResponseDto.Response response = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 회사별 고객유형 조회
+    @GetMapping("/customertypes")
+    public ResponseEntity getCustomerTypeByCompanyPk(@Positive @RequestParam("companyPk") long companyPk) {
+        List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(companyPk);
+        List<CustomerTypeResponseDto.Response> responses = customerTypeMapper.customerTypesToCustomerTypeResponseDtos(customerTypes);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     // UPDATE
