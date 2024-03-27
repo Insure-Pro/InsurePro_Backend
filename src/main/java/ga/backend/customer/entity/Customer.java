@@ -30,7 +30,7 @@ public class Customer extends Auditable {
     private Li li;
 
     @ManyToOne
-    @JoinColumn(name = "metro2_p")
+    @JoinColumn(name = "metro2_pk")
     private Metro2 metro2;
 
     @ManyToOne
@@ -52,10 +52,10 @@ public class Customer extends Auditable {
     @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Schedule> schedules = new ArrayList<>();
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private CustomerTType customerTType;
-
+//    @Column(nullable = false)
+//    @Enumerated(EnumType.STRING)
+//    private CustomerTType customerTType;
+//
     @Column
     private String name; // 이름
 

@@ -3,11 +3,13 @@ package ga.backend.customer.mapper;
 import ga.backend.customer.dto.CustomerRequestDto;
 import ga.backend.customer.dto.CustomerResponseDto;
 import ga.backend.customer.entity.Customer;
+import ga.backend.customerType.entity.CustomerType;
 import ga.backend.dong2.entity.Dong2;
 import ga.backend.gu2.entity.Gu2;
 import ga.backend.metro2.entity.Metro2;
 import org.mapstruct.Mapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,9 +17,21 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
     Customer customerPostDtoToCustomer(CustomerRequestDto.Post post);
-    List<Customer> customersPostDtoToCustomers(List<CustomerRequestDto.Post> posts);
-    default List<CustomerRequestDto.MetroGuDong> customersPostDtoToCustomersPostMetroGuDong(List<CustomerRequestDto.Post> posts) {
-        return posts.stream().map(CustomerRequestDto.Post::getMetroGuDong).collect(Collectors.toList());
+    default List<Customer> customersPostDtoToCustomers(List<CustomerRequestDto.Post> posts) {
+        if ( posts == null ) {
+            return null;
+        }
+
+        List<Customer> list = new ArrayList<Customer>( posts.size() );
+        for ( CustomerRequestDto.Post post : posts ) {
+            Customer customer = customerPostDtoToCustomer(post);
+            CustomerType customerType = new CustomerType();
+            customerType.setPk(post.getCustomerTypePk());
+            customer.setCustomerType(customerType);
+            list.add(customer);
+        }
+
+        return list;
     }
 
     Customer customerPatchDtoToCustomer(CustomerRequestDto.Patch patch);
@@ -28,6 +42,7 @@ public interface CustomerMapper {
     List<CustomerResponseDto.Response> customersToCustomersResponseDto(List<Customer> customers);
 
     default CustomerResponseDto.MetroGuDong customerToCustomerResponse(Customer customer) {
+        // metro, gu, dong 값 설정
         CustomerResponseDto.MetroGuDong metroGuDong = new CustomerResponseDto.MetroGuDong();
         if(customer.getDongString() != null) {
             String[] dongString = customer.getDongString().split(" ");
@@ -52,6 +67,7 @@ public interface CustomerMapper {
     default List<CustomerResponseDto.CoordinateResponse> customersToCustomerResponseCoordiateDtoCustom(List<Customer> customers, List<Map<String, Double>> coordinates) {
         List<CustomerResponseDto.CoordinateResponse> responses = customersToCustomerResponseCoordiateDto(customers);
 
+        // 주소 좌표값 설정
         for(int i=0; i<responses.size(); i++) {
             CustomerResponseDto.Coordinate coordinate = new CustomerResponseDto.Coordinate(
                     coordinates.get(i).get("x"),

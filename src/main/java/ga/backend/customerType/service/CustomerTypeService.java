@@ -3,6 +3,7 @@ package ga.backend.customerType.service;
 import ga.backend.company.entity.Company;
 import ga.backend.company.service.CompanyService;
 import ga.backend.customerType.entity.CustomerType;
+import ga.backend.customerType.entity.DataType;
 import ga.backend.customerType.repository.CustomerTypeRepository;
 import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
@@ -44,6 +45,12 @@ public class CustomerTypeService {
         return customerTypeRepository.findByCompany(company);
     }
 
+    // 고객유형 이름으로 고객유형 조회
+    public CustomerType findCustomerTypeByName(String name) {
+        Optional<CustomerType> customerTypes = customerTypeRepository.findByNameAndDelYnFalse(name);
+        return customerTypes.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOMERTYPE_NOT_FOUND));
+    }
+
     // UPDATE
     public CustomerType patchCustomerType(CustomerType customerType) {
         CustomerType findCustomerType = verifiedCustomerType(customerType.getPk());
@@ -75,7 +82,17 @@ public class CustomerTypeService {
 
     // 검증
     public CustomerType verifiedCustomerType(long customerTypePk) {
-        Optional<CustomerType> customerTypes = customerTypeRepository.findById(customerTypePk);
+        Optional<CustomerType> customerTypes = customerTypeRepository.findByPkAndDelYnFalse(customerTypePk);
         return customerTypes.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CUSTOMERTYPE_NOT_FOUND));
+    }
+
+    // dataType이 DB인 경우 -> true
+    public Boolean dataTypeisDB(CustomerType customerType) {
+        return customerType.getDataType() == DataType.DB;
+    }
+
+    // dataType이 ETC인 경우 -> true
+    public Boolean dataTypeisETC(CustomerType customerType) {
+        return customerType.getDataType() == DataType.ETC;
     }
 }
