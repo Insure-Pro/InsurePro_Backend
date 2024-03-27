@@ -1,9 +1,9 @@
 package ga.backend.schedule.repository;
 
 import ga.backend.customer.entity.Customer;
+import ga.backend.customerType.entity.CustomerType;
 import ga.backend.employee.entity.Employee;
 import ga.backend.schedule.entity.Schedule;
-import ga.backend.customer.entity.CustomerTType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,7 +25,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             Employee employee,
             LocalDateTime createdAtStart,
             LocalDateTime createdAtFinish,
-            CustomerTType customerType
+            CustomerType customerType
     );
 
     // 이번달에 등록된 히스토리 유형 'Schedule.Progress' 의 개수
