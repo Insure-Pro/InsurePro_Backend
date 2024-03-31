@@ -30,6 +30,7 @@ public enum ExceptionCode {
     CUSTOMER_AND_EMPLOYEE_NOT_MATCH(403, "Customer's Employee & JWT Employee Is Not Match"),
     EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH(403, "Employee can't use this CustomerType"),
     CUSTOMERTYP_IS_USED(403, "CustomerType is used"),
+    HIDE_ALREADY_EXITS(409, "Hide already exits"),
     TAMPERED_TOKEN(1004, "Tampered Token"), // 변조된 토큰
     FAIL_SEND_EMAIL(500, "Fail send email"),
 

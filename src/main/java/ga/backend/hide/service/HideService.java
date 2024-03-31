@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 @Service
 @AllArgsConstructor
@@ -36,6 +37,10 @@ public class HideService {
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH);
         }
 
+        // 이미 존재하는지 확인
+        Optional<Hide> optionalHide = hideRepository.findByEmployeeAndCustomerType(employee, customerType);
+        if(optionalHide.isPresent()) throw new BusinessLogicException(ExceptionCode.HIDE_ALREADY_EXITS);
+
         Hide hide = new Hide();
         hide.setEmployee(employee);
         hide.setCustomerType(customerType);
@@ -52,8 +57,10 @@ public class HideService {
         Employee employee = findCompany.getLoginEmployeeByToken();
         CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
 
+        // 숨기기 되어 있는지 확인
         Optional<Hide> hide = hideRepository.findByEmployeeAndCustomerType(employee, customerType);
-        hide.ifPresent(hideRepository::delete);
+        hide.ifPresent(hideRepository::delete); // 되어 있으면 삭제
+        hide.orElseThrow(() -> new BusinessLogicException(ExceptionCode.HIDE_NOT_FOUND)); // 없으면 에러
     }
 
     // 검증
