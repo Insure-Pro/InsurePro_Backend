@@ -12,4 +12,5 @@ import java.util.Optional;
 @Repository
 public interface HideRepository extends JpaRepository<Hide, Long> {
     Optional<Hide> findByEmployeeAndCustomerType(Employee employee, CustomerType customerType);
+    List<Hide> findByEmployee(Employee employee);
 }

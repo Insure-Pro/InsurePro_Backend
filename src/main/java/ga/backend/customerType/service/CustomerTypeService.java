@@ -8,6 +8,9 @@ import ga.backend.customerType.repository.CustomerTypeRepository;
 import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
+import ga.backend.hide.entity.Hide;
+import ga.backend.hide.repository.HideRepository;
+import ga.backend.hide.service.HideService;
 import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,12 +18,14 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class CustomerTypeService {
     private final CustomerTypeRepository customerTypeRepository;
     private final CompanyService companyService;
+    private final HideRepository hideRepository;
     private final FindEmployee findEmployee;
 
     // CREATE
@@ -43,6 +48,25 @@ public class CustomerTypeService {
     public List<CustomerType> findCustomerTypeByCompanyPk(long companyPk) {
         Company company = companyService.findCompany(companyPk);
         return customerTypeRepository.findByCompany(company);
+    }
+
+    // 고객별 고객유형 조회
+    public List<CustomerType> findCustomerTypeByEmployee() {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+
+        // 고객의 회사 조회
+        Company company = employee.getCompany();
+
+        // "회사 && delYn=false"인 고객유형 조회
+        List<CustomerType> customerTypes = customerTypeRepository.findByCompanyAndDelYnFalse(company);
+
+        // hide에 있는 customerType -> 조회에 제외되어야 하는 것
+        List<CustomerType> hideCustomer = hideRepository.findByEmployee(employee).stream().map(Hide::getCustomerType).collect(Collectors.toList());
+
+        // hide에서 조회된 customerType 제외
+        customerTypes.removeAll(hideCustomer);
+
+        return customerTypes;
     }
 
     // 고객유형 이름으로 고객유형 조회

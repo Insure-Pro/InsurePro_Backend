@@ -12,5 +12,6 @@ import java.util.Optional;
 public interface CustomerTypeRepository extends JpaRepository<CustomerType, Long> {
     Optional<CustomerType> findByPkAndDelYnFalse(long customerTypePk);
     List<CustomerType> findByCompany(Company company);
+    List<CustomerType> findByCompanyAndDelYnFalse(Company company);
     Optional<CustomerType> findByNameAndDelYnFalse(String name);
 }

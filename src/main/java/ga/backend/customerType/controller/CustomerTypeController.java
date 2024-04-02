@@ -52,6 +52,15 @@ public class CustomerTypeController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
+    // 고객별 고객유형 조회
+    @GetMapping("/customerTypes/employee")
+    public ResponseEntity getCustomerTypeByEmployee() {
+        List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByEmployee();
+        List<CustomerTypeResponseDto.Response> responses = customerTypeMapper.customerTypesToCustomerTypeResponseDtos(customerTypes);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     // UPDATE
     @PatchMapping("/customerType/{customerType-pk}")
     public ResponseEntity patchCustomerType(@Positive @PathVariable("customerType-pk") long customerTypePk,
