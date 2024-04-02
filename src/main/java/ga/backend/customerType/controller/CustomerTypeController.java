@@ -26,7 +26,7 @@ public class CustomerTypeController {
     private final CustomerTypeMapper customerTypeMapper;
 
     // CREATE
-    @PostMapping("/customertype")
+    @PostMapping("/customerType")
     public ResponseEntity postCustomerType(@Valid @RequestBody CustomerTypeRequestDto.Post post) {
         CustomerType customerType = customerTypeService.createCustomerType(customerTypeMapper.customerTypePostDtoToCustomerType(post));
         CustomerTypeResponseDto.Response response = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
@@ -35,7 +35,7 @@ public class CustomerTypeController {
     }
 
     // READ
-    @GetMapping("/customertype/{customerType-pk}")
+    @GetMapping("/customerType/{customerType-pk}")
     public ResponseEntity getCustomerType(@Positive @PathVariable("customerType-pk") long customerTypePk) {
         CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
         CustomerTypeResponseDto.Response response = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
@@ -44,7 +44,7 @@ public class CustomerTypeController {
     }
 
     // 회사별 고객유형 조회
-    @GetMapping("/customertypes")
+    @GetMapping("/customerTypes")
     public ResponseEntity getCustomerTypeByCompanyPk(@Positive @RequestParam("companyPk") long companyPk) {
         List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(companyPk);
         List<CustomerTypeResponseDto.Response> responses = customerTypeMapper.customerTypesToCustomerTypeResponseDtos(customerTypes);
@@ -53,7 +53,7 @@ public class CustomerTypeController {
     }
 
     // UPDATE
-    @PatchMapping("/customertype/{customerType-pk}")
+    @PatchMapping("/customerType/{customerType-pk}")
     public ResponseEntity patchCustomerType(@Positive @PathVariable("customerType-pk") long customerTypePk,
                                             @Valid @RequestBody CustomerTypeRequestDto.Patch patch) {
         patch.setPk(customerTypePk);
@@ -65,7 +65,7 @@ public class CustomerTypeController {
     }
 
     // DELETE
-    @DeleteMapping("/customertype/{customerType-pk}")
+    @DeleteMapping("/customerType/{customerType-pk}")
     public ResponseEntity deleteCustomerType(@Positive @PathVariable("customerType-pk") long customerTypePk) {
         customerTypeService.deleteCustomerType(customerTypePk);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
