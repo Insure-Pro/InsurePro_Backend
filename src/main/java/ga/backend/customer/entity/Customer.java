@@ -8,6 +8,7 @@ import ga.backend.gu2.entity.Gu2;
 import ga.backend.li.entity.Li;
 import ga.backend.metro2.entity.Metro2;
 import ga.backend.schedule.entity.Schedule;
+import ga.backend.ta.entity.TA;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -51,6 +52,9 @@ public class Customer extends Auditable {
 
     @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Schedule> schedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<TA> tas = new ArrayList<>();
 
 //    @Column(nullable = false)
 //    @Enumerated(EnumType.STRING)

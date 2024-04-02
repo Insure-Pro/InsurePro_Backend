@@ -9,6 +9,7 @@ public enum ExceptionCode {
     COMPANY_NOT_FOUND(404, "Company not found"),
     CUSTOMERTYPE_NOT_FOUND(404, "CustomerType not found"),
     TEAM_NOT_FOUND(404, "Team not found"),
+    TA_NOT_FOUND(404, "TA not found"),
     HIDE_NOT_FOUND(404, "Hide not found"),
     QUESTION_NOT_FOUND(404, "Question not found"),
     METRO_NOT_FOUND(404, "Metro not found"),
