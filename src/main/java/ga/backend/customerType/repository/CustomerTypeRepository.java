@@ -2,6 +2,7 @@ package ga.backend.customerType.repository;
 
 import ga.backend.company.entity.Company;
 import ga.backend.customerType.entity.CustomerType;
+import ga.backend.employee.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

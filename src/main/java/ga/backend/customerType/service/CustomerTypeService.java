@@ -95,6 +95,7 @@ public class CustomerTypeService {
     public void deleteCustomerType(long customerTypePk) {
         CustomerType customerType = verifiedCustomerType(customerTypePk);
         Employee employee = findEmployee.getLoginEmployeeByToken();
+
         if(customerType.getCustomers().isEmpty()) // customerType을 사용하는 customer가 없는 경우
             customerTypeRepository.delete(customerType); // 완전 삭제
         else { // customerType을 사용하는 customer가 있는 경우

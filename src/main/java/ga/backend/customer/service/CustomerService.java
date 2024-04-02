@@ -1,9 +1,11 @@
 package ga.backend.customer.service;
 
+import ga.backend.company.entity.Company;
 import ga.backend.customer.dto.CustomerRequestDto;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.repository.CustomerRepository;
 import ga.backend.customerType.entity.CustomerType;
+import ga.backend.customerType.entity.DataType;
 import ga.backend.customerType.service.CustomerTypeService;
 import ga.backend.dong2.entity.Dong2;
 import ga.backend.dong2.service.Dong2Service;
@@ -26,6 +28,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -51,7 +54,7 @@ public class CustomerService {
 //            customer.setDongString(liService.findDongString(li));
 //        }
 
-        if(customer.getContractYn() == null) customer.setContractYn(false);
+        if (customer.getContractYn() == null) customer.setContractYn(false);
 
         // metro, gu, dong을 이용한 dongString 자동 설정
         makeDongString(metroGuDong, customer);
@@ -71,14 +74,14 @@ public class CustomerService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         CustomerType defaultCustomerType = customerTypeService.findCustomerType(InitialCustomerType.NULL_CUSTOMERTYPE_PK);
 
-        for(int i=0; i<customers.size(); i++) {
+        for (int i = 0; i < customers.size(); i++) {
             Customer customer = customers.get(i);
             customer.setEmployee(employee);
 
-            if(customer.getContractYn() == null) customer.setContractYn(false);
+            if (customer.getContractYn() == null) customer.setContractYn(false);
 
             // metro, gu, dong을 이용한 dongString 자동 설정
-            if(customer.getDongString() != null) {
+            if (customer.getDongString() != null) {
                 makeDongString(customer.getDongString(), customers.get(i));
             }
 
@@ -106,15 +109,15 @@ public class CustomerService {
     public List<Map<String, Double>> findCoordinate(List<Customer> customers) {
         List<Map<String, Double>> list = new ArrayList<>();
 
-        for(Customer customer : customers) {
+        for (Customer customer : customers) {
             Map<String, Double> map = new HashMap<>();
 
-            if(customer.getDong2() != null) { // dong이 있는 경우
+            if (customer.getDong2() != null) { // dong이 있는 경우
                 Dong2 dong2 = customer.getDong2();
 
-                if(dong2.getDongName().isEmpty()) { // dong 이름이 없는 경우 삭제하기
+                if (dong2.getDongName().isEmpty()) { // dong 이름이 없는 경우 삭제하기
                     dong2Service.deleteDong(dong2);
-                } else if(dong2.getX() == null) { // 좌표값이 없는 경우 -> 구하기
+                } else if (dong2.getX() == null) { // 좌표값이 없는 경우 -> 구하기
                     map = findCoordinateByKakaoMap.findCoordinate(dong2.getDongName());
                     dong2.setX(map.get("x"));
                     dong2.setY(map.get("y"));
@@ -123,12 +126,12 @@ public class CustomerService {
                     map.put("x", dong2.getX());
                     map.put("y", dong2.getY());
                 }
-            } else if(customer.getGu2() != null) { // gu가 있는 경우
+            } else if (customer.getGu2() != null) { // gu가 있는 경우
                 Gu2 gu2 = customer.getGu2();
 
-                if(gu2.getGuName().isEmpty()) { // gu 이름이 없는 경우 삭제하기
+                if (gu2.getGuName().isEmpty()) { // gu 이름이 없는 경우 삭제하기
                     gu2Service.deleteGu(gu2);
-                } else if(gu2.getX() == null) { // 좌표값이 없는 경우 -> 구하기
+                } else if (gu2.getX() == null) { // 좌표값이 없는 경우 -> 구하기
                     map = findCoordinateByKakaoMap.findCoordinate(gu2.getGuName());
                     gu2.setX(map.get("x"));
                     gu2.setY(map.get("y"));
@@ -137,12 +140,12 @@ public class CustomerService {
                     map.put("x", gu2.getX());
                     map.put("y", gu2.getY());
                 }
-            } else if(customer.getMetro2() != null) { // metro가 있는 경우
+            } else if (customer.getMetro2() != null) { // metro가 있는 경우
                 Metro2 metro2 = customer.getMetro2();
 
-                if(metro2.getMetroName().isEmpty()) { // metro 이름이 없는 경우 삭제하기
+                if (metro2.getMetroName().isEmpty()) { // metro 이름이 없는 경우 삭제하기
                     metro2Service.deleteMetro(metro2);
-                } else if(metro2.getX() == null) { // 좌표값이 없는 경우 -> 구하기
+                } else if (metro2.getX() == null) { // 좌표값이 없는 경우 -> 구하기
                     map = findCoordinateByKakaoMap.findCoordinate(metro2.getMetroName());
                     metro2.setX(map.get("x"));
                     metro2.setY(map.get("y"));
@@ -162,50 +165,86 @@ public class CustomerService {
     // 최신순 정렬 - 생성일 기준
     public List<Customer> findCustomerByLatest(long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
-        return customerRepository.findByEmployeeAndCustomerTypeAndDelYnFalse(
-                employee,
-                customerType,
-                Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
-        );
-    }
+        List<Customer> customers;
 
-    // 월별 최신순 정렬 - 생성일 기준
-    public List<Customer> findCustomerByLatest(LocalDate date, long customerTypePk) {
-        Employee employee = findEmployee.getLoginEmployeeByToken();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
-
-        List<Customer> customers = new ArrayList<>();
-        // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
-        if(customerTypeService.dataTypeisDB(customerType)) {
-            customers = customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            customers = customerRepository.findByEmployeeAndDelYnFalse(
                     employee,
-                    Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
-                    parserStart(date).toLocalDate(),
-                    parserFinish(date).toLocalDate(),
-                    customerType
+                    Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
             );
-        }
-        // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
-        if(customerTypeService.dataTypeisETC(customerType)) {
-            customers = customerRepository.findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            return customerRepository.findByEmployeeAndCustomerTypeAndDelYnFalse(
                     employee,
-                    Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
-                    parserStart(date),
-                    parserFinish(date),
-                    customerType
+                    customerType,
+                    Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
             );
         }
 
         return customers;
     }
 
-    // 나이별 정렬(1020, 3040, 5060, 7080)
-    public List<Customer> findCustomerByAge(String age, long customerTypePk) {
+    // 월별 최신순 정렬 - 생성일 기준
+    public List<Customer> findCustomerByLatest(LocalDate date, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
-        int start = 0;
+        List<Customer> customers = new ArrayList<>();
 
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            Company company = employee.getCompany();
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
+            List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
+                    employee,
+                    Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                    parserStart(date).toLocalDate(),
+                    parserFinish(date).toLocalDate(),
+                    dbCustomerTypes
+            );
+
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            customers.addAll(customerRepository.findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(
+                    employee,
+                    Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                    parserStart(date),
+                    parserFinish(date),
+                    etcCustomerTypes
+            ));
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            if (customerTypeService.dataTypeisDB(customerType)) {
+                customers = customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
+                        employee,
+                        Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                        parserStart(date).toLocalDate(),
+                        parserFinish(date).toLocalDate(),
+                        customerType
+                );
+            }
+
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            if (customerTypeService.dataTypeisETC(customerType)) {
+                customers = customerRepository.findAllByEmployeeAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+                        employee,
+                        Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                        parserStart(date),
+                        parserFinish(date),
+                        customerType
+                );
+            }
+        }
+
+        return customers;
+    }
+
+    // 나이값 반환
+    public int returnAge(String age) {
+        int start;
         if (age.equals("10")) start = 10;
         else if (age.equals("20")) start = 20;
         else if (age.equals("30")) start = 30;
@@ -216,55 +255,93 @@ public class CustomerService {
         else if (age.equals("80")) start = 80;
         else throw new BusinessLogicException(ExceptionCode.CUSTOMER_AGE_FILTER_NOT_FOUND);
 
-        int end = start + 9;
-
-        return customerRepository.findByEmployeeAndAgeBetweenAndCustomerTypeAndDelYnFalseOrderByAge(
-                employee, start, end, customerType, Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
-        );
+        return start;
     }
 
-    // 월별 나이별 정렬(1020, 3040, 5060, 7080)
+    // 나이별 정렬(10, 20, 30, 40, 50, 60, 70, 80)
+    public List<Customer> findCustomerByAge(String age, long customerTypePk) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        List<Customer> customers;
+        int start = returnAge(age);
+        int end = start + 9;
+
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            customers = customerRepository.findByEmployeeAndAgeBetweenAndDelYnFalseOrderByAge(
+                    employee, start, end, Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
+            );
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            customers = customerRepository.findByEmployeeAndAgeBetweenAndCustomerTypeAndDelYnFalseOrderByAge(
+                    employee, start, end, customerType, Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
+            );
+        }
+
+        return customers;
+    }
+
+    // 월별 나이별 정렬(10, 20, 30, 40, 50, 60, 70, 80)
     public List<Customer> findCustomerByAge(String age, LocalDate date, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
-        int ageStart = 0;
-
-        if (age.equals("10")) ageStart = 10;
-        else if (age.equals("20")) ageStart = 20;
-        else if (age.equals("30")) ageStart = 30;
-        else if (age.equals("40")) ageStart = 40;
-        else if (age.equals("50")) ageStart = 50;
-        else if (age.equals("60")) ageStart = 60;
-        else if (age.equals("70")) ageStart = 70;
-        else if (age.equals("80")) ageStart = 80;
-        else throw new BusinessLogicException(ExceptionCode.CUSTOMER_AGE_FILTER_NOT_FOUND);
-
+        List<Customer> customers = new ArrayList<>();
+        int ageStart = returnAge(age);
         int ageEnd = ageStart + 9;
 
-        // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
-        List<Customer> customers = new ArrayList<>();
-        if(customerTypeService.dataTypeisDB(customerType)) {
-            customers = customerRepository.findByEmployeeAndAgeBetweenAndRegisterDateBetweenAndCustomerTypeAndDelYnFalseOrderByAge(
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            Company company = employee.getCompany();
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
+            List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = customerRepository.findByEmployeeAndAgeBetweenAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalseOrderByAge(
                     employee,
                     ageStart,
                     ageEnd,
                     Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
                     parserStart(date).toLocalDate(),
                     parserFinish(date).toLocalDate(),
-                    customerType
+                    dbCustomerTypes
             );
-        }
-        // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
-        if(customerTypeService.dataTypeisETC(customerType)) {
-            customers = customerRepository.findByEmployeeAndAgeBetweenAndCreatedAtBetweenAndCustomerTypeAndDelYnFalseOrderByAge(
+
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            customers.addAll(customerRepository.findByEmployeeAndAgeBetweenAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalseOrderByAge(
                     employee,
                     ageStart,
                     ageEnd,
                     Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
                     parserStart(date),
                     parserFinish(date),
-                    customerType
-            );
+                    etcCustomerTypes
+            ));
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = new ArrayList<>();
+            if (customerTypeService.dataTypeisDB(customerType)) {
+                customers = customerRepository.findByEmployeeAndAgeBetweenAndRegisterDateBetweenAndCustomerTypeAndDelYnFalseOrderByAge(
+                        employee,
+                        ageStart,
+                        ageEnd,
+                        Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                        parserStart(date).toLocalDate(),
+                        parserFinish(date).toLocalDate(),
+                        customerType
+                );
+            }
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            if (customerTypeService.dataTypeisETC(customerType)) {
+                customers = customerRepository.findByEmployeeAndAgeBetweenAndCreatedAtBetweenAndCustomerTypeAndDelYnFalseOrderByAge(
+                        employee,
+                        ageStart,
+                        ageEnd,
+                        Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                        parserStart(date),
+                        parserFinish(date),
+                        customerType
+                );
+            }
         }
 
         return customers;
@@ -273,52 +350,102 @@ public class CustomerService {
     // 지역이름으로 정렬
     public List<Customer> findCustomerByDongName(String dongName, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+        List<Customer> customers;
 
-        return customerRepository.findByEmployeeAndDongStringContainsAndCustomerTypeAndDelYnFalse(
-                employee, dongName, customerType, Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")) // 지역 오름차순, createdAt 내림차순
-        );
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            customers = customerRepository.findByEmployeeAndDongStringContainsAndDelYnFalse(
+                    employee, dongName, Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")) // 지역 오름차순, createdAt 내림차순
+            );
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            customers = customerRepository.findByEmployeeAndDongStringContainsAndCustomerTypeAndDelYnFalse(
+                    employee, dongName, customerType, Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")) // 지역 오름차순, createdAt 내림차순
+            );
+        }
+
+        return customers;
     }
 
     // 지역별 정렬
     public List<Customer> findCustomerByLi(Long dongPk, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+        List<Customer> customers;
         String dongName = dong2Service.verifiedDong(dongPk).getDongName();
 
-        return customerRepository.findByEmployeeAndDongStringContainsAndCustomerTypeAndDelYnFalse(
-                employee, dongName, customerType, Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")) // 지역 오름차순, createdAt 내림차순
-        );
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            customers = customerRepository.findByEmployeeAndDongStringContainsAndDelYnFalse(
+                    employee, dongName, Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")) // 지역 오름차순, createdAt 내림차순
+            );
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            customers = customerRepository.findByEmployeeAndDongStringContainsAndCustomerTypeAndDelYnFalse(
+                    employee, dongName, customerType, Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")) // 지역 오름차순, createdAt 내림차순
+            );
+        }
+
+
+        return customers;
     }
 
     // 월별 지역별 정렬
     public List<Customer> findCustomerByLi(Long dongPk, LocalDate date, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
         String dongName = dong2Service.verifiedDong(dongPk).getDongName();
-
-        // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
         List<Customer> customers = new ArrayList<>();
-        if(customerTypeService.dataTypeisDB(customerType)) {
-            customers = customerRepository.findByEmployeeAndDongStringContainsAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
+
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            Company company = employee.getCompany();
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
+            List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = customerRepository.findByEmployeeAndDongStringContainsAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
                     employee,
                     dongName,
                     Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("registerDate"), Sort.Order.desc("createdAt")), // 지역 오름차순, registerDate와 createdAt 내림차순
                     parserStart(date).toLocalDate(),
                     parserFinish(date).toLocalDate(),
-                    customerType
+                    dbCustomerTypes
             );
-        }
-        // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
-        if(customerTypeService.dataTypeisETC(customerType)) {
-            customers = customerRepository.findByEmployeeAndDongStringContainsAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            customers.addAll(customerRepository.findByEmployeeAndDongStringContainsAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(
                     employee,
                     dongName,
                     Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")), // 지역 오름차순, createdAt 내림차순
                     parserStart(date),
                     parserFinish(date),
-                    customerType
-            );
+                    etcCustomerTypes
+            ));
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = new ArrayList<>();
+            if (customerTypeService.dataTypeisDB(customerType)) {
+                customers = customerRepository.findByEmployeeAndDongStringContainsAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
+                        employee,
+                        dongName,
+                        Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("registerDate"), Sort.Order.desc("createdAt")), // 지역 오름차순, registerDate와 createdAt 내림차순
+                        parserStart(date).toLocalDate(),
+                        parserFinish(date).toLocalDate(),
+                        customerType
+                );
+            }
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            if (customerTypeService.dataTypeisETC(customerType)) {
+                customers = customerRepository.findByEmployeeAndDongStringContainsAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+                        employee,
+                        dongName,
+                        Sort.by(Sort.Order.asc("li_pk"), Sort.Order.desc("createdAt")), // 지역 오름차순, createdAt 내림차순
+                        parserStart(date),
+                        parserFinish(date),
+                        customerType
+                );
+            }
         }
 
         return customers;
@@ -327,56 +454,84 @@ public class CustomerService {
     // 계약여부 정렬(최신순)
     public List<Customer> findCustomerByContractYnByLatest(boolean contractYn, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+        List<Customer> customers;
 
-        return customerRepository.findByEmployeeAndContractYnAndCustomerTypeAndDelYnFalse(
-                employee,
-                contractYn,
-                customerType,
-                Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
-        );
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            customers = customerRepository.findByEmployeeAndContractYnAndDelYnFalse(
+                    employee,
+                    contractYn,
+                    Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
+            );
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            customers = customerRepository.findByEmployeeAndContractYnAndCustomerTypeAndDelYnFalse(
+                    employee,
+                    contractYn,
+                    customerType,
+                    Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
+            );
+        }
+
+        return customers;
     }
 
     // 계약여부 정렬(나이대별)
     public List<Customer> findCustomerByContractYnByLatest(boolean contractYn, String age, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
-        int ageStart = 0;
-
-        if (age.equals("10")) ageStart = 10;
-        else if (age.equals("20")) ageStart = 20;
-        else if (age.equals("30")) ageStart = 30;
-        else if (age.equals("40")) ageStart = 40;
-        else if (age.equals("50")) ageStart = 50;
-        else if (age.equals("60")) ageStart = 60;
-        else if (age.equals("70")) ageStart = 70;
-        else if (age.equals("80")) ageStart = 80;
-        else throw new BusinessLogicException(ExceptionCode.CUSTOMER_AGE_FILTER_NOT_FOUND);
-
+        List<Customer> customers;
+        int ageStart = returnAge(age);
         int ageEnd = ageStart + 9;
 
-        return customerRepository.findByEmployeeAndContractYnAndAgeBetweenAndCustomerTypeAndDelYnFalseOrderByAge(
-                employee,
-                contractYn,
-                Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
-                ageStart,
-                ageEnd,
-                customerType
-        );
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            customers = customerRepository.findByEmployeeAndContractYnAndAgeBetweenAndDelYnFalseOrderByAge(
+                    employee,
+                    contractYn,
+                    Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                    ageStart,
+                    ageEnd
+            );
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            customers = customerRepository.findByEmployeeAndContractYnAndAgeBetweenAndCustomerTypeAndDelYnFalseOrderByAge(
+                    employee,
+                    contractYn,
+                    Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                    ageStart,
+                    ageEnd,
+                    customerType
+            );
+        }
+
+        return customers;
     }
 
     // 월별 계약여부 정렬
     public List<Customer> findCustomerByContractYn(boolean contractYn, LocalDate date, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+        List<Customer> customers;
 
-        return customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
-                employee,
-                contractYn,
-                parserStart(date),
-                parserFinish(date),
-                customerType
-        );
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            customers = customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndDelYnFalse(
+                    employee,
+                    contractYn,
+                    parserStart(date),
+                    parserFinish(date)
+            );
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            customers = customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+                    employee,
+                    contractYn,
+                    parserStart(date),
+                    parserFinish(date),
+                    customerType
+            );
+        }
+
+        return customers;
     }
 
     // 이름 검색
@@ -407,7 +562,7 @@ public class CustomerService {
         try {
             System.out.println("!! customerTypePk = " + customerTypePk);
             System.out.println("!! customerTypeService.findCustomerType(customerTypePk).getName() = " + customerTypeService.findCustomerType(customerTypePk).getName());
-            if(customerTypePk != null) {
+            if (customerTypePk != null) {
                 findCustomer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
                 System.out.println("!!");
             }
@@ -473,9 +628,9 @@ public class CustomerService {
     public Customer makeDongString(String dongString, Customer customer) {
         CustomerRequestDto.MetroGuDong metroGuDong = new CustomerRequestDto.MetroGuDong();
         String[] dongStrings = dongString.split(" ");
-        if(dongStrings.length >= 1) metroGuDong.setMetroName(dongStrings[0]);
-        if(dongStrings.length >= 2) metroGuDong.setGuName(dongStrings[1]);
-        if(dongStrings.length >= 3) metroGuDong.setDongName(dongStrings[2]);
+        if (dongStrings.length >= 1) metroGuDong.setMetroName(dongStrings[0]);
+        if (dongStrings.length >= 2) metroGuDong.setGuName(dongStrings[1]);
+        if (dongStrings.length >= 3) metroGuDong.setDongName(dongStrings[2]);
 
         return makeDongString(metroGuDong, customer);
     }
@@ -486,40 +641,40 @@ public class CustomerService {
         String dongString = "";
 
         // metro, gu, dong을 이용한 dongString 생성
-        if(metroGuDong != null) {
+        if (metroGuDong != null) {
             String metroName = metroGuDong.getMetroName();
             Metro2 metro2 = null;
-            if(metroName != null && !metroName.isEmpty()) {
+            if (metroName != null && !metroName.isEmpty()) {
                 dongString += metroName + " ";
                 // metro, gu, dong 자동 설정
                 metro2 = metro2Service.findMetroByMetroName(metroName);
-                if(metro2 == null) metro2 = metro2Service.createMetro(metroName);
+                if (metro2 == null) metro2 = metro2Service.createMetro(metroName);
                 customer.setMetro2(metro2);
             }
 
             String guName = metroGuDong.getGuName();
             Gu2 gu2 = null;
-            if(guName != null && !guName.isEmpty()) {
+            if (guName != null && !guName.isEmpty()) {
                 dongString += guName + " ";
                 // metro, gu, dong 자동 설정
                 gu2 = gu2Service.findGuByGuNameAndMetro(guName, metro2);
-                if(gu2 == null) gu2 = gu2Service.createGu(guName, metro2);
+                if (gu2 == null) gu2 = gu2Service.createGu(guName, metro2);
                 customer.setGu2(gu2);
             }
 
             String dongName = metroGuDong.getDongName();
-            if(dongName != null && !dongName.isEmpty()) {
+            if (dongName != null && !dongName.isEmpty()) {
                 dongString += dongName + " ";
                 // metro, gu, dong 자동 설정
                 Dong2 dong2 = dong2Service.findDongByDongNameAndGu(dongName, gu2);
-                if(dong2 == null) dong2 = dong2Service.createDong(dongName, gu2);
+                if (dong2 == null) dong2 = dong2Service.createDong(dongName, gu2);
                 customer.setDong2(dong2);
             }
         }
 
         // 상세주소를 dongStirng에 추가
 //        if(customer.getAddress() != null) dongString += customer.getAddress();
-        if(!dongString.equals("")) customer.setDongString(dongString);
+        if (!dongString.equals("")) customer.setDongString(dongString);
 
         return customer;
     }

@@ -66,7 +66,6 @@ public class CustomerTypeController {
     public ResponseEntity patchCustomerType(@Positive @PathVariable("customerType-pk") long customerTypePk,
                                             @Valid @RequestBody CustomerTypeRequestDto.Patch patch) {
         patch.setPk(customerTypePk);
-        System.out.println("!! delYn : " + patch.getDelYn());
         CustomerType customerType = customerTypeService.patchCustomerType(customerTypeMapper.customerTypePatchDtoToCustomerType(patch));
         CustomerTypeResponseDto.Response response = customerTypeMapper.customerTypeToCustomerTypeResponseDto(customerType);
 
