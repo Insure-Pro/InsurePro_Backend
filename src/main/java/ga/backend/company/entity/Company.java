@@ -1,7 +1,9 @@
 package ga.backend.company.entity;
 
 import ga.backend.auditable.Auditable;
+import ga.backend.customerType.entity.CustomerType;
 import ga.backend.employee.entity.Employee;
+import ga.backend.team.entity.Team;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,4 +30,10 @@ public class Company extends Auditable {
 
     @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Employee> employees = new ArrayList<>();
+
+    @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Team> teams = new ArrayList<>();
+
+    @OneToMany(mappedBy = "company", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<CustomerType> customerTypes = new ArrayList<>();
 }

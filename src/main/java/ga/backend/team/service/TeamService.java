@@ -1,6 +1,6 @@
 package ga.backend.team.service;
 
-
+import ga.backend.company.service.CompanyService;
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.repository.EmployeeRepository;
 import ga.backend.exception.BusinessLogicException;
@@ -18,9 +18,11 @@ import java.util.Optional;
 public class TeamService {
     private final TeamRepository teamRespository;
     private final EmployeeRepository employeeRepository;
+    private final CompanyService companyService;
 
     // CREATE
-    public Team createTeam(Team team) {
+    public Team createTeam(Team team, Long companyPk) {
+        team.setCompany(companyService.findCompany(companyPk));
         return teamRespository.save(team);
     }
 
@@ -45,8 +47,9 @@ public class TeamService {
     }
 
     // UPDATE
-    public Team patchTeam(Team team) {
+    public Team patchTeam(Team team, Long companyPk) {
         Team findTeam = verifiedTeam(team.getPk());
+        team.setCompany(companyService.findCompany(companyPk));
         Optional.ofNullable(team.getTeamName()).ifPresent(findTeam::setTeamName);
 
         return teamRespository.save(findTeam);
@@ -55,7 +58,8 @@ public class TeamService {
     // DELETE
     public void deleteTeam(long teamPk) {
         Team team = verifiedTeam(teamPk);
-        teamRespository.delete(team);
+        team.setDelYn(true);
+        teamRespository.save(team);
     }
 
     // team에 소속된 직원 찾기

@@ -1,14 +1,16 @@
 package ga.backend.employee.entity;
 
-import ga.backend.analysis.entity.Analysis;
+//import ga.backend.analysis.entity.Analysis;
 import ga.backend.auditable.Auditable;
 import ga.backend.company.entity.Company;
 import ga.backend.customer.entity.Customer;
 import ga.backend.dayschedule.entity.DaySchedule;
+import ga.backend.hide.entity.Hide;
 import ga.backend.performance.entity.Performance;
 import ga.backend.photo.entity.Photo;
 import ga.backend.question.entity.Question;
 import ga.backend.schedule.entity.Schedule;
+import ga.backend.ta.entity.TA;
 import ga.backend.team.entity.Team;
 import lombok.*;
 
@@ -63,8 +65,8 @@ public class Employee extends Auditable {
     @JoinColumn(name = "team_pk")
     private Team team;
 
-    @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Analysis> analysises;
+//    @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+//    private List<Analysis> analysises;
 
     @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Performance> performances = new ArrayList<>();
@@ -83,4 +85,10 @@ public class Employee extends Auditable {
 
     @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Question> questions = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Hide> hides = new ArrayList<>();
+
+    @OneToMany(mappedBy = "employee", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<TA> tas = new ArrayList<>();
 }

@@ -1,6 +1,7 @@
 package ga.backend.team.entity;
 
 import ga.backend.auditable.Auditable;
+import ga.backend.company.entity.Company;
 import ga.backend.customer.entity.Customer;
 import ga.backend.employee.entity.Employee;
 import lombok.Getter;
@@ -27,4 +28,8 @@ public class Team extends Auditable {
 
     @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Employee> employees = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "company_pk")
+    private Company company;
 }

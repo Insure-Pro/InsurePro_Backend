@@ -34,7 +34,7 @@ public class EmployeeService {
         authorizationNumberService.checkAuthNum(employee.getEmail(), authNum); // 인증번호와 이메일 확인
         employee.setRoles(authorityUtils.createRoles(employee.getEmail())); // 권한 설정
         employee.setPassword(passwordEncoder.encode(employee.getPassword())); // 비밀번호 인코딩
-        if(companyPk != 0) employee.setCompany(companyService.verifiedCompany(companyPk)); // 회사 연관관계 설정
+        employee.setCompany(companyService.verifiedCompany(companyPk)); // 회사 연관관계 설정
         if(teamPk != 0) employee.setTeam(teamService.verifiedTeam(teamPk)); // 회사 연관관계 설정
         publisher.publishEvent(new UserRegistrationApplicationEvent(employee));
 

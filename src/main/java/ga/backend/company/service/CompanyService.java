@@ -39,8 +39,7 @@ public class CompanyService {
     }
 
     public Company findCompany(long companyPk) {
-        Company company = verifiedCompany(companyPk);
-        return company;
+        return verifiedCompany(companyPk);
     }
 
     // UPDATE
@@ -61,7 +60,7 @@ public class CompanyService {
 
     // 검증
     public Company verifiedCompany(long companyPk) {
-        Optional<Company> company = companyRespository.findById(companyPk);
+        Optional<Company> company = companyRespository.findByDelYnFalseAndPk(companyPk);
         return company.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
     }
 }

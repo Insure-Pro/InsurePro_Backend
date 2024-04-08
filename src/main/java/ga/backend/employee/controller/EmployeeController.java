@@ -51,7 +51,7 @@ public class EmployeeController {
     public ResponseEntity getEmployee(@Positive @PathVariable("employee-pk") long employeePk) {
         Employee employee = employeeService.findEmployeeByPk(employeePk);
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
-        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam());
+        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam(), employee.getCompany().getPk());
         response.setTeamResponseDto(teamResponse);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -61,7 +61,7 @@ public class EmployeeController {
     public ResponseEntity getEmployee() {
         Employee employee = employeeService.findEmployeeByToken();
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
-        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam());
+        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam(), employee.getCompany().getPk());
         response.setTeamResponseDto(teamResponse);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -80,7 +80,7 @@ public class EmployeeController {
     public ResponseEntity getEmployee(@RequestParam("id") String employee_id) {
         Employee employee = employeeService.verifiedEmployeeById(employee_id);
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
-        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam());
+        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam(), employee.getCompany().getPk());
         response.setTeamResponseDto(teamResponse);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -91,7 +91,7 @@ public class EmployeeController {
     public ResponseEntity patchEmployee(@Valid @RequestBody EmployeeRequestDto.Patch patch) {
         Employee employee = employeeService.patchEmployee(employeeMapper.employeePatchDtoToEmployee(patch));
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
-        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam());
+        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam(), employee.getCompany().getPk());
         response.setTeamResponseDto(teamResponse);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -103,7 +103,7 @@ public class EmployeeController {
         employeeService.checkPassword(changePassword.getPassword(), changePassword.getRePassword()); // 비밀번호 확인
         Employee employee = employeeService.changePassword(employeeMapper.employeeChangePasswordToEmployee(changePassword), changePassword.getAuthNum());
         EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
-        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam());
+        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam(), employee.getCompany().getPk());
         response.setTeamResponseDto(teamResponse);
 
         return new ResponseEntity<>(response, HttpStatus.OK);

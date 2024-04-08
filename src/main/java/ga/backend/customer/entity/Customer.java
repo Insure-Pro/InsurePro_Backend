@@ -1,13 +1,14 @@
 package ga.backend.customer.entity;
 
 import ga.backend.auditable.Auditable;
+import ga.backend.customerType.entity.CustomerType;
 import ga.backend.dong2.entity.Dong2;
 import ga.backend.employee.entity.Employee;
 import ga.backend.gu2.entity.Gu2;
 import ga.backend.li.entity.Li;
 import ga.backend.metro2.entity.Metro2;
 import ga.backend.schedule.entity.Schedule;
-import ga.backend.util.CustomerType;
+import ga.backend.ta.entity.TA;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,7 +31,7 @@ public class Customer extends Auditable {
     private Li li;
 
     @ManyToOne
-    @JoinColumn(name = "metro2_p")
+    @JoinColumn(name = "metro2_pk")
     private Metro2 metro2;
 
     @ManyToOne
@@ -45,13 +46,20 @@ public class Customer extends Auditable {
     @JoinColumn(name = "employee_pk")
     private Employee employee;
 
+    @ManyToOne
+    @JoinColumn(name = "customer_type_pk")
+    private CustomerType customerType;
+
     @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<Schedule> schedules = new ArrayList<>();
 
-    @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private CustomerType customerType;
+    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<TA> tas = new ArrayList<>();
 
+//    @Column(nullable = false)
+//    @Enumerated(EnumType.STRING)
+//    private CustomerTType customerTType;
+//
     @Column
     private String name; // 이름
 

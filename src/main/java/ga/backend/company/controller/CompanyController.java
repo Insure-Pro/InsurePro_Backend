@@ -21,7 +21,7 @@ import javax.validation.constraints.Positive;
 import java.util.List;
 
 @RestController
-@RequestMapping(Version.currentUrl + "/companys")
+@RequestMapping(Version.currentUrl)
 @Validated
 @AllArgsConstructor
 public class CompanyController {
@@ -36,7 +36,7 @@ public class CompanyController {
      * 	"name" : "패스파인더"
      * }
      */
-    @PostMapping
+    @PostMapping("/company")
     public ResponseEntity postCompany(@Valid @RequestBody CompanyRequestDto.Post post) {
 
         // 생성
@@ -66,7 +66,7 @@ public class CompanyController {
      *     ]
      * }
      */
-    @GetMapping
+    @GetMapping("/companys")
     public ResponseEntity getCompanyList(
             @Positive @RequestParam(value = "pk", required = false) Long pk,
             @RequestParam(value = "name", required = false) String name) {
@@ -91,7 +91,7 @@ public class CompanyController {
      * 	"name" : "SAMSUNG"
      * }
      */
-    @PatchMapping("/{company_pk}")
+    @PatchMapping("/company/{company_pk}")
     public ResponseEntity patchCompany(@Positive @PathVariable("company_pk") long companyPk,
                                        @Valid @RequestBody CompanyRequestDto.Patch patch) {
         // 수정
@@ -118,7 +118,7 @@ public class CompanyController {
      *     "message": "success delete"
      * }
      */
-    @DeleteMapping("/{company_pk}")
+    @DeleteMapping("/company/{company_pk}")
     public ResponseEntity deleteCompany(@Positive @PathVariable("company_pk") long companyPk) {
         // 삭제
         Company company = companyService.deleteCompany(companyPk);

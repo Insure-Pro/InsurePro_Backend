@@ -1,6 +1,5 @@
 package ga.backend.customer.dto;
 
-import ga.backend.util.CustomerType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +30,7 @@ public class CustomerResponseDto {
         private LocalDateTime modifiedAt;
     }
 
+    // 행정동 관련된 response
     @AllArgsConstructor
     @Setter
     @Getter
@@ -53,6 +53,7 @@ public class CustomerResponseDto {
         private MetroGuDong metroGuDong; // metro, gu, dong에 대한 이름
     }
 
+    // 좌표값 관련 response
     @AllArgsConstructor
     @Setter
     @Getter
@@ -94,5 +95,14 @@ public class CustomerResponseDto {
     public static class Coordinate {
         private Double x;
         private Double y;
+    }
+
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Setter
+    @Getter
+    public static class CustomerType {
+        private Long pk;
+        private String name;
     }
 }
