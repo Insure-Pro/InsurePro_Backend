@@ -61,12 +61,23 @@ public class CustomerTypeService {
         List<CustomerType> customerTypes = customerTypeRepository.findByCompanyAndDelYnFalse(company);
 
         // hide에 있는 customerType -> 조회에 제외되어야 하는 것
-        List<CustomerType> hideCustomer = hideRepository.findByEmployee(employee).stream().map(Hide::getCustomerType).collect(Collectors.toList());
+        List<CustomerType> hideCustomer = findCustomerTypeByHide(employee);
 
         // hide에서 조회된 customerType 제외
         customerTypes.removeAll(hideCustomer);
 
         return customerTypes;
+    }
+
+    // 숨기기한 고객유형 목록 조회
+    public List<CustomerType> findCustomerTypeByHide() {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        return findCustomerTypeByHide(employee);
+    }
+
+    // hide에 있는 customerType
+    public List<CustomerType> findCustomerTypeByHide(Employee employee) {
+        return hideRepository.findByEmployee(employee).stream().map(Hide::getCustomerType).collect(Collectors.toList());
     }
 
     // 고객유형 이름으로 고객유형 조회
