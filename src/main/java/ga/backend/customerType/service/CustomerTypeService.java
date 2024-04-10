@@ -10,12 +10,12 @@ import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.hide.entity.Hide;
 import ga.backend.hide.repository.HideRepository;
-import ga.backend.hide.service.HideService;
 import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,6 +27,19 @@ public class CustomerTypeService {
     private final CompanyService companyService;
     private final HideRepository hideRepository;
     private final FindEmployee findEmployee;
+    private final List<String> CustomerTypeColors = new ArrayList<>(List.of(
+            "#e70000",
+            "#fa7533",
+            "#21a549",
+            "#1060ff",
+            "#7543ff",
+            "#bb5abb",
+            "#ff8a8a",
+            "#e5ba00",
+            "#91b6ff"
+    ));
+    private final String CustomerTypeFirstColor = CustomerTypeColors.get(0);
+    private final int CustomerTypeColorSize = CustomerTypeColors.size();
 
     // CREATE
     @Transactional
@@ -36,6 +49,19 @@ public class CustomerTypeService {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         customerType.setEmployeePk(employee.getPk());
         customerType.setCompany(employee.getCompany());
+
+        // 색상 자동추가 -> 색상값이 없는 경우
+        if(customerType.getColor() == null) {
+            Company company = employee.getCompany();
+            List<CustomerType> customerTypes = customerTypeRepository.findByCompany(company);
+            String lastColor = customerTypes.get(customerTypes.size()-1).getColor(); // 마지막에 설정한 색상
+            int index = CustomerTypeColors.indexOf(lastColor); // 지정한 컬러의 index 확인
+
+            // 지정된 컬러 이외의 색상일 경우 or 마지막 컬러인 경우
+            if(index == -1 || index == CustomerTypeColorSize-1) customerType.setColor(CustomerTypeFirstColor);
+            else customerType.setColor(CustomerTypeColors.get(index+1));
+        }
+
         return customerTypeRepository.save(customerType);
     }
 
@@ -61,12 +87,23 @@ public class CustomerTypeService {
         List<CustomerType> customerTypes = customerTypeRepository.findByCompanyAndDelYnFalse(company);
 
         // hide에 있는 customerType -> 조회에 제외되어야 하는 것
-        List<CustomerType> hideCustomer = hideRepository.findByEmployee(employee).stream().map(Hide::getCustomerType).collect(Collectors.toList());
+        List<CustomerType> hideCustomer = findCustomerTypeByHide(employee);
 
         // hide에서 조회된 customerType 제외
         customerTypes.removeAll(hideCustomer);
 
         return customerTypes;
+    }
+
+    // 숨기기한 고객유형 목록 조회
+    public List<CustomerType> findCustomerTypeByHide() {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        return findCustomerTypeByHide(employee);
+    }
+
+    // hide에 있는 customerType
+    public List<CustomerType> findCustomerTypeByHide(Employee employee) {
+        return hideRepository.findByEmployee(employee).stream().map(Hide::getCustomerType).collect(Collectors.toList());
     }
 
     // 고객유형 이름으로 고객유형 조회

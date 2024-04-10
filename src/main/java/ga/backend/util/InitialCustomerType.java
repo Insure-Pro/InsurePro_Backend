@@ -23,6 +23,7 @@ public class InitialCustomerType {
             customerType.setPk(NULL_CUSTOMERTYPE_PK);
             customerType.setDetail("customerType을 지정하지 않을 경우 사용하는 default값");
             customerType.setDataType(DataType.ETC);
+            customerType.setColor("#000000");
             customerTypeRepository.save(customerType);
         }
     }

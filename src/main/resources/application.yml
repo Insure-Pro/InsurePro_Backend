@@ -21,14 +21,14 @@ spring:
 
   datasource: # DATABASE
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://ls-8e9c7ce5ba63f8ce7dc860020e9887eaff60bae9.cuwgajafrk25.ap-northeast-2.rds.amazonaws.com:3306/insureprodb
+    url: ${DX_DB_URL}
     username: ${DX_DB_NM}
     password: ${DX_DB_PW}
 
   jpa: # JPA
     show-sql: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true

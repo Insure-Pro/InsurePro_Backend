@@ -61,6 +61,15 @@ public class CustomerTypeController {
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
+    // 숨기기한 고객유형 목록 조회
+    @GetMapping("/customerTypes/hide")
+    public ResponseEntity getCustomerTypeByHide() {
+        List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByHide();
+        List<CustomerTypeResponseDto.Response> responses = customerTypeMapper.customerTypesToCustomerTypeResponseDtos(customerTypes);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     // UPDATE
     @PatchMapping("/customerType/{customerType-pk}")
     public ResponseEntity patchCustomerType(@Positive @PathVariable("customerType-pk") long customerTypePk,
