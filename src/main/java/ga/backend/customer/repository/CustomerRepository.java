@@ -56,6 +56,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     // 상담현황별
     List<Customer> findByEmployeeAndConsultationStatusAndDelYnFalse(Employee employee, ConsultationStatus consultationStatus, Sort sort);
     List<Customer> findByEmployeeAndConsultationStatusAndCustomerTypeAndDelYnFalse(Employee employee, ConsultationStatus consultationStatus, CustomerType customerType, Sort sort);
+    List<Customer> findByEmployeeAndConsultationStatusAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(Employee employee, ConsultationStatus consultationStatus, Sort sort, LocalDate start, LocalDate finish, List<CustomerType> customerTypes);
+    List<Customer> findByEmployeeAndConsultationStatusAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(Employee employee, ConsultationStatus consultationStatus, Sort sort, LocalDate start, LocalDate finish, CustomerType customerType);
+    List<Customer> findByEmployeeAndConsultationStatusAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(Employee employee, ConsultationStatus consultationStatus, Sort sort, LocalDateTime start, LocalDateTime finish, List<CustomerType> customerTypes);
+    List<Customer> findByEmployeeAndConsultationStatusAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(Employee employee, ConsultationStatus consultationStatus, Sort sort, LocalDateTime start, LocalDateTime finish, CustomerType customerType);
 
 
     // 이름 검색
