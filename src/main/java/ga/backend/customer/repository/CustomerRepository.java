@@ -3,6 +3,7 @@ package ga.backend.customer.repository;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customerType.entity.CustomerType;
 import ga.backend.employee.entity.Employee;
+import ga.backend.util.ConsultationStatus;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -51,6 +52,11 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByEmployeeAndContractYnAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(Employee employee, boolean contractYn, Sort sort, LocalDate start, LocalDate finish, CustomerType customerType);
     List<Customer> findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(Employee employee, boolean contractYn, Sort sort, LocalDateTime start, LocalDateTime finish, List<CustomerType> customerTypes);
     List<Customer> findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(Employee employee, boolean contractYn, Sort sort, LocalDateTime start, LocalDateTime finish, CustomerType customerType);
+
+    // 상담현황별
+    List<Customer> findByEmployeeAndConsultationStatusAndDelYnFalse(Employee employee, ConsultationStatus consultationStatus, Sort sort);
+    List<Customer> findByEmployeeAndConsultationStatusAndCustomerTypeAndDelYnFalse(Employee employee, ConsultationStatus consultationStatus, CustomerType customerType, Sort sort);
+
 
     // 이름 검색
     List<Customer> findByEmployeeAndNameContainsAndDelYnFalse(Employee employee, String name);

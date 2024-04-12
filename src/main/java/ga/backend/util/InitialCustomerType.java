@@ -11,6 +11,7 @@ import java.util.Optional;
 public class InitialCustomerType {
     private final CustomerTypeRepository customerTypeRepository;
     public static final Long NULL_CUSTOMERTYPE_PK = 999L;
+    public static CustomerType CUSTOMER_TYPE_NULL = null;
 
     public InitialCustomerType(CustomerTypeRepository customerTypeRepository) {
         this.customerTypeRepository = customerTypeRepository;
@@ -24,7 +25,8 @@ public class InitialCustomerType {
             customerType.setDetail("customerType을 지정하지 않을 경우 사용하는 default값");
             customerType.setDataType(DataType.ETC);
             customerType.setColor("#000000");
-            customerTypeRepository.save(customerType);
-        }
+            CUSTOMER_TYPE_NULL = customerTypeRepository.save(customerType);
+        } else
+            CUSTOMER_TYPE_NULL = customerTypeRepository.save(optionalCustomerType.get());
     }
 }
