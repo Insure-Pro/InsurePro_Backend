@@ -580,6 +580,7 @@ public class CustomerService {
         Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
         Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
+        Optional.ofNullable(customer.getConsultationStatus()).ifPresent(findCustomer::setConsultationStatus);
         if (Optional.ofNullable(customer.getDelYn()).orElse(false)) {
             changeSchduleDelYnTrue(findCustomer);
         }
