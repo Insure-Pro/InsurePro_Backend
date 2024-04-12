@@ -61,7 +61,10 @@ public class CustomerService {
 
         // customerType 설정
         try {
-            customer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+            if(customerType.getCompany() != employee.getCompany()) // 다른 회사의 customertype을 사용하는지 확인
+                throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH);
+            customer.setCustomerType(customerType);
         } catch (NullPointerException E) {
             customer.setCustomerType(customerTypeService.findCustomerType(InitialCustomerType.NULL_CUSTOMERTYPE_PK));
         }
@@ -513,22 +516,56 @@ public class CustomerService {
         List<Customer> customers;
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
-            customers = customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndDelYnFalse(
+            Company company = employee.getCompany();
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
+            List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = customerRepository.findByEmployeeAndContractYnAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
                     employee,
                     contractYn,
-                    parserStart(date),
-                    parserFinish(date)
+                    Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                    parserStart(date).toLocalDate(),
+                    parserFinish(date).toLocalDate(),
+                    dbCustomerTypes
             );
+
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            customers.addAll(customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(
+                    employee,
+                    contractYn,
+                    Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                    parserStart(date),
+                    parserFinish(date),
+                    etcCustomerTypes
+            ));
         } else { // 고객유형이 있는 경우
             CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
 
-            customers = customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
-                    employee,
-                    contractYn,
-                    parserStart(date),
-                    parserFinish(date),
-                    customerType
-            );
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = new ArrayList<>();
+            if (customerTypeService.dataTypeisDB(customerType)) {
+                customers = customerRepository.findByEmployeeAndContractYnAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
+                        employee,
+                        contractYn,
+                        Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                        parserStart(date).toLocalDate(),
+                        parserFinish(date).toLocalDate(),
+                        customerType
+                );
+            }
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            if (customerTypeService.dataTypeisETC(customerType)) {
+                customers = customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+                        employee,
+                        contractYn,
+                        Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                        parserStart(date),
+                        parserFinish(date),
+                        customerType
+                );
+            }
         }
 
         return customers;

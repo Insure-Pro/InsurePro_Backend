@@ -47,8 +47,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByEmployeeAndContractYnAndCustomerTypeAndDelYnFalse(Employee employee, boolean contractYn, CustomerType customerType, Sort sort);
     List<Customer> findByEmployeeAndContractYnAndAgeBetweenAndDelYnFalseOrderByAge(Employee employee, boolean contractYn, Sort sort, int startAge, int endAge);
     List<Customer> findByEmployeeAndContractYnAndAgeBetweenAndCustomerTypeAndDelYnFalseOrderByAge(Employee employee, boolean contractYn, Sort sort, int startAge, int endAge, CustomerType customerType);
-    List<Customer> findByEmployeeAndContractYnAndCreatedAtBetweenAndDelYnFalse(Employee employee, boolean contractYn, LocalDateTime start, LocalDateTime finish);
-    List<Customer> findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(Employee employee, boolean contractYn, LocalDateTime start, LocalDateTime finish, CustomerType customerType);
+    List<Customer> findByEmployeeAndContractYnAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(Employee employee, boolean contractYn, Sort sort, LocalDate start, LocalDate finish, List<CustomerType> customerTypes);
+    List<Customer> findByEmployeeAndContractYnAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(Employee employee, boolean contractYn, Sort sort, LocalDate start, LocalDate finish, CustomerType customerType);
+    List<Customer> findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(Employee employee, boolean contractYn, Sort sort, LocalDateTime start, LocalDateTime finish, List<CustomerType> customerTypes);
+    List<Customer> findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(Employee employee, boolean contractYn, Sort sort, LocalDateTime start, LocalDateTime finish, CustomerType customerType);
 
     // 이름 검색
     List<Customer> findByEmployeeAndNameContainsAndDelYnFalse(Employee employee, String name);
