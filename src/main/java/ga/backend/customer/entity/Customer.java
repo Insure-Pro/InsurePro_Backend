@@ -9,6 +9,7 @@ import ga.backend.li.entity.Li;
 import ga.backend.metro2.entity.Metro2;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.ta.entity.TA;
+import ga.backend.util.ConsultationStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -56,10 +57,6 @@ public class Customer extends Auditable {
     @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<TA> tas = new ArrayList<>();
 
-//    @Column(nullable = false)
-//    @Enumerated(EnumType.STRING)
-//    private CustomerTType customerTType;
-//
     @Column
     private String name; // 이름
 
@@ -92,4 +89,8 @@ public class Customer extends Auditable {
 
     @Column
     private LocalDate registerDate; // 고객 등록 날짜
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ConsultationStatus consultationStatus; // 상담현황(상담보류중, 상품제안중, 병력대기, 청약거절, 상담거절, AS대상)
 }

@@ -5,6 +5,7 @@ import ga.backend.customer.dto.CustomerResponseDto;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.mapper.CustomerMapper;
 import ga.backend.customer.service.*;
+import ga.backend.util.ConsultationStatus;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -170,6 +171,27 @@ public class CustomerController {
                                                             @PathVariable("date") String date,
                                                             @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByContractYn(contractYn, LocalDate.parse(date), customerTypePk);
+        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    // 상담현황별 정렬
+    @GetMapping("/customers/consultationStatus/{consultationStatus}")
+    public ResponseEntity findCustomersByConsultationStatusByLatest(@PathVariable("consultationStatus") ConsultationStatus consultationStatus,
+                                                                    @RequestParam("customerTypePk") long customerTypePk) {
+        List<Customer> customers = customerService.findCustomerByConsultationStatusByLatest(consultationStatus, customerTypePk);
+        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    // 월별 상담현황별 정렬
+    @GetMapping("/customers/consultationStatus/{consultationStatus}/{date}")
+    public ResponseEntity findCustomersByConsultationStatusByLatestAndMonth(@PathVariable("consultationStatus") ConsultationStatus consultationStatus,
+                                                                            @PathVariable("date") String date,
+                                                                            @RequestParam("customerTypePk") long customerTypePk) {
+        List<Customer> customers = customerService.findCustomerByConsultationStatusByLatestAndMonth(consultationStatus, LocalDate.parse(date), customerTypePk);
         List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);

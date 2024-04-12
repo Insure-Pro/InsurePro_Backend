@@ -17,6 +17,7 @@ import ga.backend.gu2.service.Gu2Service;
 import ga.backend.metro2.entity.Metro2;
 import ga.backend.metro2.service.Metro2Service;
 import ga.backend.schedule.entity.Schedule;
+import ga.backend.util.ConsultationStatus;
 import ga.backend.util.FindCoordinateByKakaoMap;
 import ga.backend.util.FindEmployee;
 import ga.backend.util.InitialCustomerType;
@@ -61,9 +62,12 @@ public class CustomerService {
 
         // customerType 설정
         try {
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+            if(customerType.getCompany() != employee.getCompany()) // 다른 회사의 customertype을 사용하는지 확인
+                throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH);
             customer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
         } catch (NullPointerException E) {
-            customer.setCustomerType(customerTypeService.findCustomerType(InitialCustomerType.NULL_CUSTOMERTYPE_PK));
+            customer.setCustomerType(InitialCustomerType.CUSTOMER_TYPE_NULL);
         }
 
         return customerRepository.save(customer);
@@ -195,6 +199,7 @@ public class CustomerService {
             List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
             List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
             List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
+            etcCustomerTypes.add(InitialCustomerType.CUSTOMER_TYPE_NULL);
 
             // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
             customers = customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
@@ -292,6 +297,7 @@ public class CustomerService {
             List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
             List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
             List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
+            etcCustomerTypes.add(InitialCustomerType.CUSTOMER_TYPE_NULL);
 
             // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
             customers = customerRepository.findByEmployeeAndAgeBetweenAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalseOrderByAge(
@@ -400,6 +406,7 @@ public class CustomerService {
             List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
             List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
             List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
+            etcCustomerTypes.add(InitialCustomerType.CUSTOMER_TYPE_NULL);
 
             // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
             customers = customerRepository.findByEmployeeAndDongStringContainsAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
@@ -513,22 +520,144 @@ public class CustomerService {
         List<Customer> customers;
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
-            customers = customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndDelYnFalse(
+            Company company = employee.getCompany();
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
+            List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
+            etcCustomerTypes.add(InitialCustomerType.CUSTOMER_TYPE_NULL);
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = customerRepository.findByEmployeeAndContractYnAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
                     employee,
                     contractYn,
+                    Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                    parserStart(date).toLocalDate(),
+                    parserFinish(date).toLocalDate(),
+                    dbCustomerTypes
+            );
+
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            customers.addAll(customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(
+                    employee,
+                    contractYn,
+                    Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
                     parserStart(date),
-                    parserFinish(date)
+                    parserFinish(date),
+                    etcCustomerTypes
+            ));
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = new ArrayList<>();
+            if (customerTypeService.dataTypeisDB(customerType)) {
+                customers = customerRepository.findByEmployeeAndContractYnAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
+                        employee,
+                        contractYn,
+                        Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                        parserStart(date).toLocalDate(),
+                        parserFinish(date).toLocalDate(),
+                        customerType
+                );
+            }
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            if (customerTypeService.dataTypeisETC(customerType)) {
+                customers = customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+                        employee,
+                        contractYn,
+                        Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                        parserStart(date),
+                        parserFinish(date),
+                        customerType
+                );
+            }
+        }
+
+        return customers;
+    }
+
+    // 상담현황별 정렬
+    public List<Customer> findCustomerByConsultationStatusByLatest(ConsultationStatus consultationStatus, long customerTypePk) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        List<Customer> customers;
+
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            customers = customerRepository.findByEmployeeAndConsultationStatusAndDelYnFalse(
+                    employee,
+                    consultationStatus,
+                    Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
             );
         } else { // 고객유형이 있는 경우
             CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
 
-            customers = customerRepository.findByEmployeeAndContractYnAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+            customers = customerRepository.findByEmployeeAndConsultationStatusAndCustomerTypeAndDelYnFalse(
                     employee,
-                    contractYn,
+                    consultationStatus,
+                    customerType,
+                    Sort.by(Sort.Direction.DESC, "createdAt") // 내림차순
+            );
+        }
+
+        return customers;
+    }
+
+    // 월별 상담현황별 정렬
+    public List<Customer> findCustomerByConsultationStatusByLatestAndMonth(ConsultationStatus consultationStatus, LocalDate date, long customerTypePk) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        List<Customer> customers;
+
+        if (customerTypePk == 0) { // 모든 고객유형 조회
+            Company company = employee.getCompany();
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
+            List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
+            etcCustomerTypes.add(InitialCustomerType.CUSTOMER_TYPE_NULL);
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = customerRepository.findByEmployeeAndConsultationStatusAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
+                    employee,
+                    consultationStatus,
+                    Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                    parserStart(date).toLocalDate(),
+                    parserFinish(date).toLocalDate(),
+                    dbCustomerTypes
+            );
+
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            customers.addAll(customerRepository.findByEmployeeAndConsultationStatusAndCreatedAtBetweenAndCustomerTypeInAndDelYnFalse(
+                    employee,
+                    consultationStatus,
+                    Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
                     parserStart(date),
                     parserFinish(date),
-                    customerType
-            );
+                    etcCustomerTypes
+            ));
+        } else { // 고객유형이 있는 경우
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+            // customerType.dataType = DB인 경우 -> registerDate 기준으로 월별 필터링 & 정렬
+            customers = new ArrayList<>();
+            if (customerTypeService.dataTypeisDB(customerType)) {
+                customers = customerRepository.findByEmployeeAndConsultationStatusAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
+                        employee,
+                        consultationStatus,
+                        Sort.by(Sort.Direction.DESC, "registerDate", "createdAt"), // 내림차순
+                        parserStart(date).toLocalDate(),
+                        parserFinish(date).toLocalDate(),
+                        customerType
+                );
+            }
+            // customerType.dataType = ETC인 경우 -> createdAt 기준으로 월별 필터링 & 정렬
+            if (customerTypeService.dataTypeisETC(customerType)) {
+                customers = customerRepository.findByEmployeeAndConsultationStatusAndCreatedAtBetweenAndCustomerTypeAndDelYnFalse(
+                        employee,
+                        consultationStatus,
+                        Sort.by(Sort.Direction.DESC, "createdAt"), // 내림차순
+                        parserStart(date),
+                        parserFinish(date),
+                        customerType
+                );
+            }
         }
 
         return customers;
@@ -580,6 +709,7 @@ public class CustomerService {
         Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
         Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
+        Optional.ofNullable(customer.getConsultationStatus()).ifPresent(findCustomer::setConsultationStatus);
         if (Optional.ofNullable(customer.getDelYn()).orElse(false)) {
             changeSchduleDelYnTrue(findCustomer);
         }

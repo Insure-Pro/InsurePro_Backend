@@ -1,5 +1,6 @@
 package ga.backend.customer.dto;
 
+import ga.backend.util.ConsultationStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class CustomerResponseDto {
         private Boolean contractYn; // 계약 체결 여부
         private Boolean delYn; // 고객 삭제 여부
         private LocalDate registerDate; // 고객 등록 날짜
+        private ConsultationStatus consultationStatus; // 상담현황
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
     }
@@ -48,6 +50,7 @@ public class CustomerResponseDto {
         private Boolean contractYn; // 계약 체결 여부
         private Boolean delYn; // 고객 삭제 여부
         private LocalDate registerDate; // 고객 등록 날짜
+        private ConsultationStatus consultationStatus; // 상담현황
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
         private MetroGuDong metroGuDong; // metro, gu, dong에 대한 이름
@@ -71,6 +74,7 @@ public class CustomerResponseDto {
         private Boolean contractYn; // 계약 체결 여부
         private Boolean delYn; // 고객 삭제 여부
         private LocalDate registerDate; // 고객 등록 날짜
+        private ConsultationStatus consultationStatus; // 상담현황
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
         private Coordinate coordinate; // 좌표 설정
