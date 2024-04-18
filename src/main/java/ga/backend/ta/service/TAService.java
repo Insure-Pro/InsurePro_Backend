@@ -8,6 +8,7 @@ import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.ta.entity.TA;
 import ga.backend.ta.repository.TARepository;
+import ga.backend.util.ConsultationStatus;
 import ga.backend.util.FindEmployee;
 import ga.backend.util.Status;
 import lombok.AllArgsConstructor;
@@ -49,6 +50,18 @@ public class TAService {
         // time 값이 없으면 지금 시각값을 넣음
         if (ta.getTime() == null) ta.setTime(LocalTime.now());
         if (ta.getDate() == null) ta.setDate(LocalDate.now());
+
+        // 부재 or 거절일 경우 Customer의 asCount 증가
+        // 만약 "asCount"가 "asSetting"r보다 같거나 크다면 고객의 상담현황의 값을 "AS 대상"으로 변경하기
+        if(ta.getStatus() == Status.ABSENCE || ta.getStatus() == Status.REJECTION) {
+            // 부재 or 거절일 경우 Customer의 asCount 증가
+            int asCount = customer.getAsCount()+1;
+            customer.setAsCount(asCount);
+
+            // 만약 "asCount"가 "asSetting"r보다 같거나 크다면 고객의 상담현황의 값을 "AS 대상"으로 변경하기
+            if(asCount >= customer.getCustomerType().getAsSetting())
+                customer.setConsultationStatus(ConsultationStatus.AS_TARGET);
+        }
 
         return taRepository.save(ta);
     }
