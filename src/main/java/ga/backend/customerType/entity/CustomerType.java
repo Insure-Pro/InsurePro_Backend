@@ -51,4 +51,7 @@ public class CustomerType extends Auditable {
 
     @Column
     private Boolean delYn = false; // 고객 삭제 여부
+
+    @Column
+    private Integer asSetting; // AS 가능한 TA 횟수
 }
