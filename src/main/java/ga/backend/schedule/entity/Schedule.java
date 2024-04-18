@@ -7,10 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -57,7 +54,7 @@ public class Schedule extends Auditable {
     @Getter
     public static enum Progress {
         // 초회상담(AP) / 상품제안(PC) / 증권전달(ST)
-        AP("초회상담"),
+        안녕("초회상담"),
         PC("상품제안"),
         ST("증권전달");
 
@@ -68,7 +65,7 @@ public class Schedule extends Auditable {
         }
     }
 
-    @Column(nullable = false)
+    @Column
     private Boolean meetYn = false;
 
     @Column(nullable = false)
