@@ -12,5 +12,4 @@ import java.util.Optional;
 public interface TARepository extends JpaRepository<TA, Long> {
     Optional<TA> findByPkAndDelYnFalse(Long pk);
     List<TA> findByCustomerAndDelYnFalse(Customer customer);
-    List<TA> findByCustomer_PkAndDelYnFalse(Long customerPk);
 }

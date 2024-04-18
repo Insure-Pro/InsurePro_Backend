@@ -54,6 +54,12 @@ public class TAService {
         return verifiedTA(taPk);
     }
 
+    // 고객별 tas 조회
+    public List<TA> findTAbyCustomerPk(long customerPk) {
+        Customer customer = customerService.findCustomer(customerPk);
+        return taRepository.findByCustomerAndDelYnFalse(customer);
+    }
+
     // UPDATE
     public TA patchTA(TA ta) {
         TA findTa = verifiedTA(ta.getPk());

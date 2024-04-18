@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping(Version.currentUrl)
@@ -39,6 +40,14 @@ public class TAController {
         TA ta = teamService.findTA(taPk);
         TAResponseDto.Response response = teamMapper.taToTAResponseDto(ta);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 고객별 TA들 조회
+    @GetMapping("/tas/{customer-pk}")
+    public ResponseEntity getTAByCustomerPk(@Positive @PathVariable("customer-pk") long customerPk) {
+        List<TA> tas = teamService.findTAbyCustomerPk(customerPk);
+        List<TAResponseDto.Response> responses = teamMapper.tasToTAResponseDtos(tas);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
     // UPDATE
