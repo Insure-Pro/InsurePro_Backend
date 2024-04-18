@@ -12,7 +12,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +41,10 @@ public class TA extends Auditable {
     private Integer count = 1; // 전화 횟수(1 ~ 20)
 
     @Column
-    private LocalDateTime time; // 전화환 시간
+    private LocalTime time; // 전화한 시간
+
+    @Column
+    private LocalDate date; // 전화한 날짜
 
     @Column
     private String memo; // 메모

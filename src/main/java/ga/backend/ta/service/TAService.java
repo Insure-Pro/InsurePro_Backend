@@ -12,7 +12,9 @@ import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,7 +46,8 @@ public class TAService {
         }
 
         // time 값이 없으면 지금 시각값을 넣음
-        if (ta.getTime() == null) ta.setTime(LocalDateTime.now());
+        if (ta.getTime() == null) ta.setTime(LocalTime.now());
+        if (ta.getDate() == null) ta.setDate(LocalDate.now());
 
         return taRepository.save(ta);
     }
@@ -65,6 +68,7 @@ public class TAService {
         TA findTa = verifiedTA(ta.getPk());
         Optional.ofNullable(ta.getCount()).ifPresent(findTa::setCount);
         Optional.ofNullable(ta.getTime()).ifPresent(findTa::setTime);
+        Optional.ofNullable(ta.getDate()).ifPresent(findTa::setDate);
         Optional.ofNullable(ta.getMemo()).ifPresent(findTa::setMemo);
         Optional.ofNullable(ta.getStatus()).ifPresent(findTa::setStatus);
         Optional.ofNullable(ta.getDelYn()).ifPresent(findTa::setDelYn);
