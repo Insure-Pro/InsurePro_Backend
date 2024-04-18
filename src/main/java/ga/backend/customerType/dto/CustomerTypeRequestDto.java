@@ -19,7 +19,7 @@ public class CustomerTypeRequestDto {
         private String color; // 색상
         private String detail; // 상세내용
         private DataType dataType; // DB 유형
-        private boolean delYn = false; // 고객 삭제 여부
+        private Integer asSetting; // AS 가능한 TA 횟수
     }
 
     @AllArgsConstructor
@@ -34,5 +34,6 @@ public class CustomerTypeRequestDto {
         private String detail; // 상세내용
         private DataType dataType; // DB 유형
         private Boolean delYn; // 고객 삭제 여부
+        private Integer asSetting; // AS 가능한 TA 횟수
     }
 }

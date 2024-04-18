@@ -124,6 +124,7 @@ public class CustomerTypeService {
         Optional.ofNullable(customerType.getColor()).ifPresent(findCustomerType::setColor);
         Optional.ofNullable(customerType.getDetail()).ifPresent(findCustomerType::setDetail);
         Optional.ofNullable(customerType.getDataType()).ifPresent(findCustomerType::setDataType);
+        Optional.ofNullable(customerType.getAsSetting()).ifPresent(findCustomerType::setAsSetting);
         Optional.ofNullable(customerType.getDelYn()).ifPresent(findCustomerType::setDelYn);
         return customerTypeRepository.save(findCustomerType);
     }

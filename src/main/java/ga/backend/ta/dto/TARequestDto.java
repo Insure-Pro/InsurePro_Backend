@@ -13,7 +13,9 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 public class TARequestDto {
     @AllArgsConstructor
@@ -26,8 +28,8 @@ public class TARequestDto {
         @Min(value = 1, message = "최소 1 이상이어야 합니다.")
         @Max(value = 20, message = "최대 20 이하여야 합니다.")
         private Integer count ; // 전화 횟수(1 ~ 20)
-
-        private LocalDateTime time; // 전화환 시간
+        private LocalTime time; // 전화한 시간
+        private LocalDate date; // 전화한 날짜
         private String memo; // 메모
         private Status status; // 상태(부재, 거절, 확약, AS대상)
     }
@@ -40,7 +42,8 @@ public class TARequestDto {
         @Min(value = 1, message = "최소 1 이상이어야 합니다.")
         @Max(value = 20, message = "최대 20 이하여야 합니다.")
         private Integer count ; // 전화 횟수(1 ~ 20)
-        private LocalDateTime time; // 전화환 시간
+        private LocalTime time; // 전화한 시간
+        private LocalDate date; // 전화한 날짜
         private String memo; // 메모
         private Status status; // 상태(부재, 거절, 확약, AS대상)
         private Boolean delYn; // 삭제여부
