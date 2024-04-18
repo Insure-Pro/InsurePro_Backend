@@ -42,10 +42,17 @@ public class EmployeeService {
 
         // 회사 연관관계 설정
         if(companyPk != null) employee.setCompany(companyService.verifiedCompany(companyPk));
-        else if(companyName != null) {
+        else if(companyName != null) { // 사용자 설정으로 새로운 회사 생성하기
             // 새로 회사를 생성
             Company company = new Company();
             company.setName(companyName);
+            company = companyService.createCompany(company);
+            employee.setCompany(company);
+        } else { // 회사PK와 회사이름이 없으면 자동으로 이름 생성
+            // 새로 회사를 생성
+            Company company = new Company();
+            String autoCompanyName = "GA_" + employee.getEmail().split("@")[0];
+            company.setName(autoCompanyName);
             company = companyService.createCompany(company);
             employee.setCompany(company);
         }
