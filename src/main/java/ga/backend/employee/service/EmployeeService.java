@@ -1,6 +1,7 @@
 package ga.backend.employee.service;
 
 import ga.backend.authorizationNumber.service.AuthorizationNumberService;
+import ga.backend.company.entity.Company;
 import ga.backend.company.service.CompanyService;
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.repository.EmployeeRepository;
@@ -30,13 +31,24 @@ public class EmployeeService {
     private final FindEmployee findEmployee;
 
     // CREATE
-    public Employee createEmployee(Employee employee, long companyPk, long teamPk, int authNum) {
+    public Employee createEmployee(Employee employee, Long companyPk, String companyName, long teamPk, int authNum) {
         authorizationNumberService.checkAuthNum(employee.getEmail(), authNum); // 인증번호와 이메일 확인
         employee.setRoles(authorityUtils.createRoles(employee.getEmail())); // 권한 설정
         employee.setPassword(passwordEncoder.encode(employee.getPassword())); // 비밀번호 인코딩
-        employee.setCompany(companyService.verifiedCompany(companyPk)); // 회사 연관관계 설정
-        if(teamPk != 0) employee.setTeam(teamService.verifiedTeam(teamPk)); // 회사 연관관계 설정
-        publisher.publishEvent(new UserRegistrationApplicationEvent(employee));
+        publisher.publishEvent(new UserRegistrationApplicationEvent(employee)); //  사용자 등록 이벤트를 발생시키는 코드입
+
+        // 팀 연관관계 설정
+        if(teamPk != 0) employee.setTeam(teamService.verifiedTeam(teamPk));
+
+        // 회사 연관관계 설정
+        if(companyPk != null) employee.setCompany(companyService.verifiedCompany(companyPk));
+        else if(companyName != null) {
+            // 새로 회사를 생성
+            Company company = new Company();
+            company.setName(companyName);
+            company = companyService.createCompany(company);
+            employee.setCompany(company);
+        }
 
         return employeeRespository.save(employee);
     }

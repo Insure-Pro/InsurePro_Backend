@@ -54,7 +54,9 @@ public class EmployeeRequestDto {
                 message = "특수문자, 영문자, 숫자는 1개 이상 들어가야 합니다, 비밀번호 '최소 4자에서 최대 16자'까지 허용")
         private String rePassword; // 비밀번호 재확인
 
-        private long companyPk; // 회사 식별자
+        private Long companyPk; // 회사 식별자
+
+        private String companyName; // 회사 이름
 
         private long teamPk; // 팀 식별자
 
