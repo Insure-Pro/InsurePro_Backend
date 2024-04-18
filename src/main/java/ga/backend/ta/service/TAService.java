@@ -9,6 +9,7 @@ import ga.backend.exception.ExceptionCode;
 import ga.backend.ta.entity.TA;
 import ga.backend.ta.repository.TARepository;
 import ga.backend.util.FindEmployee;
+import ga.backend.util.Status;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -71,7 +72,6 @@ public class TAService {
         Optional.ofNullable(ta.getDate()).ifPresent(findTa::setDate);
         Optional.ofNullable(ta.getMemo()).ifPresent(findTa::setMemo);
         Optional.ofNullable(ta.getStatus()).ifPresent(findTa::setStatus);
-        Optional.ofNullable(ta.getDelYn()).ifPresent(findTa::setDelYn);
 
         return taRepository.save(findTa);
     }
@@ -80,6 +80,13 @@ public class TAService {
     public void deleteTA(long taPk) {
         TA ta = verifiedTA(taPk);
         ta.setDelYn(true);
+
+        // TA 삭제 시 asCount 감소
+        if(ta.getStatus() == Status.ABSENCE || ta.getStatus() == Status.REJECTION) {
+            Customer customer = ta.getCustomer();
+            customer.setAsCount(customer.getAsCount()-1);
+        }
+
         taRepository.save(ta);
     }
 
