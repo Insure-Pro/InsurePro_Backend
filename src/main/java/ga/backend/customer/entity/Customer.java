@@ -93,4 +93,7 @@ public class Customer extends Auditable {
     @Column
     @Enumerated(EnumType.STRING)
     private ConsultationStatus consultationStatus; // 상담현황(상담보류중, 상품제안중, 병력대기, 청약거절, 상담거절, AS대상)
+
+    @Column
+    private int asCount; // as count
 }
