@@ -54,7 +54,7 @@ public class Schedule extends Auditable {
     @Getter
     public static enum Progress {
         // 초회상담(AP) / 상품제안(PC) / 증권전달(ST)
-        안녕("초회상담"),
+        AP("초회상담"),
         PC("상품제안"),
         ST("증권전달");
 
