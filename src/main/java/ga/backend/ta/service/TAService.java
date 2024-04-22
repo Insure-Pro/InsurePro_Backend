@@ -53,14 +53,16 @@ public class TAService {
 
         // 부재 or 거절일 경우 Customer의 asCount 증가
         // 만약 "asCount"가 "asSetting"r보다 같거나 크다면 고객의 상담현황의 값을 "AS 대상"으로 변경하기
-        if(ta.getStatus() == Status.ABSENCE || ta.getStatus() == Status.REJECTION) {
-            // 부재 or 거절일 경우 Customer의 asCount 증가
-            int asCount = customer.getAsCount()+1;
-            customer.setAsCount(asCount);
+        if(customer.getCustomerType().getAsSetting() != null) { // asSetting값이 설정된 경우에만 counting하기
+            if(ta.getStatus() == Status.ABSENCE || ta.getStatus() == Status.REJECTION) {
+                // 부재 or 거절일 경우 Customer의 asCount 증가
+                int asCount = customer.getAsCount()+1;
+                customer.setAsCount(asCount);
 
-            // 만약 "asCount"가 "asSetting"r보다 같거나 크다면 고객의 상담현황의 값을 "AS 대상"으로 변경하기
-            if(asCount >= customer.getCustomerType().getAsSetting())
-                customer.setConsultationStatus(ConsultationStatus.AS_TARGET);
+                // 만약 "asCount"가 "asSetting"r보다 같거나 크다면 고객의 상담현황의 값을 "AS 대상"으로 변경하기
+                if(asCount >= customer.getCustomerType().getAsSetting())
+                    customer.setConsultationStatus(ConsultationStatus.AS_TARGET);
+            }
         }
 
         return taRepository.save(ta);
