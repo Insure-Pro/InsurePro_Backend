@@ -65,6 +65,10 @@ public class TAService {
             }
         }
 
+        // TA의 state 값에 따른 Customer의 상담현황 변경(AS_TARGET)
+        if(ta.getStatus() == Status.AS_TARGET)
+            customer.setConsultationStatus(ConsultationStatus.AS_TARGET);
+
         return taRepository.save(ta);
     }
 
@@ -87,6 +91,10 @@ public class TAService {
         Optional.ofNullable(ta.getDate()).ifPresent(findTa::setDate);
         Optional.ofNullable(ta.getMemo()).ifPresent(findTa::setMemo);
         Optional.ofNullable(ta.getStatus()).ifPresent(findTa::setStatus);
+
+        // TA의 state 값에 따른 Customer의 상담현황 변경(AS_TARGET)
+        if(findTa.getStatus() == Status.AS_TARGET)
+            findTa.getCustomer().setConsultationStatus(ConsultationStatus.AS_TARGET);
 
         return taRepository.save(findTa);
     }
