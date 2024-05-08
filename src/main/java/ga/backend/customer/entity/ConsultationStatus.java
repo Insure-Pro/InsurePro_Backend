@@ -1,10 +1,11 @@
-package ga.backend.util;
+package ga.backend.customer.entity;
 
 import lombok.Getter;
 
 @Getter
 public enum ConsultationStatus {
-    // 상담보류중, 상품제안중, 병력대기, 청약거절, 상담거절, AS대상
+    // 상담전, 상담보류중, 상품제안중, 병력대기, 청약거절, 상담거절, AS대상
+    BEFORE_CONSULTATION("상담전"),
     PENDING_CONSULTATION("상담보류중"),
     PRODUCT_PROPOSAL("상품제안중"),
     MEDICAL_HISTORY_WAITING("병력대기"),

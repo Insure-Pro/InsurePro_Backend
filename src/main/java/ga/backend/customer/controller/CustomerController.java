@@ -5,7 +5,7 @@ import ga.backend.customer.dto.CustomerResponseDto;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.mapper.CustomerMapper;
 import ga.backend.customer.service.*;
-import ga.backend.util.ConsultationStatus;
+import ga.backend.customer.entity.ConsultationStatus;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

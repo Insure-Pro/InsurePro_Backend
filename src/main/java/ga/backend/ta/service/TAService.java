@@ -7,7 +7,7 @@ import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
 import ga.backend.ta.entity.TA;
 import ga.backend.ta.repository.TARepository;
-import ga.backend.util.ConsultationStatus;
+import ga.backend.customer.entity.ConsultationStatus;
 import ga.backend.util.FindEmployee;
 import ga.backend.ta.entity.Status;
 import lombok.AllArgsConstructor;

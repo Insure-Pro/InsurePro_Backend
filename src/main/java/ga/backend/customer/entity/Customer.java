@@ -9,12 +9,12 @@ import ga.backend.li.entity.Li;
 import ga.backend.metro2.entity.Metro2;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.ta.entity.TA;
-import ga.backend.util.ConsultationStatus;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -92,8 +92,18 @@ public class Customer extends Auditable {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private ConsultationStatus consultationStatus; // 상담현황(상담보류중, 상품제안중, 병력대기, 청약거절, 상담거절, AS대상)
+    private ConsultationStatus consultationStatus; // 상담현황
+
+    @Column
+    private LocalDateTime consultationStatusModifiedAt; // 상담현황 수정일
 
     @Column
     private int asCount; // as count
+
+    public Customer() {
+        if (consultationStatus == null) {
+            consultationStatus = ConsultationStatus.BEFORE_CONSULTATION;
+        }
+        consultationStatusModifiedAt = LocalDateTime.now();
+    }
 }
