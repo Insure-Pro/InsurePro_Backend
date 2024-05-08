@@ -17,7 +17,7 @@ import ga.backend.gu2.service.Gu2Service;
 import ga.backend.metro2.entity.Metro2;
 import ga.backend.metro2.service.Metro2Service;
 import ga.backend.schedule.entity.Schedule;
-import ga.backend.util.ConsultationStatus;
+import ga.backend.customer.entity.ConsultationStatus;
 import ga.backend.util.FindCoordinateByKakaoMap;
 import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
@@ -685,7 +685,17 @@ public class CustomerService {
         Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
         Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
-        Optional.ofNullable(customer.getConsultationStatus()).ifPresent(findCustomer::setConsultationStatus);
+        // 상담현황 변경할 때, 상담현황 수정일자도 변경
+        Optional.ofNullable(customer.getConsultationStatus()).ifPresent(consultationStatus -> {
+            // 날짜 변경
+            LocalDateTime now = LocalDateTime.now();
+            if(customer.getConsultationStatus() != findCustomer.getConsultationStatus()){
+                findCustomer.setConsultationStatusModifiedAt(now);
+            }
+
+            // 상담현황 변경
+            findCustomer.setConsultationStatus(consultationStatus);
+        });
         if (Optional.ofNullable(customer.getDelYn()).orElse(false)) {
             changeSchduleDelYnTrue(findCustomer);
         }

@@ -103,7 +103,7 @@ public class Customer extends Auditable {
     public Customer() {
         if (consultationStatus == null) {
             consultationStatus = ConsultationStatus.BEFORE_CONSULTATION;
+            consultationStatusModifiedAt = LocalDateTime.now();
         }
-        consultationStatusModifiedAt = LocalDateTime.now();
     }
 }
