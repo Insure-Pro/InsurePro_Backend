@@ -3,7 +3,7 @@ package ga.backend.customer.repository;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customerType.entity.CustomerType;
 import ga.backend.employee.entity.Employee;
-import ga.backend.util.ConsultationStatus;
+import ga.backend.customer.entity.ConsultationStatus;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

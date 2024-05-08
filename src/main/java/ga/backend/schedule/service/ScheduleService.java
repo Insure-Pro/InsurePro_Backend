@@ -12,6 +12,7 @@ import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,10 @@ public class ScheduleService {
 
         schedule.setEmployee(employee);
         schedule.setCustomer(customer);
+
+        // 만나는 날짜 자동 생성
+        if(schedule.getDate() == null)
+            schedule.setDate(LocalDate.now());
 
         // 만나는 시간(time) 자동 계산
         LocalTime time = findScheduleTime(schedule.getStartTm(), schedule.getFinishTm());

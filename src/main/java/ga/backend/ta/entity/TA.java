@@ -1,22 +1,14 @@
 package ga.backend.ta.entity;
 
 import ga.backend.auditable.Auditable;
-import ga.backend.company.entity.Company;
 import ga.backend.customer.entity.Customer;
-import ga.backend.customerType.entity.CustomerType;
 import ga.backend.employee.entity.Employee;
-import ga.backend.util.Status;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
