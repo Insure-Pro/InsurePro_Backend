@@ -1,6 +1,6 @@
 package ga.backend.ta.dto;
 
-import ga.backend.util.Status;
+import ga.backend.ta.entity.Status;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

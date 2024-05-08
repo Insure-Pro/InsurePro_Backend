@@ -1,4 +1,4 @@
-package ga.backend.util;
+package ga.backend.ta.entity;
 
 import lombok.Getter;
 
