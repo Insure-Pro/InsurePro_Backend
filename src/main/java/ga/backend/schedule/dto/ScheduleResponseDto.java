@@ -1,6 +1,6 @@
 package ga.backend.schedule.dto;
 
-import ga.backend.schedule.entity.Schedule;
+import ga.backend.schedule.entity.Progress;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +30,7 @@ public class ScheduleResponseDto {
         private Boolean meetYn;
         private Boolean delYn;
         private String color;
-        private Schedule.Progress progress;
+        private Progress progress;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
     }

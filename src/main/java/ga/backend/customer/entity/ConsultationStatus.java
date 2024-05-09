@@ -17,4 +17,5 @@ public enum ConsultationStatus {
 
     ConsultationStatus(String value) {
         this.value = value;
-    }}
+    }
+}

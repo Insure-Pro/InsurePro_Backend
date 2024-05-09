@@ -1,6 +1,6 @@
 package ga.backend.schedule.dto;
 
-import ga.backend.schedule.entity.Schedule;
+import ga.backend.schedule.entity.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +24,7 @@ public class ScheduleRequestDto {
         private Boolean meetYn;
         private boolean delYn;
         private String color;
-        private String progress;
+        private Progress progress;
     }
 
     @AllArgsConstructor
@@ -40,6 +40,6 @@ public class ScheduleRequestDto {
         private Boolean meetYn;
         private Boolean delYn;
         private String color;
-        private Schedule.Progress progress;
+        private Progress progress;
     }
 }
