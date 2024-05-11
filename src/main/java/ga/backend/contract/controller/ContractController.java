@@ -47,10 +47,13 @@ public class ContractController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //  Customer별 contract 리스트 조회
-    @GetMapping("/contracts/{customer-pk}")
-    public ResponseEntity getContracts(@Positive @PathVariable("customer-pk") long customerPk) {
-        List<Contract> contracts = contractService.findContractByCustomerPk(customerPk);
+    // Customer 및 schedule별 contract 리스트 조회
+    @GetMapping("/contracts")
+    public ResponseEntity getContracts(@RequestParam(value = "customerPk", required = false) Long customerPk,
+                                       @RequestParam(value = "schedulePk", required = false) Long schedulePk) {
+        List<Contract> contracts;
+        if (customerPk != null) contracts = contractService.findContractByCustomerPk(customerPk);
+        else contracts = contractService.findContractBySchedulePk(schedulePk);
         List<ContractResponseDto.Response> responses = contractMapper.contractsToContractResponseDtos(contracts);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }

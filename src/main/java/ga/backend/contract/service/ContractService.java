@@ -37,10 +37,16 @@ public class ContractService {
         return verifiedContract(contractPk);
     }
 
-    //  Customer별 contract 리스트 조회
+    // Customer별 contract 리스트 조회
     public List<Contract> findContractByCustomerPk(long customerPk) {
         Customer customer = customerService.findCustomer(customerPk);
         return contractRespository.findByCustomer(customer);
+    }
+
+    // Customer별 contract 리스트 조회
+    public List<Contract> findContractBySchedulePk(long schedulePk) {
+        Schedule schedule = scheduleService.findSchedule(schedulePk);
+        return contractRespository.findBySchedule(schedule);
     }
 
     // UPDATE
