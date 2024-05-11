@@ -27,6 +27,8 @@ public class ContractRequestDto {
         private String name; // 보험 상품 이름
         private String memo; // 메모
         private LocalDate contractDate; // 계약 체결 날짜
-        private Boolean delYn = false; // 삭제 여부
+
+        private Long customerPk;
+        private Long schedulePk;
     }
 }

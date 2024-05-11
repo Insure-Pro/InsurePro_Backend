@@ -44,7 +44,7 @@ public class ContractController {
         Contract contract = contractService.findContract(contractPk);
         ContractResponseDto.Response response = contractMapper.contractToContractResponseDto(contract);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //  Customer별 contract 리스트 조회
@@ -60,7 +60,11 @@ public class ContractController {
     public ResponseEntity patchContract(@Positive @PathVariable("contract-pk") long contractPk,
                                            @Valid @RequestBody ContractRequestDto.Patch patch) {
         patch.setPk(contractPk);
-        Contract contract = contractService.patchContract(contractMapper.contractPatchDtoToContract(patch));
+        Contract contract = contractService.patchContract(
+                contractMapper.contractPatchDtoToContract(patch),
+                patch.getCustomerPk(),
+                patch.getSchedulePk()
+        );
         ContractResponseDto.Response response = contractMapper.contractToContractResponseDto(contract);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -70,6 +74,13 @@ public class ContractController {
     @DeleteMapping("/contract/{contract-pk}")
     public ResponseEntity deleteContract(@Positive @PathVariable("contract-pk") long contractPk) {
         contractService.deleteContract(contractPk);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    // schedule에서 contract 삭제
+    @DeleteMapping("/contract/{contract-pk}/schedule")
+    public ResponseEntity deleteContractBySchedulePk(@Positive @PathVariable("contract-pk") long contractPk) {
+        contractService.deleteContractBySchedule(contractPk);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

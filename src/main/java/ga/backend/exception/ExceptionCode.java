@@ -31,6 +31,7 @@ public enum ExceptionCode {
     EMPLOYEE_NOT_CONTAIN_CUSTOMER(401, "Emploee not contains customer"),
     CUSTOMER_AND_EMPLOYEE_NOT_MATCH(403, "Customer's Employee & JWT Employee Is Not Match"),
     SCHEDULE_AND_EMPLOYEE_NOT_MATCH(403, "Schedule and Employee is not match"),
+    SCHEDULE_AND_CUSTOMER_NOT_MATCH(403, "Schedule and Customer is not match"),
     EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH(403, "Employee can't use this CustomerType"),
     CUSTOMERTYP_IS_USED(403, "CustomerType is used"),
     HIDE_ALREADY_EXITS(409, "Hide already exits"),

@@ -37,7 +37,4 @@ public class Contract extends Auditable {
 
     @Column
     private LocalDate contractDate; // 계약 체결 날짜
-
-    @Column
-    private Boolean delYn = false; // 삭제 여부
 }
