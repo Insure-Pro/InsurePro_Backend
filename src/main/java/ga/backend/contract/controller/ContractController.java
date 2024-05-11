@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 
 @RestController
-@RequestMapping(Version.currentUrl + "/contract")
+@RequestMapping(Version.currentUrl)
 @Validated
 @AllArgsConstructor
 public class ContractController {
@@ -24,16 +24,21 @@ public class ContractController {
     private final ContractMapper contractMapper;
 
     // CREATE
-    @PostMapping
-    public ResponseEntity postContract(@Valid @RequestBody ContractRequestDto.Post post) {
-        Contract contract = contractService.createContract(contractMapper.contractPostDtoToContract(post));
+    @PostMapping("/contract")
+    public ResponseEntity postContract(@Valid @RequestBody ContractRequestDto.Post post,
+                                       @RequestParam(value = "customerPk", required = false) Long customerPk,
+                                       @RequestParam(value = "schedulePk", required = false) Long schedulePk) {
+        Contract contract = contractMapper.contractPostDtoToContract(post);
+        System.out.println("!! customerPk: " + customerPk);
+        System.out.println("!! schedulePk: " + schedulePk);
+        contract = contractService.createContract(contract, customerPk, schedulePk);
         ContractResponseDto.Response response = contractMapper.contractToContractResponseDto(contract);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     // READ
-    @GetMapping("/{contract-pk}")
+    @GetMapping("/contract/{contract-pk}")
     public ResponseEntity getContract(@Positive @PathVariable("contract-pk") long contractPk) {
         Contract contract = contractService.findContract(contractPk);
         ContractResponseDto.Response response = contractMapper.contractToContractResponseDto(contract);
@@ -42,7 +47,7 @@ public class ContractController {
     }
 
     // UPDATE
-    @PatchMapping("/{contract-pk}")
+    @PatchMapping("/contract/{contract-pk}")
     public ResponseEntity patchContract(@Positive @PathVariable("contract-pk") long contractPk,
                                            @Valid @RequestBody ContractRequestDto.Patch patch) {
         patch.setPk(contractPk);
@@ -53,7 +58,7 @@ public class ContractController {
     }
 
     // DELETE
-    @DeleteMapping("/{contract-pk}")
+    @DeleteMapping("/contract/{contract-pk}")
     public ResponseEntity deleteContract(@Positive @PathVariable("contract-pk") long contractPk) {
         contractService.deleteContract(contractPk);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

@@ -2,8 +2,14 @@ package ga.backend.contract.service;
 
 import ga.backend.contract.entity.Contract;
 import ga.backend.contract.repository.ContractRepository;
+import ga.backend.customer.entity.Customer;
+import ga.backend.customer.service.CustomerService;
+import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
+import ga.backend.schedule.entity.Schedule;
+import ga.backend.schedule.service.ScheduleService;
+import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +19,29 @@ import java.util.Optional;
 @AllArgsConstructor
 public class ContractService {
     private final ContractRepository contractRespository;
+    private final CustomerService customerService;
+    private final ScheduleService scheduleService;
+    private final FindEmployee findEmployee;
 
     // CREATE
-    public Contract createContract(Contract contract) {
+    public Contract createContract(Contract contract, Long customerPk, Long schedulePk) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+
+        if(schedulePk != null) {
+            Schedule schedule = scheduleService.findSchedule(schedulePk);
+            if (schedule.getEmployee().getPk() != employee.getPk())
+                throw new BusinessLogicException(ExceptionCode.SCHEDULE_AND_EMPLOYEE_NOT_MATCH);
+            contract.setSchedule(schedule);
+            contract.setCustomer(schedule.getCustomer());
+        }
+
+        if (customerPk != null) {
+            Customer customer = customerService.findCustomer(customerPk);
+            if (customer.getEmployee().getPk() != employee.getPk())
+                throw new BusinessLogicException(ExceptionCode.CUSTOMER_AND_EMPLOYEE_NOT_MATCH);
+            contract.setCustomer(customer);
+        }
+
         return contractRespository.save(contract);
     }
 
@@ -38,7 +64,9 @@ public class ContractService {
     // DELETE
     public void deleteContract(long contractPk) {
         Contract contract = verifiedContract(contractPk);
-        contractRespository.delete(contract);
+        contract.setDelYn(true);
+        contractRespository.save(contract);
+//        contractRespository.delete(contract);
     }
 
     // 검증
