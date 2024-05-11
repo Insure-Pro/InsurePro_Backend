@@ -49,6 +49,12 @@ public class ContractService {
         return contractRespository.findBySchedule(schedule);
     }
 
+    // 추가 가능한 contract 리스트
+    public List<Contract> findContractAddable(long customerPk) {
+        Customer customer = customerService.findCustomer(customerPk);
+        return contractRespository.findByCustomerAndScheduleIsNull(customer);
+    }
+
     // UPDATE
     public Contract patchContract(Contract contract, Long customerPk, Long schedulePk) {
         Contract findContract = verifiedContract(contract.getPk());

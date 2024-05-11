@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface ContractRepository extends JpaRepository<Contract, Long> {
     List<Contract> findByCustomer(Customer customer);
     List<Contract> findBySchedule(Schedule schedule);
+    List<Contract> findByCustomerAndScheduleIsNull(Customer customer);
 }

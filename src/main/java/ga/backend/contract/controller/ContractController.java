@@ -30,8 +30,6 @@ public class ContractController {
                                        @RequestParam(value = "customerPk", required = false) Long customerPk,
                                        @RequestParam(value = "schedulePk", required = false) Long schedulePk) {
         Contract contract = contractMapper.contractPostDtoToContract(post);
-        System.out.println("!! customerPk: " + customerPk);
-        System.out.println("!! schedulePk: " + schedulePk);
         contract = contractService.createContract(contract, customerPk, schedulePk);
         ContractResponseDto.Response response = contractMapper.contractToContractResponseDto(contract);
 
@@ -54,6 +52,14 @@ public class ContractController {
         List<Contract> contracts;
         if (customerPk != null) contracts = contractService.findContractByCustomerPk(customerPk);
         else contracts = contractService.findContractBySchedulePk(schedulePk);
+        List<ContractResponseDto.Response> responses = contractMapper.contractsToContractResponseDtos(contracts);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
+    //  추가 가능한 contract 리스트 조회
+    @GetMapping("/contracts/addable")
+    public ResponseEntity getContracts(@RequestParam(value = "customerPk", required = false) Long customerPk) {
+        List<Contract> contracts = contractService.findContractAddable(customerPk);
         List<ContractResponseDto.Response> responses = contractMapper.contractsToContractResponseDtos(contracts);
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
