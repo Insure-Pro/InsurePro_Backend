@@ -13,6 +13,7 @@ import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,6 +52,12 @@ public class ContractService {
         return contract;
     }
 
+    //  Customer별 contract 리스트 조회
+    public List<Contract> findContractByCustomerPk(long customerPk) {
+        Customer customer = customerService.findCustomer(customerPk);
+        return contractRespository.findByCustomer(customer);
+    }
+
     // UPDATE
     public Contract patchContract(Contract contract) {
         Contract findContract = verifiedContract(contract.getPk());
@@ -72,6 +79,6 @@ public class ContractService {
     // 검증
     public Contract verifiedContract(long contractPk) {
         Optional<Contract> contract = contractRespository.findById(contractPk);
-        return contract.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
+        return contract.orElseThrow(() -> new BusinessLogicException(ExceptionCode.CONTRACT_NOT_FOUND));
     }
 }

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
+import java.util.List;
 
 @RestController
 @RequestMapping(Version.currentUrl)
@@ -46,6 +47,14 @@ public class ContractController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    //  Customer별 contract 리스트 조회
+    @GetMapping("/contracts/{customer-pk}")
+    public ResponseEntity getContracts(@Positive @PathVariable("customer-pk") long customerPk) {
+        List<Contract> contracts = contractService.findContractByCustomerPk(customerPk);
+        List<ContractResponseDto.Response> responses = contractMapper.contractsToContractResponseDtos(contracts);
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
+
     // UPDATE
     @PatchMapping("/contract/{contract-pk}")
     public ResponseEntity patchContract(@Positive @PathVariable("contract-pk") long contractPk,
@@ -54,7 +63,7 @@ public class ContractController {
         Contract contract = contractService.patchContract(contractMapper.contractPatchDtoToContract(patch));
         ContractResponseDto.Response response = contractMapper.contractToContractResponseDto(contract);
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     // DELETE
