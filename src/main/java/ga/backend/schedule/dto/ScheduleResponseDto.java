@@ -1,5 +1,6 @@
 package ga.backend.schedule.dto;
 
+import ga.backend.contract.dto.ContractResponseDto;
 import ga.backend.schedule.entity.Progress;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 public class ScheduleResponseDto {
     @AllArgsConstructor
@@ -31,6 +33,7 @@ public class ScheduleResponseDto {
         private Boolean delYn;
         private String color;
         private Progress progress;
+        private List<ContractResponseDto.Response> contracts;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
     }

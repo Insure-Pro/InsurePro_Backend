@@ -1,5 +1,6 @@
 package ga.backend.schedule.mapper;
 
+import ga.backend.contract.entity.Contract;
 import ga.backend.schedule.dto.ScheduleRequestDto;
 import ga.backend.schedule.dto.ScheduleResponseDto;
 import ga.backend.schedule.entity.Schedule;
