@@ -1,6 +1,7 @@
 package ga.backend.schedule.entity;
 
 import ga.backend.auditable.Auditable;
+import ga.backend.contract.entity.Contract;
 import ga.backend.customer.entity.Customer;
 import ga.backend.employee.entity.Employee;
 import lombok.Getter;
@@ -9,6 +10,8 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,6 +29,9 @@ public class Schedule extends Auditable {
     @ManyToOne
     @JoinColumn(name = "employee_pk")
     private Employee employee;
+
+    @OneToMany(mappedBy = "schedule", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Contract> contracts = new ArrayList<>();
 
     @Column
     private String memo;
@@ -50,23 +56,6 @@ public class Schedule extends Auditable {
 
     @Enumerated(EnumType.STRING)
     private Progress progress;
-
-    @Getter
-    public static enum Progress {
-        // 초회상담(AP) / 상품제안(PC) / 증권전달(ST)
-        AP("초회상담"),
-        PC("상품제안"),
-        ST("증권전달"),
-        IC("정보수집"),
-        OC("기타상담"),
-        CIC("계약체결");
-
-        private final String value;
-
-        Progress(String value) {
-            this.value = value;
-        }
-    }
 
     @Column
     private Boolean meetYn = false;

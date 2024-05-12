@@ -1,6 +1,7 @@
 package ga.backend.customer.entity;
 
 import ga.backend.auditable.Auditable;
+import ga.backend.contract.entity.Contract;
 import ga.backend.customerType.entity.CustomerType;
 import ga.backend.dong2.entity.Dong2;
 import ga.backend.employee.entity.Employee;
@@ -56,6 +57,9 @@ public class Customer extends Auditable {
 
     @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private List<TA> tas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Contract> contracts = new ArrayList<>();
 
     @Column
     private String name; // 이름

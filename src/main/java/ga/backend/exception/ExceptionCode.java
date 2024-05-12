@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 public enum ExceptionCode {
     COMPANY_NOT_FOUND(404, "Company not found"),
+    CONTRACT_NOT_FOUND(404, "Contract not found"),
     CUSTOMERTYPE_NOT_FOUND(404, "CustomerType not found"),
     TEAM_NOT_FOUND(404, "Team not found"),
     TA_NOT_FOUND(404, "TA not found"),
@@ -29,6 +30,8 @@ public enum ExceptionCode {
     WRONG_PASSWORD(401, "Wrong Password"),
     EMPLOYEE_NOT_CONTAIN_CUSTOMER(401, "Emploee not contains customer"),
     CUSTOMER_AND_EMPLOYEE_NOT_MATCH(403, "Customer's Employee & JWT Employee Is Not Match"),
+    SCHEDULE_AND_EMPLOYEE_NOT_MATCH(403, "Schedule and Employee is not match"),
+    SCHEDULE_AND_CUSTOMER_NOT_MATCH(403, "Schedule and Customer is not match"),
     EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH(403, "Employee can't use this CustomerType"),
     CUSTOMERTYP_IS_USED(403, "CustomerType is used"),
     HIDE_ALREADY_EXITS(409, "Hide already exits"),
