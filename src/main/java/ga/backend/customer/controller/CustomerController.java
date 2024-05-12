@@ -48,7 +48,7 @@ public class CustomerController {
                 customerMapper.customersPostDtoToCustomers(posts)
         );
 
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomerResponseDtos(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.CREATED);
     }
@@ -66,12 +66,12 @@ public class CustomerController {
     @GetMapping("/customers/latest")
     public ResponseEntity getCustomers(@RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByLatest(customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
 
-    // 최신순 정렬 - 생성일 기준 (+ metroGuDong 추가)
+    // 최신순 정렬 - 생성일 기준 (+ 좌표값 추가)
     @GetMapping("/customers/latest-2")
     public ResponseEntity getCustomersAddMetro(@RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByLatest(customerTypePk);
@@ -87,7 +87,7 @@ public class CustomerController {
     public ResponseEntity getCustomersByMonth(@PathVariable("date") String date,
                                               @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByLatest(LocalDate.parse(date), customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
@@ -97,7 +97,7 @@ public class CustomerController {
     public ResponseEntity getCustomersByAge(@PathVariable("age") String age,
                                             @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByAge(age, customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
@@ -108,7 +108,7 @@ public class CustomerController {
                                                     @PathVariable("date") String date,
                                                     @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByAge(age, LocalDate.parse(date), customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
@@ -118,7 +118,7 @@ public class CustomerController {
     public ResponseEntity findCustomersByDongName(@PathVariable("dongName") String dongName,
                                                   @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByDongName(dongName, customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
@@ -128,7 +128,7 @@ public class CustomerController {
     public ResponseEntity findCustomersByDong(@RequestParam("dongPk") long dongPk,
                                               @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByLi(dongPk, customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
@@ -139,7 +139,7 @@ public class CustomerController {
                                                       @PathVariable("date") String date,
                                                       @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByLi(dongPk, LocalDate.parse(date), customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
@@ -171,7 +171,7 @@ public class CustomerController {
 //                                                            @PathVariable("date") String date,
 //                                                            @RequestParam("customerTypePk") long customerTypePk) {
 //        List<Customer> customers = customerService.findCustomerByContractYn(contractYn, LocalDate.parse(date), customerTypePk);
-//        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+//        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 //
 //        return new ResponseEntity<>(responses, HttpStatus.OK);
 //    }
@@ -181,7 +181,7 @@ public class CustomerController {
     public ResponseEntity findCustomersByConsultationStatusByLatest(@PathVariable("consultationStatus") ConsultationStatus consultationStatus,
                                                                     @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByConsultationStatusByLatest(consultationStatus, customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
@@ -192,7 +192,7 @@ public class CustomerController {
                                                                             @PathVariable("date") String date,
                                                                             @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByConsultationStatusByLatestAndMonth(consultationStatus, LocalDate.parse(date), customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
@@ -201,7 +201,7 @@ public class CustomerController {
     @GetMapping("/customers/name/{name}")
     public ResponseEntity findCustomerByname(@PathVariable("name") String name) {
         List<Customer> customers = customerService.findCustomerByName(name);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
@@ -217,7 +217,6 @@ public class CustomerController {
                 patch.getMetroGuDong(),
                 patch.getCustomerTypePk()
         );
-        System.out.println("!! patch.getCustomerTypePk() = " + patch.getCustomerTypePk());
         CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
