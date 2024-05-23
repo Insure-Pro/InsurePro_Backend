@@ -2,6 +2,9 @@ package ga.backend.analysis.service;
 
 import ga.backend.analysis.entity.Analysis;
 import ga.backend.analysis.repository.AnanlysisRepository;
+import ga.backend.contract.entity.Contract;
+import ga.backend.contract.repository.ContractRepository;
+import ga.backend.contract.service.ContractService;
 import ga.backend.customer.entity.ConsultationStatus;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.repository.CustomerRepository;
@@ -30,6 +33,7 @@ public class AnalysisService {
     private final AnanlysisRepository analysisRespository;
     private final CustomerRepository customerRepository;
     private final ScheduleRepository scheduleRepository;
+    private final ContractRepository contractRepository;
     private final CustomerTypeService customerTypeService;
     private final FindEmployee findEmployee;
 
@@ -52,6 +56,8 @@ public class AnalysisService {
         // 분석하는 날짜
         LocalDateTime start = requestDate.atStartOfDay().withDayOfMonth(1); // 요청한 달의 첫째날 00:00:00
         LocalDateTime finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날 23:59:99
+        LocalDate startDate = requestDate.withDayOfMonth(1); // 요청한 달의 첫째날
+        LocalDate finishDate = requestDate.withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날
 
         // 계산여부 확인
         if(checkMonth(date)) { // 요청한 달이 이번달이면 계산
@@ -80,12 +86,12 @@ public class AnalysisService {
 //            analysis.setDbCustomerCount(dbCustomers.size());
 //            analysis.setEtcCustomerCount(etcCustomers.size());
             if(customerTypeService.dataTypeisDB(customerType)) // DB 고객유형
-                analysis.setDbCustomerCount(customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerType(employee, start.toLocalDate(), finish.toLocalDate(), customerType).size());
+                analysis.setDbCustomerCount(customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerType(employee, startDate, finishDate, customerType).size());
             else // ETC 고객유형
                 analysis.setEtcCustomerCount(customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(employee, start, finish, customerType).size());
 
             // customer의 상담현황 확률
-            List<Customer> allCustomersByConsultationStatusModifiedAt = customerRepository.findByEmployeeAndConsultationStatusModifiedAtBetweenAndCustomerType(
+            List<Customer> allCustomersByConsultationStatusModifiedAt = customerRepository.findByEmployeeAndConsultationStatusModifiedAtBetweenAndCustomerTypeAndDelYnFalse(
                     employee,
                     start,
                     finish,
@@ -112,6 +118,14 @@ public class AnalysisService {
             analysis.setMedicalHistoryWaitingRatio(medicalHistoryWaitingCount / allCustomersByConsultationStatusModifiedAtCount);
             analysis.setSubscriptionRejectionRatio(subscriptionRejectionCount / allCustomersByConsultationStatusModifiedAtCount);
             analysis.setConsultationRejectionRatio(consultationRejectionCount / allCustomersByConsultationStatusModifiedAtCount);
+
+            // Contract의 계약 체결한 Contract 개수
+            analysis.setContractCount((int) contractRepository.countByCustomerEmployeeAndContractDateBetweenAndCustomerCustomerType(
+                    employee,
+                    startDate,
+                    finishDate,
+                    customerType
+            ));
 
             analysisRespository.save(analysis);
         }

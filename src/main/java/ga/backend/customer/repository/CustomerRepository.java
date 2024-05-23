@@ -80,7 +80,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(Employee employee, LocalDateTime start, LocalDateTime finish, CustomerType customerType);
 
     // customer의 상담현황 확률
-    List<Customer> findByEmployeeAndConsultationStatusModifiedAtBetweenAndCustomerType(Employee employee, LocalDateTime start, LocalDateTime finish, CustomerType customerType);
+    List<Customer> findByEmployeeAndConsultationStatusModifiedAtBetweenAndCustomerTypeAndDelYnFalse(Employee employee, LocalDateTime start, LocalDateTime finish, CustomerType customerType);
 
 
     // 계산
