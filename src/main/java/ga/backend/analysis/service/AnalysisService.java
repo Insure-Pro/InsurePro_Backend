@@ -104,6 +104,7 @@ public class AnalysisService {
             int medicalHistoryWaitingCount = 0;
             int subscriptionRejectionCount = 0;
             int consultationRejectionCount = 0;
+            int asTargetCount = 0;
             for(Customer customer : allCustomersByConsultationStatusModifiedAt) {
                 if(customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION) beforeConsultationCount++;
                 else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION) pendingConsultationCount++;
@@ -111,6 +112,7 @@ public class AnalysisService {
                 else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING) medicalHistoryWaitingCount++;
                 else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION) subscriptionRejectionCount++;
                 else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION) consultationRejectionCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.AS_TARGET) asTargetCount++;
             }
             analysis.setBeforeConsultationRatio(beforeConsultationCount / allCustomersByConsultationStatusModifiedAtCount);
             analysis.setPendingCounsultationRatio(pendingConsultationCount / allCustomersByConsultationStatusModifiedAtCount);
@@ -118,6 +120,7 @@ public class AnalysisService {
             analysis.setMedicalHistoryWaitingRatio(medicalHistoryWaitingCount / allCustomersByConsultationStatusModifiedAtCount);
             analysis.setSubscriptionRejectionRatio(subscriptionRejectionCount / allCustomersByConsultationStatusModifiedAtCount);
             analysis.setConsultationRejectionRatio(consultationRejectionCount / allCustomersByConsultationStatusModifiedAtCount);
+            analysis.setAsTargetCount(asTargetCount); // Customer의 상담현황 = AS_TARGET인 Customer 개수
 
             // Contract의 계약 체결한 Contract 개수
             analysis.setContractCount((int) contractRepository.countByCustomerEmployeeAndContractDateBetweenAndCustomerCustomerType(
