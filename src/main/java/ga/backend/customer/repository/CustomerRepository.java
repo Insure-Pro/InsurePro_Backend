@@ -5,7 +5,6 @@ import ga.backend.customerType.entity.CustomerType;
 import ga.backend.customerType.entity.DataType;
 import ga.backend.employee.entity.Employee;
 import ga.backend.customer.entity.ConsultationStatus;
-import ga.backend.li.entity.Li;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -70,14 +69,10 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     // -----------------------------------------------------------------------------
     // 성과분석(analysis) RegisterDate
     // 이번달 DB 유형 고객들
-    List<Customer> findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerTypeIn(Employee employee, LocalDate start, LocalDate finish, List<CustomerType> customerTypes);
-    List<Customer> findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerTypeDataType(Employee employee, LocalDate start, LocalDate finish, DataType dataType);
-    List<Customer> findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerType(Employee employee, LocalDate start, LocalDate finish, CustomerType customerType);
+    long countByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerType(Employee employee, LocalDate start, LocalDate finish, CustomerType customerType);
 
     // 이번달 ETC 유형 고객들
-    List<Customer> findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerTypeIn(Employee employee, LocalDateTime start, LocalDateTime finish, List<CustomerType> customerTypes);
-    List<Customer> findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerTypeDataType(Employee employee, LocalDateTime start, LocalDateTime finish, DataType dataType);
-    List<Customer> findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(Employee employee, LocalDateTime start, LocalDateTime finish, CustomerType customerType);
+    long countByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(Employee employee, LocalDateTime start, LocalDateTime finish, CustomerType customerType);
 
     // customer의 상담현황 확률
     List<Customer> findByEmployeeAndConsultationStatusModifiedAtBetweenAndCustomerTypeAndDelYnFalse(Employee employee, LocalDateTime start, LocalDateTime finish, CustomerType customerType);

@@ -51,149 +51,13 @@ public class AnalysisService {
 
     public Analysis findAnalysis(LocalDate requestDate, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        LocalDate date = requestDate.withDayOfMonth(1); // 분석 날짜
-        Analysis analysis = verifiedAnalysis(employee, date, customerTypePk); // 이전에 구현된 analysis가 있는지 확인
 
-        // 분석하는 날짜
-        LocalDateTime start = requestDate.atStartOfDay().withDayOfMonth(1); // 요청한 달의 첫째날 00:00:00
-        LocalDateTime finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날 23:59:99
-        LocalDate startDate = requestDate.withDayOfMonth(1); // 요청한 달의 첫째날
-        LocalDate finishDate = requestDate.withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날
+        // 이전에 구현된 analysis가 있는지 확인
+        LocalDate date = requestDate.withDayOfMonth(1); // 요청한 달의 첫째날
+        Analysis analysis = verifiedAnalysis(employee, date, customerTypePk);
 
-        // 계산여부 확인
-        if (checkMonth(date)) { // 요청한 달이 이번달이면 계산
-            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
-
-            // 직원 회사의 고객 유형
-//            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
-//            List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType().equals(DataType.DB)).collect(Collectors.toList());
-//            List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType().equals(DataType.ETC)).collect(Collectors.toList());
-
-            // 이번달에 추가된 고객들
-//            List<Customer> dbCustomers = customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerTypeDataType(
-//                    employee,
-//                    start.toLocalDate(),
-//                    finish.toLocalDate(),
-//                    DataType.DB
-//            );
-//            List<Customer> etcCustomers = customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerTypeDataType(
-//                    employee,
-//                    start,
-//                    finish,
-//                    DataType.ETC
-//            );
-
-            // 이번달에 추가된 customer 개수
-//            analysis.setDbCustomerCount(dbCustomers.size());
-//            analysis.setEtcCustomerCount(etcCustomers.size());
-            if (customerTypeService.dataTypeisDB(customerType)) // DB 고객유형
-                analysis.setDbCustomerCount(customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerType(employee, startDate, finishDate, customerType).size());
-            else // ETC 고객유형
-                analysis.setEtcCustomerCount(customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(employee, start, finish, customerType).size());
-
-            // customer의 상담현황 확률
-            List<Customer> allCustomersByConsultationStatusModifiedAt = customerRepository.findByEmployeeAndConsultationStatusModifiedAtBetweenAndCustomerTypeAndDelYnFalse(
-                    employee,
-                    start,
-                    finish,
-                    customerType
-            );
-            double allCustomersByConsultationStatusModifiedAtCount = allCustomersByConsultationStatusModifiedAt.size();
-            int beforeConsultationCount = 0;
-            int pendingConsultationCount = 0;
-            int productProposalCount = 0;
-            int medicalHistoryWaitingCount = 0;
-            int subscriptionRejectionCount = 0;
-            int consultationRejectionCount = 0;
-            int asTargetCount = 0;
-            for (Customer customer : allCustomersByConsultationStatusModifiedAt) {
-                if (customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION) beforeConsultationCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION) pendingConsultationCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.PRODUCT_PROPOSAL) productProposalCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING) medicalHistoryWaitingCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION) subscriptionRejectionCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION) consultationRejectionCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.AS_TARGET) asTargetCount++;
-            }
-            analysis.setBeforeConsultationRatio(beforeConsultationCount / allCustomersByConsultationStatusModifiedAtCount);
-            analysis.setPendingCounsultationRatio(pendingConsultationCount / allCustomersByConsultationStatusModifiedAtCount);
-            analysis.setProductProposalRatio(productProposalCount / allCustomersByConsultationStatusModifiedAtCount);
-            analysis.setMedicalHistoryWaitingRatio(medicalHistoryWaitingCount / allCustomersByConsultationStatusModifiedAtCount);
-            analysis.setSubscriptionRejectionRatio(subscriptionRejectionCount / allCustomersByConsultationStatusModifiedAtCount);
-            analysis.setConsultationRejectionRatio(consultationRejectionCount / allCustomersByConsultationStatusModifiedAtCount);
-            analysis.setAsTargetCount(asTargetCount); // Customer의 상담현황 = AS_TARGET인 Customer 개수
-
-            // Contract의 계약 체결한 Contract 개수
-            analysis.setContractCount((int) contractRepository.countByCustomerEmployeeAndContractDateBetweenAndCustomerCustomerType(
-                    employee,
-                    startDate,
-                    finishDate,
-                    customerType
-            ));
-
-            // TA의 Customer 개수
-            List<TA> tas = new ArrayList<>(taRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescTimeDescPkDesc(
-                            employee,
-                            startDate,
-                            finishDate,
-                            customerType
-                    ).stream()
-                    .collect(Collectors.toMap(
-                            TA::getCustomer,
-                            ta -> ta,
-                            (existing, replacement) -> existing
-                    )).values());
-
-            int absenceCount = 0;
-            int rejectionCount = 0;
-            int pendingCount = 0;
-            int promiseCount = 0;
-            for(TA ta : tas) {
-                if(ta.getStatus() == Status.ABSENCE) absenceCount++;
-                else if(ta.getStatus() == Status.REJECTION) rejectionCount++;
-                else if(ta.getStatus() == Status.PENDING) pendingCount++;
-                else if(ta.getStatus() == Status.PROMISE) promiseCount++;
-            }
-            analysis.setAbsenceCount(absenceCount);
-            analysis.setRejectionCount(rejectionCount);
-            analysis.setPendingCount(pendingCount);
-            analysis.setPromiseCount(promiseCount);
-
-            // Schedule의 Progress(진척도)의 Customer 개수
-            List<Schedule> schedules = new ArrayList<>(scheduleRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescPkDesc(
-                            employee,
-                            startDate,
-                            finishDate,
-                            customerType
-                    ).stream()
-                    .collect(Collectors.toMap(
-                            Schedule::getCustomer,
-                            schedule -> schedule,
-                            (existing, replacement) -> existing
-                    )).values());
-            int apCount = 0;
-            int icCount = 0;
-            int pcCount = 0;
-            int cicCount = 0;
-            int stCount = 0;
-            int ocCount = 0;
-            for(Schedule schedule : schedules) {
-                if(schedule.getProgress() == Progress.AP) apCount++;
-                else if(schedule.getProgress() == Progress.IC) icCount++;
-                else if(schedule.getProgress() == Progress.PC) pcCount++;
-                else if(schedule.getProgress() == Progress.CIC) cicCount++;
-                else if(schedule.getProgress() == Progress.ST) stCount++;
-                else if(schedule.getProgress() == Progress.OC) ocCount++;
-            }
-            analysis.setApCount(apCount);
-            analysis.setIcCount(icCount);
-            analysis.setPcCount(pcCount);
-            analysis.setCicCount(cicCount);
-            analysis.setStCount(stCount);
-            analysis.setOcCount(ocCount);
-
-            analysisRespository.save(analysis);
-        }
+        // 계산여부 확인 -> 요청한 달이 이번달이면 계산
+        if (checkMonth(date)) calculateAnalysis(analysis, employee, customerTypePk, requestDate);
 
         return analysis;
     }
@@ -241,5 +105,146 @@ public class AnalysisService {
         if (now.getMonthValue() != date.getMonthValue()) check = false;
         else if (now.getYear() != date.getYear()) check = false;
         return check;
+    }
+
+    // 성과분석 계산
+    public void calculateAnalysis(Analysis analysis, Employee employee, long customerTypePk, LocalDate requestDate) {
+        // 분석하는 날짜
+        LocalDateTime start = requestDate.atStartOfDay().withDayOfMonth(1); // 요청한 달의 첫째날 00:00:00
+        LocalDateTime finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날 23:59:99
+        LocalDate startDate = requestDate.withDayOfMonth(1); // 요청한 달의 첫째날
+        LocalDate finishDate = requestDate.withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날
+
+        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+        // 이번달에 추가된 customer 개수
+        if (customerTypeService.dataTypeisDB(customerType)) // DB 고객유형
+            analysis.setDbCustomerCount(
+                    (int) customerRepository.countByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerType(
+                            employee, startDate, finishDate, customerType
+                    ));
+        else // ETC 고객유형
+            analysis.setEtcCustomerCount((
+                    int) customerRepository.countByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(
+                    employee, start, finish, customerType
+            ));
+
+        // customer의 상담현황 확률
+        consultationStatusRatio(analysis, employee, start, finish, customerType);
+
+        // Contract의 계약 체결한 Contract 개수
+        analysis.setContractCount((int) contractRepository.countByCustomerEmployeeAndContractDateBetweenAndCustomerCustomerType(
+                employee,
+                startDate,
+                finishDate,
+                customerType
+        ));
+
+        // TA의 Customer 개수
+        taCustomerCount(analysis, employee, startDate, finishDate, customerType);
+
+        // Schedule의 Progress(진척도)의 Customer 개수
+        scheduleCustomerCount(analysis, employee, startDate, finishDate, customerType);
+    }
+
+    // customer의 상담현황 확률
+    public void consultationStatusRatio(Analysis analysis, Employee employee, LocalDateTime start, LocalDateTime finish, CustomerType customerType) {
+        List<Customer> allCustomersByConsultationStatusModifiedAt = customerRepository.findByEmployeeAndConsultationStatusModifiedAtBetweenAndCustomerTypeAndDelYnFalse(
+                employee,
+                start,
+                finish,
+                customerType
+        );
+        double allCustomerCount = allCustomersByConsultationStatusModifiedAt.size();
+        int beforeConsultationCount = 0;
+        int pendingConsultationCount = 0;
+        int productProposalCount = 0;
+        int medicalHistoryWaitingCount = 0;
+        int subscriptionRejectionCount = 0;
+        int consultationRejectionCount = 0;
+        int asTargetCount = 0;
+        for (Customer customer : allCustomersByConsultationStatusModifiedAt) {
+            if (customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION) beforeConsultationCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION) pendingConsultationCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.PRODUCT_PROPOSAL) productProposalCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING) medicalHistoryWaitingCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION) subscriptionRejectionCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION) consultationRejectionCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.AS_TARGET) asTargetCount++;
+        }
+        analysis.setBeforeConsultationRatio(beforeConsultationCount / allCustomerCount);
+        analysis.setPendingCounsultationRatio(pendingConsultationCount / allCustomerCount);
+        analysis.setProductProposalRatio(productProposalCount / allCustomerCount);
+        analysis.setMedicalHistoryWaitingRatio(medicalHistoryWaitingCount / allCustomerCount);
+        analysis.setSubscriptionRejectionRatio(subscriptionRejectionCount / allCustomerCount);
+        analysis.setConsultationRejectionRatio(consultationRejectionCount / allCustomerCount);
+        analysis.setAsTargetCount(asTargetCount); // Customer의 상담현황 = AS_TARGET인 Customer 개수
+    }
+
+    // TA의 Customer 개수
+    public void taCustomerCount(Analysis analysis, Employee employee, LocalDate startDate, LocalDate finishDate, CustomerType customerType) {
+        List<TA> tas = new ArrayList<>(taRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescTimeDescPkDesc(
+                        employee,
+                        startDate,
+                        finishDate,
+                        customerType
+                ).stream()
+                .collect(Collectors.toMap(
+                        TA::getCustomer,
+                        ta -> ta,
+                        (existing, replacement) -> existing
+                )).values());
+
+        int absenceCount = 0;
+        int rejectionCount = 0;
+        int pendingCount = 0;
+        int promiseCount = 0;
+        for(TA ta : tas) {
+            if(ta.getStatus() == Status.ABSENCE) absenceCount++;
+            else if(ta.getStatus() == Status.REJECTION) rejectionCount++;
+            else if(ta.getStatus() == Status.PENDING) pendingCount++;
+            else if(ta.getStatus() == Status.PROMISE) promiseCount++;
+        }
+        analysis.setAbsenceCount(absenceCount);
+        analysis.setRejectionCount(rejectionCount);
+        analysis.setPendingCount(pendingCount);
+        analysis.setPromiseCount(promiseCount);
+    }
+
+    // Schedule의 Progress(진척도)의 Customer 개수
+    public void scheduleCustomerCount(Analysis analysis, Employee employee, LocalDate startDate, LocalDate finishDate, CustomerType customerType) {
+        List<Schedule> schedules = new ArrayList<>(scheduleRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescPkDesc(
+                        employee,
+                        startDate,
+                        finishDate,
+                        customerType
+                ).stream()
+                .collect(Collectors.toMap(
+                        Schedule::getCustomer,
+                        schedule -> schedule,
+                        (existing, replacement) -> existing
+                )).values());
+        int apCount = 0;
+        int icCount = 0;
+        int pcCount = 0;
+        int cicCount = 0;
+        int stCount = 0;
+        int ocCount = 0;
+        for(Schedule schedule : schedules) {
+            if(schedule.getProgress() == Progress.AP) apCount++;
+            else if(schedule.getProgress() == Progress.IC) icCount++;
+            else if(schedule.getProgress() == Progress.PC) pcCount++;
+            else if(schedule.getProgress() == Progress.CIC) cicCount++;
+            else if(schedule.getProgress() == Progress.ST) stCount++;
+            else if(schedule.getProgress() == Progress.OC) ocCount++;
+        }
+        analysis.setApCount(apCount);
+        analysis.setIcCount(icCount);
+        analysis.setPcCount(pcCount);
+        analysis.setCicCount(cicCount);
+        analysis.setStCount(stCount);
+        analysis.setOcCount(ocCount);
+
+        analysisRespository.save(analysis);
     }
 }
