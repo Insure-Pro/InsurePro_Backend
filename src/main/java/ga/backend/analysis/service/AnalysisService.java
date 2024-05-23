@@ -11,6 +11,8 @@ import ga.backend.customerType.service.CustomerTypeService;
 import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
+import ga.backend.schedule.entity.Progress;
+import ga.backend.schedule.entity.Schedule;
 import ga.backend.schedule.repository.ScheduleRepository;
 import ga.backend.ta.entity.Status;
 import ga.backend.ta.entity.TA;
@@ -105,18 +107,12 @@ public class AnalysisService {
             int consultationRejectionCount = 0;
             int asTargetCount = 0;
             for (Customer customer : allCustomersByConsultationStatusModifiedAt) {
-                if (customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION)
-                    beforeConsultationCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION)
-                    pendingConsultationCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.PRODUCT_PROPOSAL)
-                    productProposalCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING)
-                    medicalHistoryWaitingCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION)
-                    subscriptionRejectionCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION)
-                    consultationRejectionCount++;
+                if (customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION) beforeConsultationCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION) pendingConsultationCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.PRODUCT_PROPOSAL) productProposalCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING) medicalHistoryWaitingCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION) subscriptionRejectionCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION) consultationRejectionCount++;
                 else if (customer.getConsultationStatus() == ConsultationStatus.AS_TARGET) asTargetCount++;
             }
             analysis.setBeforeConsultationRatio(beforeConsultationCount / allCustomersByConsultationStatusModifiedAtCount);
@@ -136,7 +132,7 @@ public class AnalysisService {
             ));
 
             // TA의 Customer 개수
-            List<TA> tas = new ArrayList<>(taRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescTimeDesc(
+            List<TA> tas = new ArrayList<>(taRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescTimeDescPkDesc(
                             employee,
                             startDate,
                             finishDate,
@@ -162,6 +158,39 @@ public class AnalysisService {
             analysis.setRejectionCount(rejectionCount);
             analysis.setPendingCount(pendingCount);
             analysis.setPromiseCount(promiseCount);
+
+            // Schedule의 Progress(진척도)의 Customer 개수
+            List<Schedule> schedules = new ArrayList<>(scheduleRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescPkDesc(
+                            employee,
+                            startDate,
+                            finishDate,
+                            customerType
+                    ).stream()
+                    .collect(Collectors.toMap(
+                            Schedule::getCustomer,
+                            schedule -> schedule,
+                            (existing, replacement) -> existing
+                    )).values());
+            int apCount = 0;
+            int icCount = 0;
+            int pcCount = 0;
+            int cicCount = 0;
+            int stCount = 0;
+            int ocCount = 0;
+            for(Schedule schedule : schedules) {
+                if(schedule.getProgress() == Progress.AP) apCount++;
+                else if(schedule.getProgress() == Progress.IC) icCount++;
+                else if(schedule.getProgress() == Progress.PC) pcCount++;
+                else if(schedule.getProgress() == Progress.CIC) cicCount++;
+                else if(schedule.getProgress() == Progress.ST) stCount++;
+                else if(schedule.getProgress() == Progress.OC) ocCount++;
+            }
+            analysis.setApCount(apCount);
+            analysis.setIcCount(icCount);
+            analysis.setPcCount(pcCount);
+            analysis.setCicCount(cicCount);
+            analysis.setStCount(stCount);
+            analysis.setOcCount(ocCount);
 
             analysisRespository.save(analysis);
         }

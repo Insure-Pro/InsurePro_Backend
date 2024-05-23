@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,5 +17,5 @@ public interface TARepository extends JpaRepository<TA, Long> {
     List<TA> findByCustomerAndDelYnFalse(Customer customer);
 
     // TA의 Customer 개수
-    List<TA> findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescTimeDesc(Employee employee, LocalDate start, LocalDate end, CustomerType customerType);
+    List<TA> findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescTimeDescPkDesc(Employee employee, LocalDate start, LocalDate end, CustomerType customerType);
 }
