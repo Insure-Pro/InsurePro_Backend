@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -44,4 +45,7 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
             LocalDateTime createdAtAfter,
             LocalDateTime modifiedAfter
     );
+
+    // Schedule의 Progress(진척도)의 Customer 개수
+    List<Schedule> findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescPkDesc(Employee employee, LocalDate start, LocalDate end, CustomerType customerType);
 }

@@ -145,36 +145,36 @@ public class CustomerController {
     }
 
     // 계약여부 정렬(최신순)
-//    @GetMapping("/customers/contractYn/{contractYn}/latest")
-//    public ResponseEntity findCustomersByContractYnByLatest(@PathVariable("contractYn") boolean contractYn,
-//                                                            @RequestParam("customerTypePk") long customerTypePk) {
-//        List<Customer> customers = customerService.findCustomerByContractYnByLatest(contractYn, customerTypePk);
-//        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
-//
-//        return new ResponseEntity<>(responses, HttpStatus.OK);
-//    }
+    @GetMapping("/customers/contractYn/{contractYn}/latest")
+    public ResponseEntity findCustomersByContractYnByLatest(@PathVariable("contractYn") boolean contractYn,
+                                                            @RequestParam("customerTypePk") long customerTypePk) {
+        List<Customer> customers = customerService.findCustomerByContractYnByLatest(contractYn, customerTypePk);
+        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
 
     // 계약여부 정렬(나이대별)
-//    @GetMapping("/customers/contractYn/{contractYn}/age/{age}")
-//    public ResponseEntity findCustomersByContractYnByAge(@PathVariable("contractYn") boolean contractYn,
-//                                                         @PathVariable("age") String age,
-//                                                         @RequestParam("customerTypePk") long customerTypePk) {
-//        List<Customer> customers = customerService.findCustomerByContractYnByLatest(contractYn, age, customerTypePk);
-//        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
-//
-//        return new ResponseEntity<>(responses, HttpStatus.OK);
-//    }
+    @GetMapping("/customers/contractYn/{contractYn}/age/{age}")
+    public ResponseEntity findCustomersByContractYnByAge(@PathVariable("contractYn") boolean contractYn,
+                                                         @PathVariable("age") String age,
+                                                         @RequestParam("customerTypePk") long customerTypePk) {
+        List<Customer> customers = customerService.findCustomerByContractYnByLatest(contractYn, age, customerTypePk);
+        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
 
     // 월별 계약여부 정렬
-//    @GetMapping("/customers/contractYn/{contractYn}/{date}")
-//    public ResponseEntity findCustomersByContractYnAndMonth(@PathVariable("contractYn") boolean contractYn,
-//                                                            @PathVariable("date") String date,
-//                                                            @RequestParam("customerTypePk") long customerTypePk) {
-//        List<Customer> customers = customerService.findCustomerByContractYn(contractYn, LocalDate.parse(date), customerTypePk);
-//        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
-//
-//        return new ResponseEntity<>(responses, HttpStatus.OK);
-//    }
+    @GetMapping("/customers/contractYn/{contractYn}/{date}")
+    public ResponseEntity findCustomersByContractYnAndMonth(@PathVariable("contractYn") boolean contractYn,
+                                                            @PathVariable("date") String date,
+                                                            @RequestParam("customerTypePk") long customerTypePk) {
+        List<Customer> customers = customerService.findCustomerByContractYn(contractYn, LocalDate.parse(date), customerTypePk);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
+
+        return new ResponseEntity<>(responses, HttpStatus.OK);
+    }
 
     // 상담현황별 정렬
     @GetMapping("/customers/consultationStatus/{consultationStatus}")
@@ -223,19 +223,19 @@ public class CustomerController {
     }
 
     // 고객 수정(contractYn 수정)
-//    @PatchMapping("/customer/{customer-pk}/contractYn")
-//    public ResponseEntity patchCustomerByContractYn(@Positive @PathVariable("customer-pk") long customerPk,
-//                                                    @Valid @RequestBody CustomerRequestDto.Patch patch) {
-//        patch.setPk(customerPk);
-//        Customer customer = customerService.patchCustomer(
-//                customerMapper.customerPatchDtoToCustomer(patch),
-//                patch.getMetroGuDong(),
-//                patch.getCustomerTypePk()
-//        );
-//        CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
-//
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+    @PatchMapping("/customer/{customer-pk}/contractYn")
+    public ResponseEntity patchCustomerByContractYn(@Positive @PathVariable("customer-pk") long customerPk,
+                                                    @Valid @RequestBody CustomerRequestDto.Patch patch) {
+        patch.setPk(customerPk);
+        Customer customer = customerService.patchCustomer(
+                customerMapper.customerPatchDtoToCustomer(patch),
+                patch.getMetroGuDong(),
+                patch.getCustomerTypePk()
+        );
+        CustomerResponseDto.Response response = customerMapper.customerToCustomerResponseDto(customer);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
     // DELETE
 //    @DeleteMapping("/customer/{customer-pk}")

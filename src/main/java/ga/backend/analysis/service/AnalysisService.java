@@ -1,253 +1,250 @@
-//package ga.backend.analysis.service;
-//
-//import ga.backend.analysis.entity.Analysis;
-//import ga.backend.analysis.repository.AnanlysisRepository;
-//import ga.backend.customer.entity.Customer;
-//import ga.backend.customer.repository.CustomerRepository;
-//import ga.backend.employee.entity.Employee;
-//import ga.backend.exception.BusinessLogicException;
-//import ga.backend.exception.ExceptionCode;
-//import ga.backend.schedule.entity.Schedule;
-//import ga.backend.schedule.repository.ScheduleRepository;
-//import ga.backend.customer.entity.CustomerTType;
-//import ga.backend.util.FindEmployee;
-//import lombok.AllArgsConstructor;
-//import org.springframework.stereotype.Service;
-//
-//import java.time.LocalDate;
-//import java.time.LocalDateTime;
-//import java.time.LocalTime;
-//import java.util.*;
-//
-//@Service
-//@AllArgsConstructor
-//public class AnalysisService {
-//    private final AnanlysisRepository analysisRespository;
-//    private final CustomerRepository customerRepository;
-//    private final ScheduleRepository scheduleRepository;
-//    private final FindEmployee findEmployee;
-//
-//    private final List<CustomerTType> customerTypesRegisterDate = List.of(
-//            CustomerTType.OD,
-//            CustomerTType.AD,
-//            CustomerTType.CP,
-//            CustomerTType.CD,
-//            CustomerTType.JD
-//    );
-//
-//    // CREATE
-//    public Analysis createAnalysis(Analysis analysis) {
-//        return analysisRespository.save(analysis);
-//    }
-//
-//    // READ
-//    public Analysis findAnalysis(long analysisPk) {
-//        Analysis analysis = verifiedAnalysis(analysisPk);
-//        return analysis;
-//    }
-//
-//    public Analysis findAnalysis(LocalDate requestDate, CustomerTType customerType) {
-//        Employee employee = findEmployee.getLoginEmployeeByToken();
-//        Analysis analysis = verifiedAnalysis(employee, requestDate, customerType); // 이전에 구현된 analysis가 있는지 확인
-//
-//        // 분석하기
-//        LocalDateTime start = requestDate.atStartOfDay().withDayOfMonth(1); // 요청한 달의 첫째낫 00:00:00
-//        LocalDateTime finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날 23:59:99
-//        analysisPercentage(start, finish, employee, analysis, customerType);
-//        analysisAllPercentage(start, finish, employee, analysis);
-//
-//        // 다시 분석할지 여부 -> 구현할지 말지 고민중
-//        // 다시 분석할지 확인한 코드
-//        /*
-//        // 이번달일 경우 사용
-//        LocalDateTime now = LocalDateTime.now();
-//
-//        // 시작 날짜 -> 1일 00:00
-//        LocalDateTime start = requestDate.atStartOfDay().withDayOfMonth(1);
-//        // 종료 날짜
-//        LocalDateTime finish;
-//
-//        // 1. 계산이 되어있지 않은 경우 -> 이번달인것과 아닌것 구분 X
-//        // 2. 이번달인데, 계산이 되어 있는 경우
-//
-//        // 성과분석이 안되어있는 달(이번달과 이전달 포함)
-//        if(analysis.getPk() == null) {
-//            finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth()); // 마지막날 23:59:99
-//            // 성과분석 계산
-//            analysisAllPercentage(start, finish, employee, analysis, customerType);
-//        } else if (checkMonth(requestDate, now)) { // 종료날짜 -> 요청날짜(requsetDate) == 이번달(now)
-//            if (checkAnalysis(employee, analysis)) { // 수정해야 하는 경우 -> customer과 history 변경사항 발생 시
-//                finish = now; // 종료 날짜 -> 지금
-//                // 성과분석 계산
-//                analysisAllPercentage(start, finish, employee, analysis, customerType);
-//            }
-//        } else if(analysis.getModifiedAt().isBefore(start.plusMonths(1))) { // 이전 달의 성과분석 업데이트를 해야하는 경우(수정날짜 < 다음달 1일 00:00)
-//            finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth());
-//            // 성과분석 계산
-//            analysisAllPercentage(start, finish, employee, analysis, customerType);
-//        }
-//         */
-//
-//        return analysis;
-//    }
-//
-//    // UPDATE
-//    public Analysis patchAnalysis(Analysis analysis) {
-//        Analysis findAnalysis = verifiedAnalysis(analysis.getPk());
-////        Optional.ofNullable(analysis.getName()).ifPresent(findAnalysis::setName);
-//
-//        return analysisRespository.save(findAnalysis);
-//    }
-//
-//    // 검증
-//    public Analysis verifiedAnalysis(long analysisPk) {
-//        Optional<Analysis> analysis = analysisRespository.findById(analysisPk);
-//        return analysis.orElseThrow(() -> new BusinessLogicException(ExceptionCode.ANALYSIS_NOT_FOUND));
-//    }
-//
-//    public Analysis verifiedAnalysis(Employee employee, LocalDate requestDate, CustomerTType customerType) {
-//        Optional<Analysis> optionalAnalysis = analysisRespository.findByEmployeeAndDateAndCustomerType(
-//                employee,
-//                requestDate.withDayOfMonth(1),
-//                customerType
-//        );
-//
-//        // requestDate가 존재하지 않은 경우
-//        return optionalAnalysis.orElseGet(() -> {
-//            Analysis analysis = new Analysis();
-//            analysis.setEmployee(employee); // 직원 설정
-//            analysis.setCustomerType(customerType); // 고객유형 설정
-//            analysis.setDate(requestDate.withDayOfMonth(1)); // 성과분석 날짜 설정
-//            return analysis;
-//        });
-//    }
-//
-//    // 요청 날짜가 이번달인지 확인
-//    // true : 요청날짜 == 이번달, false : 요청날짜 != 이번달
-//    public boolean checkMonth(LocalDate requestDate, LocalDateTime now) {
-//        boolean check = true;
-//
-//        if (now.getMonthValue() != requestDate.getMonthValue()) check = false;
-//        else if (now.getYear() != requestDate.getYear()) check = false;
-////        System.out.println("!! check : " + check);
-////        System.out.println("now.getDayOfMonth() : " + now.getMonthValue() + " + requestDate.getDayOfMonth() ; " + requestDate.getMonthValue());
-////        System.out.println("now.getYear() : " + now.getYear() + " + requestDate.getYear() : " + requestDate.getYear());
-//        return check;
-//    }
-//
-//    // 이번달일 경우 → 다시 계산해야하는지 확인
-//    // true : 다시 계산, false ; 계산 X
-//    public boolean checkAnalysis(Employee employee, Analysis analysis) {
-//        // now 이후 createdAt, modifiedAt된 customer과 history가 있으면 다시 계산하기
-//
-//        // 새로 추가되거나 수정된 customer이 있는지 확인
-//        List<Customer> customers = customerRepository.findByEmployeeAndCreatedAtGreaterThanEqualOrModifiedAtGreaterThanEqual(
-//                employee, analysis.getModifiedAt(), analysis.getModifiedAt()
-//        );
-//        customers.forEach(customer -> System.out.println(customer.getPk()));
-//        if (!customers.isEmpty()) return true;
-//
-//        // 새로 추가되거나 수정된 history이 있는지 확인
-//        List<Schedule> schedules = scheduleRepository.findByEmployeeAndCreatedAtGreaterThanEqualOrModifiedAtGreaterThanEqual(
-//                employee, analysis.getModifiedAt(), analysis.getModifiedAt()
-//        );
-//        return !schedules.isEmpty();
-//    }
-//
-//    // 성과분석 계산
-//    public Analysis analysisPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis, CustomerTType customerType) {
-//        // 이번달에 DB에 등록한 고객들
-//        List<Customer> customers = customerRepository.findByEmployeeAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
-//                employee, start.toLocalDate(), finish.toLocalDate(), customerType
-//        );
-//        double customer_count = customers.size();
-//
-//        if(customer_count == 0) { // 이번달에 DB에 등록한 고객들이 없는 경우
-//            analysis.setTARatio(0.0); // TA 확률
-//            analysis.setAPRatio(0.0); // AP 확률
-//            analysis.setPCRatio(0.0); // PC 확률
-//            analysis.setTA(0L); // TA 개수
-//            analysis.setAP(0L); // AP 개수
-//            analysis.setPC(0L); // PC 개수
-//            analysis.setSubscriptionCount(0); // 청약 개수
-//        } else { // 이번달에 DB에 등록한 고객들이 있는 경우
-//            Map<String, Long> schedule_count = progressFilter(customers); // 이번달에 등록된 히스토리별 고객들(Progree별)
-//            analysis.setTARatio(schedule_count.get("TA") / customer_count); // TA 확률
-//            analysis.setAPRatio(schedule_count.get("AP") / customer_count); // AP 확률
-//            analysis.setPCRatio(schedule_count.get("PC") / customer_count); // PC 확률
-//            analysis.setTA(schedule_count.get("TA")); // TA 개수
-//            analysis.setAP(schedule_count.get("AP")); // AP 개수
-//            analysis.setPC(schedule_count.get("PC")); // PC 개수
-//            analysis.setSubscriptionCount(isContractYnCount(customers)); // 청약 개수
-//        }
-//
-//        return analysisRespository.save(analysis);
-//    }
-//
-//    // 성과분석 계산(ALL)
-//    public Analysis analysisAllPercentage(LocalDateTime start, LocalDateTime finish, Employee employee, Analysis analysis) {
-//        // 이번달에 DB에 등록한 고객들
-//        List<Customer> customers = customerRepository.findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(
-//                employee, start.toLocalDate(), finish.toLocalDate(), customerTypesRegisterDate
-//        );
-//        double customer_count = customers.size();
-//
-//        System.out.println("!! customerCount : " + customer_count);
-//        System.out.println("!! : " + isExistHistory(customers));
-//
-//        if(customer_count == 0) { // 이번달에 DB에 등록한 고객들이 없는 경우
-//            analysis.setAllTARatio(0.0); // 모든 TA 확률
-//            analysis.setAllAPRatio(0.0); // 모든 AP 확률
-//            analysis.setAllPCRatio(0.0); // 모든 PC 확률
-//            analysis.setAllHistoryRatio(0.0); // history 비율
-//        } else { // 이번달에 DB에 등록한 고객들이 있는 경우
-//            Map<String, Long> schedule_count = progressFilter(customers); // 이번달에 등록된 히스토리별 고객들(Progree별)
-//            analysis.setAllTARatio(schedule_count.get("TA") / customer_count); // 모든 TA 확률
-//            analysis.setAllAPRatio(schedule_count.get("AP") / customer_count); // 모든 AP 확률
-//            analysis.setAllPCRatio(schedule_count.get("PC") / customer_count); // 모든 PC 확률
-//            analysis.setAllHistoryRatio(isExistHistory(customers) / customer_count); // history 비율
-//
-//            System.out.println("!! count : " + schedule_count.get("TA"));
-//            System.out.println("!! count : " + schedule_count.get("AP"));
-//            System.out.println("!! count : " + schedule_count.get("PC"));
-//        }
-//
-//        return analysisRespository.save(analysis);
-//    }
-//
-//    // Progress별 Schedule 개수세기(TA, AP, PC)
-//    public Map<String, Long> progressFilter(List<Customer> customers) {
-//        // 고객별 TA, AP, PC는 1개만 세기
-//
-//        Set<Customer> TA = new HashSet<>();
-//        Set<Customer> AP = new HashSet<>();
-//        Set<Customer> PC = new HashSet<>();
-//
-//        customers.forEach(customer -> {
-//            customer.getSchedules().forEach(
-//                    schedule -> {
-//                        if(schedule.getProgress().getValue().equals("TA")) TA.add(customer);
-//                        if(schedule.getProgress().getValue().equals("AP")) AP.add(customer);
-//                        if(schedule.getProgress().getValue().equals("PC")) PC.add(customer);
-//                    }
-//            );
-//        });
-//
-//        Map<String, Long> map = new HashMap<>();
-//        map.put("TA", (long) TA.size());
-//        map.put("AP", (long) AP.size());
-//        map.put("PC", (long) PC.size());
-//
-//        return map;
-//    }
-//
-//    // 계약을 한 고객들 count
-//    public int isContractYnCount(List<Customer> customers) {
-//        return (int) customers.stream().filter(Customer::getContractYn).count();
-//    }
-//
-//    // history가 없는 고객들 count
-//    public double isExistHistory(List<Customer> customers) {
-//        return customers.stream().filter(customer -> customer.getSchedules().isEmpty()).count();
-//    }
-//}
+package ga.backend.analysis.service;
+
+import ga.backend.analysis.entity.Analysis;
+import ga.backend.analysis.repository.AnanlysisRepository;
+import ga.backend.contract.repository.ContractRepository;
+import ga.backend.customer.entity.ConsultationStatus;
+import ga.backend.customer.entity.Customer;
+import ga.backend.customer.repository.CustomerRepository;
+import ga.backend.customerType.entity.CustomerType;
+import ga.backend.customerType.service.CustomerTypeService;
+import ga.backend.employee.entity.Employee;
+import ga.backend.exception.BusinessLogicException;
+import ga.backend.exception.ExceptionCode;
+import ga.backend.schedule.entity.Progress;
+import ga.backend.schedule.entity.Schedule;
+import ga.backend.schedule.repository.ScheduleRepository;
+import ga.backend.ta.entity.Status;
+import ga.backend.ta.entity.TA;
+import ga.backend.ta.repository.TARepository;
+import ga.backend.util.FindEmployee;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Service
+@AllArgsConstructor
+public class AnalysisService {
+    private final AnanlysisRepository analysisRespository;
+    private final CustomerRepository customerRepository;
+    private final ScheduleRepository scheduleRepository;
+    private final ContractRepository contractRepository;
+    private final TARepository taRepository;
+    private final CustomerTypeService customerTypeService;
+    private final FindEmployee findEmployee;
+
+    // CREATE
+    public Analysis createAnalysis(Analysis analysis) {
+        return analysisRespository.save(analysis);
+    }
+
+    // READ
+    public Analysis findAnalysis(long analysisPk) {
+        Analysis analysis = verifiedAnalysis(analysisPk);
+        return analysis;
+    }
+
+    public Analysis findAnalysis(LocalDate requestDate, long customerTypePk) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+
+        // 이전에 구현된 analysis가 있는지 확인
+        LocalDate date = requestDate.withDayOfMonth(1); // 요청한 달의 첫째날
+        Analysis analysis = verifiedAnalysis(employee, date, customerTypePk);
+
+        // 계산여부 확인 -> 요청한 달이 이번달이면 계산
+        if (checkMonth(date)) calculateAnalysis(analysis, employee, customerTypePk, requestDate);
+
+        return analysis;
+    }
+
+    // UPDATE
+    public Analysis patchAnalysis(Analysis analysis) {
+        Analysis findAnalysis = verifiedAnalysis(analysis.getPk());
+//        Optional.ofNullable(analysis.getName()).ifPresent(findAnalysis::setName);
+
+        return analysisRespository.save(findAnalysis);
+    }
+
+    // 검증
+    public Analysis verifiedAnalysis(long analysisPk) {
+        Optional<Analysis> analysis = analysisRespository.findById(analysisPk);
+        return analysis.orElseThrow(() -> new BusinessLogicException(ExceptionCode.ANALYSIS_NOT_FOUND));
+    }
+
+    // 검증
+    public Analysis verifiedAnalysis(Employee employee, LocalDate date, long customerTypePk) {
+        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+        Optional<Analysis> optionalAnalysis = analysisRespository.findByEmployeeAndDateAndCustomerType(
+                employee,
+                date,
+                customerType
+        );
+
+        // requestDate가 존재하지 않은 경우
+        return optionalAnalysis.orElseGet(() -> {
+            Analysis analysis = new Analysis();
+            analysis.setEmployee(employee); // 직원 설정
+            analysis.setCustomerType(customerType); // 고객유형 설정
+            analysis.setDate(date); // 성과분석 날짜 설정
+            return analysis;
+        });
+    }
+
+    // 요청 날짜가 이번달인지 확인
+    // true : 요청날짜 == 이번달(다시 계산), false : 요청날짜 != 이번달(다시 계산X)
+    public boolean checkMonth(LocalDate date) {
+        boolean check = true;
+        LocalDate now = LocalDate.now();
+
+        if (now.getMonthValue() != date.getMonthValue()) check = false;
+        else if (now.getYear() != date.getYear()) check = false;
+        return check;
+    }
+
+    // 성과분석 계산
+    public void calculateAnalysis(Analysis analysis, Employee employee, long customerTypePk, LocalDate requestDate) {
+        // 분석하는 날짜
+        LocalDateTime start = requestDate.atStartOfDay().withDayOfMonth(1); // 요청한 달의 첫째날 00:00:00
+        LocalDateTime finish = requestDate.atTime(LocalTime.MAX).withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날 23:59:99
+        LocalDate startDate = requestDate.withDayOfMonth(1); // 요청한 달의 첫째날
+        LocalDate finishDate = requestDate.withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날
+
+        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
+        // 이번달에 추가된 customer 개수
+        if (customerTypeService.dataTypeisDB(customerType)) // DB 고객유형
+            analysis.setDbCustomerCount(
+                    (int) customerRepository.countByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerType(
+                            employee, startDate, finishDate, customerType
+                    ));
+        else // ETC 고객유형
+            analysis.setEtcCustomerCount((
+                    int) customerRepository.countByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(
+                    employee, start, finish, customerType
+            ));
+
+        // customer의 상담현황 확률
+        consultationStatusRatio(analysis, employee, start, finish, customerType);
+
+        // Contract의 계약 체결한 Contract 개수
+        analysis.setContractCount((int) contractRepository.countByCustomerEmployeeAndContractDateBetweenAndCustomerCustomerType(
+                employee,
+                startDate,
+                finishDate,
+                customerType
+        ));
+
+        // TA의 Customer 개수
+        taCustomerCount(analysis, employee, startDate, finishDate, customerType);
+
+        // Schedule의 Progress(진척도)의 Customer 개수
+        scheduleCustomerCount(analysis, employee, startDate, finishDate, customerType);
+    }
+
+    // customer의 상담현황 확률
+    public void consultationStatusRatio(Analysis analysis, Employee employee, LocalDateTime start, LocalDateTime finish, CustomerType customerType) {
+        List<Customer> allCustomersByConsultationStatusModifiedAt = customerRepository.findByEmployeeAndConsultationStatusModifiedAtBetweenAndCustomerTypeAndDelYnFalse(
+                employee,
+                start,
+                finish,
+                customerType
+        );
+        double allCustomerCount = allCustomersByConsultationStatusModifiedAt.size();
+        int beforeConsultationCount = 0;
+        int pendingConsultationCount = 0;
+        int productProposalCount = 0;
+        int medicalHistoryWaitingCount = 0;
+        int subscriptionRejectionCount = 0;
+        int consultationRejectionCount = 0;
+        int asTargetCount = 0;
+        for (Customer customer : allCustomersByConsultationStatusModifiedAt) {
+            if (customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION) beforeConsultationCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION) pendingConsultationCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.PRODUCT_PROPOSAL) productProposalCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING) medicalHistoryWaitingCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION) subscriptionRejectionCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION) consultationRejectionCount++;
+            else if (customer.getConsultationStatus() == ConsultationStatus.AS_TARGET) asTargetCount++;
+        }
+        analysis.setBeforeConsultationRatio(beforeConsultationCount / allCustomerCount);
+        analysis.setPendingCounsultationRatio(pendingConsultationCount / allCustomerCount);
+        analysis.setProductProposalRatio(productProposalCount / allCustomerCount);
+        analysis.setMedicalHistoryWaitingRatio(medicalHistoryWaitingCount / allCustomerCount);
+        analysis.setSubscriptionRejectionRatio(subscriptionRejectionCount / allCustomerCount);
+        analysis.setConsultationRejectionRatio(consultationRejectionCount / allCustomerCount);
+        analysis.setAsTargetCount(asTargetCount); // Customer의 상담현황 = AS_TARGET인 Customer 개수
+    }
+
+    // TA의 Customer 개수
+    public void taCustomerCount(Analysis analysis, Employee employee, LocalDate startDate, LocalDate finishDate, CustomerType customerType) {
+        List<TA> tas = new ArrayList<>(taRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescTimeDescPkDesc(
+                        employee,
+                        startDate,
+                        finishDate,
+                        customerType
+                ).stream()
+                .collect(Collectors.toMap(
+                        TA::getCustomer,
+                        ta -> ta,
+                        (existing, replacement) -> existing
+                )).values());
+
+        int absenceCount = 0;
+        int rejectionCount = 0;
+        int pendingCount = 0;
+        int promiseCount = 0;
+        for(TA ta : tas) {
+            if(ta.getStatus() == Status.ABSENCE) absenceCount++;
+            else if(ta.getStatus() == Status.REJECTION) rejectionCount++;
+            else if(ta.getStatus() == Status.PENDING) pendingCount++;
+            else if(ta.getStatus() == Status.PROMISE) promiseCount++;
+        }
+        analysis.setAbsenceCount(absenceCount);
+        analysis.setRejectionCount(rejectionCount);
+        analysis.setPendingCount(pendingCount);
+        analysis.setPromiseCount(promiseCount);
+    }
+
+    // Schedule의 Progress(진척도)의 Customer 개수
+    public void scheduleCustomerCount(Analysis analysis, Employee employee, LocalDate startDate, LocalDate finishDate, CustomerType customerType) {
+        List<Schedule> schedules = new ArrayList<>(scheduleRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescPkDesc(
+                        employee,
+                        startDate,
+                        finishDate,
+                        customerType
+                ).stream()
+                .collect(Collectors.toMap(
+                        Schedule::getCustomer,
+                        schedule -> schedule,
+                        (existing, replacement) -> existing
+                )).values());
+        int apCount = 0;
+        int icCount = 0;
+        int pcCount = 0;
+        int cicCount = 0;
+        int stCount = 0;
+        int ocCount = 0;
+        for(Schedule schedule : schedules) {
+            if(schedule.getProgress() == Progress.AP) apCount++;
+            else if(schedule.getProgress() == Progress.IC) icCount++;
+            else if(schedule.getProgress() == Progress.PC) pcCount++;
+            else if(schedule.getProgress() == Progress.CIC) cicCount++;
+            else if(schedule.getProgress() == Progress.ST) stCount++;
+            else if(schedule.getProgress() == Progress.OC) ocCount++;
+        }
+        analysis.setApCount(apCount);
+        analysis.setIcCount(icCount);
+        analysis.setPcCount(pcCount);
+        analysis.setCicCount(cicCount);
+        analysis.setStCount(stCount);
+        analysis.setOcCount(ocCount);
+
+        analysisRespository.save(analysis);
+    }
+}

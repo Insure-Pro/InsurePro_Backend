@@ -29,6 +29,10 @@ public class ContractService {
     public Contract createContract(Contract contract, Long customerPk, Long schedulePk) {
         setCustomerAndSchedule(contract, customerPk, schedulePk);
 
+        //  Contract의 contractDate가 null이 아니면 customer의 contractYn=true로 자동 변경
+        if(contract.getContractDate() != null && contract.getCustomer() != null)
+            contract.getCustomer().setContractYn(true);
+
         return contractRespository.save(contract);
     }
 
@@ -63,6 +67,11 @@ public class ContractService {
         Optional.ofNullable(contract.getName()).ifPresent(findContract::setName);
         Optional.ofNullable(contract.getMemo()).ifPresent(findContract::setMemo);
         Optional.ofNullable(contract.getContractDate()).ifPresent(findContract::setContractDate);
+
+        //  Contract의 contractDate가 null이 아니면 customer의 contractYn=true로 자동 변경
+        if(contract.getContractDate() != null && findContract.getCustomer() != null)
+            findContract.getCustomer().setContractYn(true);
+
         return contractRespository.save(findContract);
     }
 
