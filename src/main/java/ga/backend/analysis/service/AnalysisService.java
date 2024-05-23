@@ -2,6 +2,7 @@ package ga.backend.analysis.service;
 
 import ga.backend.analysis.entity.Analysis;
 import ga.backend.analysis.repository.AnanlysisRepository;
+import ga.backend.customer.entity.ConsultationStatus;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.repository.CustomerRepository;
 import ga.backend.customer.service.CustomerService;
@@ -54,40 +55,63 @@ public class AnalysisService {
 
         // 계산여부 확인
         if(checkMonth(date)) { // 요청한 달이 이번달이면 계산
+            CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
+
             // 직원 회사의 고객 유형
-            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
-            List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType().equals(DataType.DB)).collect(Collectors.toList());
-            List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType().equals(DataType.ETC)).collect(Collectors.toList());
+//            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
+//            List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType().equals(DataType.DB)).collect(Collectors.toList());
+//            List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType().equals(DataType.ETC)).collect(Collectors.toList());
 
             // 이번달에 추가된 고객들
-//            List<Customer> dbCustomers = customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerTypeIn(
+//            List<Customer> dbCustomers = customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerTypeDataType(
 //                    employee,
 //                    start.toLocalDate(),
 //                    finish.toLocalDate(),
-//                    dbCustomerTypes
+//                    DataType.DB
 //            );
-            List<Customer> dbCustomers = customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerTypeDataType(
-                    employee,
-                    start.toLocalDate(),
-                    finish.toLocalDate(),
-                    DataType.DB
-            );
-//            List<Customer> etcCustomers = customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerTypeIn(
+//            List<Customer> etcCustomers = customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerTypeDataType(
 //                    employee,
 //                    start,
 //                    finish,
-//                    etcCustomerTypes
+//                    DataType.ETC
 //            );
-            List<Customer> etcCustomers = customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerTypeDataType(
+
+            // 이번달에 추가된 customer 개수
+//            analysis.setDbCustomerCount(dbCustomers.size());
+//            analysis.setEtcCustomerCount(etcCustomers.size());
+            if(customerTypeService.dataTypeisDB(customerType)) // DB 고객유형
+                analysis.setDbCustomerCount(customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerType(employee, start.toLocalDate(), finish.toLocalDate(), customerType).size());
+            else // ETC 고객유형
+                analysis.setEtcCustomerCount(customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(employee, start, finish, customerType).size());
+
+            // customer의 상담현황 확률
+            List<Customer> allCustomersByConsultationStatusModifiedAt = customerRepository.findByEmployeeAndConsultationStatusModifiedAtBetweenAndCustomerType(
                     employee,
                     start,
                     finish,
-                    DataType.ETC
+                    customerType
             );
-
-            // 이번달에 추가된 customer 개수
-            analysis.setDbCustomerCount(dbCustomers.size());
-            analysis.setEtcCustomerCount(etcCustomers.size());
+            double allCustomersByConsultationStatusModifiedAtCount = allCustomersByConsultationStatusModifiedAt.size();
+            int beforeConsultationCount = 0;
+            int pendingConsultationCount = 0;
+            int productProposalCount = 0;
+            int medicalHistoryWaitingCount = 0;
+            int subscriptionRejectionCount = 0;
+            int consultationRejectionCount = 0;
+            for(Customer customer : allCustomersByConsultationStatusModifiedAt) {
+                if(customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION) beforeConsultationCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION) pendingConsultationCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.PRODUCT_PROPOSAL) productProposalCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING) medicalHistoryWaitingCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION) subscriptionRejectionCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION) consultationRejectionCount++;
+            }
+            analysis.setBeforeConsultationRatio(beforeConsultationCount / allCustomersByConsultationStatusModifiedAtCount);
+            analysis.setPendingCounsultationRatio(pendingConsultationCount / allCustomersByConsultationStatusModifiedAtCount);
+            analysis.setProductProposalRatio(productProposalCount / allCustomersByConsultationStatusModifiedAtCount);
+            analysis.setMedicalHistoryWaitingRatio(medicalHistoryWaitingCount / allCustomersByConsultationStatusModifiedAtCount);
+            analysis.setSubscriptionRejectionRatio(subscriptionRejectionCount / allCustomersByConsultationStatusModifiedAtCount);
+            analysis.setConsultationRejectionRatio(consultationRejectionCount / allCustomersByConsultationStatusModifiedAtCount);
 
             analysisRespository.save(analysis);
         }
