@@ -2,21 +2,19 @@ package ga.backend.analysis.service;
 
 import ga.backend.analysis.entity.Analysis;
 import ga.backend.analysis.repository.AnanlysisRepository;
-import ga.backend.contract.entity.Contract;
 import ga.backend.contract.repository.ContractRepository;
-import ga.backend.contract.service.ContractService;
 import ga.backend.customer.entity.ConsultationStatus;
 import ga.backend.customer.entity.Customer;
 import ga.backend.customer.repository.CustomerRepository;
-import ga.backend.customer.service.CustomerService;
 import ga.backend.customerType.entity.CustomerType;
-import ga.backend.customerType.entity.DataType;
 import ga.backend.customerType.service.CustomerTypeService;
 import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
 import ga.backend.exception.ExceptionCode;
-import ga.backend.schedule.entity.Schedule;
 import ga.backend.schedule.repository.ScheduleRepository;
+import ga.backend.ta.entity.Status;
+import ga.backend.ta.entity.TA;
+import ga.backend.ta.repository.TARepository;
 import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,6 +32,7 @@ public class AnalysisService {
     private final CustomerRepository customerRepository;
     private final ScheduleRepository scheduleRepository;
     private final ContractRepository contractRepository;
+    private final TARepository taRepository;
     private final CustomerTypeService customerTypeService;
     private final FindEmployee findEmployee;
 
@@ -60,7 +59,7 @@ public class AnalysisService {
         LocalDate finishDate = requestDate.withDayOfMonth(requestDate.lengthOfMonth()); // 요청한 달의 마지막날
 
         // 계산여부 확인
-        if(checkMonth(date)) { // 요청한 달이 이번달이면 계산
+        if (checkMonth(date)) { // 요청한 달이 이번달이면 계산
             CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
 
             // 직원 회사의 고객 유형
@@ -85,7 +84,7 @@ public class AnalysisService {
             // 이번달에 추가된 customer 개수
 //            analysis.setDbCustomerCount(dbCustomers.size());
 //            analysis.setEtcCustomerCount(etcCustomers.size());
-            if(customerTypeService.dataTypeisDB(customerType)) // DB 고객유형
+            if (customerTypeService.dataTypeisDB(customerType)) // DB 고객유형
                 analysis.setDbCustomerCount(customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerType(employee, startDate, finishDate, customerType).size());
             else // ETC 고객유형
                 analysis.setEtcCustomerCount(customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(employee, start, finish, customerType).size());
@@ -105,13 +104,19 @@ public class AnalysisService {
             int subscriptionRejectionCount = 0;
             int consultationRejectionCount = 0;
             int asTargetCount = 0;
-            for(Customer customer : allCustomersByConsultationStatusModifiedAt) {
-                if(customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION) beforeConsultationCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION) pendingConsultationCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.PRODUCT_PROPOSAL) productProposalCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING) medicalHistoryWaitingCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION) subscriptionRejectionCount++;
-                else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION) consultationRejectionCount++;
+            for (Customer customer : allCustomersByConsultationStatusModifiedAt) {
+                if (customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION)
+                    beforeConsultationCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION)
+                    pendingConsultationCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.PRODUCT_PROPOSAL)
+                    productProposalCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING)
+                    medicalHistoryWaitingCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION)
+                    subscriptionRejectionCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION)
+                    consultationRejectionCount++;
                 else if (customer.getConsultationStatus() == ConsultationStatus.AS_TARGET) asTargetCount++;
             }
             analysis.setBeforeConsultationRatio(beforeConsultationCount / allCustomersByConsultationStatusModifiedAtCount);
@@ -129,6 +134,34 @@ public class AnalysisService {
                     finishDate,
                     customerType
             ));
+
+            // TA의 Customer 개수
+            List<TA> tas = new ArrayList<>(taRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescTimeDesc(
+                            employee,
+                            startDate,
+                            finishDate,
+                            customerType
+                    ).stream()
+                    .collect(Collectors.toMap(
+                            TA::getCustomer,
+                            ta -> ta,
+                            (existing, replacement) -> existing
+                    )).values());
+
+            int absenceCount = 0;
+            int rejectionCount = 0;
+            int pendingCount = 0;
+            int promiseCount = 0;
+            for(TA ta : tas) {
+                if(ta.getStatus() == Status.ABSENCE) absenceCount++;
+                else if(ta.getStatus() == Status.REJECTION) rejectionCount++;
+                else if(ta.getStatus() == Status.PENDING) pendingCount++;
+                else if(ta.getStatus() == Status.PROMISE) promiseCount++;
+            }
+            analysis.setAbsenceCount(absenceCount);
+            analysis.setRejectionCount(rejectionCount);
+            analysis.setPendingCount(pendingCount);
+            analysis.setPromiseCount(promiseCount);
 
             analysisRespository.save(analysis);
         }
