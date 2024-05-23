@@ -30,7 +30,7 @@ public class CustomerRequestDto {
         private Boolean contractYn; // 계약 완료 여부
         private LocalDate registerDate; // 고객 등록 날짜
         private MetroGuDong metroGuDong; // metro, gu, dong에 대한 이름 설정
-        private ConsultationStatus consultationStatu; // 상담현황
+        private ConsultationStatus consultationStatus; // 상담현황
     }
 
     @AllArgsConstructor
