@@ -33,6 +33,7 @@ public enum ExceptionCode {
     SCHEDULE_AND_EMPLOYEE_NOT_MATCH(403, "Schedule and Employee is not match"),
     SCHEDULE_AND_CUSTOMER_NOT_MATCH(403, "Schedule and Customer is not match"),
     EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH(403, "Employee can't use this CustomerType"),
+    EMPOYEE_AND_COMPANY_NOT_MATCH(403, "Employee can't use this Company"),
     CUSTOMERTYP_IS_USED(403, "CustomerType is used"),
     HIDE_ALREADY_EXITS(409, "Hide already exits"),
     TAMPERED_TOKEN(1004, "Tampered Token"), // 변조된 토큰

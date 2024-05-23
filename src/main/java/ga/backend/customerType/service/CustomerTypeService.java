@@ -53,7 +53,7 @@ public class CustomerTypeService {
         // 색상 자동추가 -> 색상값이 없는 경우
         if(customerType.getColor() == null) {
             Company company = employee.getCompany();
-            List<CustomerType> customerTypes = customerTypeRepository.findByCompany(company);
+            List<CustomerType> customerTypes = customerTypeRepository.findByCompanyAndDelYnFalse(company);
             String lastColor = customerTypes.get(customerTypes.size()-1).getColor(); // 마지막에 설정한 색상
             int index = CustomerTypeColors.indexOf(lastColor); // 지정한 컬러의 index 확인
 
@@ -70,21 +70,27 @@ public class CustomerTypeService {
         return verifiedCustomerType(customerTypePk);
     }
 
-    // 회사별 고객유형 조회
+    // 회사별 고객유형 조회 by companyPk
     public List<CustomerType> findCustomerTypeByCompanyPk(long companyPk) {
+        Employee employee = findEmployee.getLoginEmployeeByToken();
         Company company = companyService.findCompany(companyPk);
-        return customerTypeRepository.findByCompany(company);
+
+        if(employee.getCompany() != company) throw new BusinessLogicException(ExceptionCode.EMPOYEE_AND_COMPANY_NOT_MATCH);
+
+        return customerTypeRepository.findByCompanyAndDelYnFalse(company);
+    }
+
+    // 회사별 고객유형 조회 by Employee
+    public List<CustomerType> findCustomerTypeByCompanyFromEmployee(Employee employee) {
+        return customerTypeRepository.findByCompanyAndDelYnFalse(employee.getCompany());
     }
 
     // 고객별 고객유형 조회
     public List<CustomerType> findCustomerTypeByEmployee() {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
-        // 고객의 회사 조회
-        Company company = employee.getCompany();
-
         // "회사 && delYn=false"인 고객유형 조회
-        List<CustomerType> customerTypes = customerTypeRepository.findByCompanyAndDelYnFalse(company);
+        List<CustomerType> customerTypes = findCustomerTypeByCompanyFromEmployee(employee);
 
         // hide에 있는 customerType -> 조회에 제외되어야 하는 것
         List<CustomerType> hideCustomer = findCustomerTypeByHide(employee);

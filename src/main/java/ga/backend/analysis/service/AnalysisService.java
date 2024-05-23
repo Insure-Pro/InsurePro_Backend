@@ -6,6 +6,7 @@ import ga.backend.customer.entity.Customer;
 import ga.backend.customer.repository.CustomerRepository;
 import ga.backend.customer.service.CustomerService;
 import ga.backend.customerType.entity.CustomerType;
+import ga.backend.customerType.entity.DataType;
 import ga.backend.customerType.service.CustomerTypeService;
 import ga.backend.employee.entity.Employee;
 import ga.backend.exception.BusinessLogicException;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -52,6 +54,40 @@ public class AnalysisService {
 
         // 계산여부 확인
         if(checkMonth(date)) { // 요청한 달이 이번달이면 계산
+            // 직원 회사의 고객 유형
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
+            List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType().equals(DataType.DB)).collect(Collectors.toList());
+            List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType().equals(DataType.ETC)).collect(Collectors.toList());
+
+            // 이번달에 추가된 고객들
+//            List<Customer> dbCustomers = customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerTypeIn(
+//                    employee,
+//                    start.toLocalDate(),
+//                    finish.toLocalDate(),
+//                    dbCustomerTypes
+//            );
+            List<Customer> dbCustomers = customerRepository.findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerTypeDataType(
+                    employee,
+                    start.toLocalDate(),
+                    finish.toLocalDate(),
+                    DataType.DB
+            );
+//            List<Customer> etcCustomers = customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerTypeIn(
+//                    employee,
+//                    start,
+//                    finish,
+//                    etcCustomerTypes
+//            );
+            List<Customer> etcCustomers = customerRepository.findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerTypeDataType(
+                    employee,
+                    start,
+                    finish,
+                    DataType.ETC
+            );
+
+            // 이번달에 추가된 customer 개수
+            analysis.setDbCustomerCount(dbCustomers.size());
+            analysis.setEtcCustomerCount(etcCustomers.size());
 
             analysisRespository.save(analysis);
         }

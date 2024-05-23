@@ -2,6 +2,7 @@ package ga.backend.customer.repository;
 
 import ga.backend.customer.entity.Customer;
 import ga.backend.customerType.entity.CustomerType;
+import ga.backend.customerType.entity.DataType;
 import ga.backend.employee.entity.Employee;
 import ga.backend.customer.entity.ConsultationStatus;
 import org.springframework.data.domain.Sort;
@@ -67,6 +68,13 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
 
     // -----------------------------------------------------------------------------
     // 성과분석(analysis) RegisterDate
+    // 이번달 DB 유형 고객들
+    List<Customer> findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerTypeIn(Employee employee, LocalDate start, LocalDate finish, List<CustomerType> customerTypes);
+    List<Customer> findByEmployeeAndRegisterDateBetweenAndDelYnFalseAndCustomerTypeDataType(Employee employee, LocalDate start, LocalDate finish, DataType dataType);
+
+    // 이번달 ETC 유형 고객들
+    List<Customer> findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerTypeIn(Employee employee, LocalDateTime start, LocalDateTime finish, List<CustomerType> customerTypes);
+    List<Customer> findByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerTypeDataType(Employee employee, LocalDateTime start, LocalDateTime finish, DataType dataType);
     // 계산
 //    List<Customer> findByEmployeeAndRegisterDateBetweenAndCustomerTypeAndDelYnFalse(
 //            Employee employee,

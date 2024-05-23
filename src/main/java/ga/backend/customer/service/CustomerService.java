@@ -185,8 +185,7 @@ public class CustomerService {
         List<Customer> customers = new ArrayList<>();
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
-            Company company = employee.getCompany();
-            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
             List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
             List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
 
@@ -282,8 +281,7 @@ public class CustomerService {
         int ageEnd = ageStart + 9;
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
-            Company company = employee.getCompany();
-            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
             List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
             List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
 
@@ -390,8 +388,7 @@ public class CustomerService {
         List<Customer> customers = new ArrayList<>();
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
-            Company company = employee.getCompany();
-            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
             List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
             List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
 
@@ -507,8 +504,7 @@ public class CustomerService {
         List<Customer> customers;
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
-            Company company = employee.getCompany();
-            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
             List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
             List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
 
@@ -593,8 +589,7 @@ public class CustomerService {
         List<Customer> customers;
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
-            Company company = employee.getCompany();
-            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyPk(company.getPk());
+            List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
             List<CustomerType> dbCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.DB).collect(Collectors.toList());
             List<CustomerType> etcCustomerTypes = customerTypes.stream().filter(customerType -> customerType.getDataType() == DataType.ETC).collect(Collectors.toList());
 
