@@ -27,7 +27,8 @@ public interface CustomerMapper {
         for (CustomerRequestDto.Post post : posts) {
             Customer customer = customerPostDtoToCustomer(post);
             CustomerType customerType = new CustomerType();
-            customerType.setPk(post.getCustomerTypePk());
+//            customerType.setPk(post.getCustomerTypePk());
+            customerType.setName(post.getCustomerTypeName());
             customer.setCustomerType(customerType);
             list.add(customer);
         }
