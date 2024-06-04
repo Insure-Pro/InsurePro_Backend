@@ -24,6 +24,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -69,8 +70,10 @@ public class CustomerService {
     }
 
     // 여러 명의 custemer 생성
+    @Transactional
     public List<Customer> createCustomers(List<Customer> customers) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
+        List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByEmployee(employee); // 고객의 customerType
 
         for (int i = 0; i < customers.size(); i++) {
             Customer customer = customers.get(i);
@@ -84,7 +87,14 @@ public class CustomerService {
             }
 
             // customerType 설정
-            customer.setCustomerType(customerTypeService.findCustomerType(customer.getCustomerType().getPk()));
+            String customerTypeName = customer.getCustomerType().getName();
+            CustomerType customerType = customerTypes.stream()
+                    .filter(c -> c.getName().equals(customerTypeName))
+                    .findFirst().orElse(null);
+            if(customerType == null) {
+                throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH, "customerType is null { customer's name : " + customer.getName() + " }");
+            }
+            customer.setCustomerType(customerType);
 
             customerRepository.save(customer);
         }

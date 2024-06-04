@@ -101,6 +101,20 @@ public class CustomerTypeService {
         return customerTypes;
     }
 
+    // 고객별 고객유형 조회
+    public List<CustomerType> findCustomerTypeByEmployee(Employee employee) {
+        // "회사 && delYn=false"인 고객유형 조회
+        List<CustomerType> customerTypes = findCustomerTypeByCompanyFromEmployee(employee);
+
+        // hide에 있는 customerType -> 조회에 제외되어야 하는 것
+        List<CustomerType> hideCustomer = findCustomerTypeByHide(employee);
+
+        // hide에서 조회된 customerType 제외
+        customerTypes.removeAll(hideCustomer);
+
+        return customerTypes;
+    }
+
     // 숨기기한 고객유형 목록 조회
     public List<CustomerType> findCustomerTypeByHide() {
         Employee employee = findEmployee.getLoginEmployeeByToken();
