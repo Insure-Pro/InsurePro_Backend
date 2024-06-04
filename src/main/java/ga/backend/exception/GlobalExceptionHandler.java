@@ -19,7 +19,7 @@ public class GlobalExceptionHandler {
         int status = ex.getExceptionCode().getStatus();
         String error = HttpStatus.valueOf(status).getReasonPhrase();
         String exception = ex.getClass().getName();
-        String message = ex.getExceptionCode().getMessage();
+        String message = ex.getMessage();
         String path = request.getServletPath();
 
         ErrorResponse response = new ErrorResponse(status, error, exception, message, path);
