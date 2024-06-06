@@ -104,6 +104,26 @@ public class Customer extends Auditable {
     @Column
     private int asCount; // as count
 
+    // 컬럼 추가
+    @Column
+    private String email; // 이메일
+
+    @Column
+    private String work; // 직업
+
+    @Column
+    private String worry; // 돈관련가장큰고민
+
+    @Column
+    private int salary; // 평균 세전 월소득액(만)
+
+    @Column
+    private String workTime; // 통화가능한 시간
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private Gender gender; // 성별
+
     public Customer() {
         if (consultationStatus == null) {
             consultationStatus = ConsultationStatus.BEFORE_CONSULTATION;

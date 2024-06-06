@@ -3,6 +3,7 @@ package ga.backend.customer.service;
 import ga.backend.company.entity.Company;
 import ga.backend.customer.dto.CustomerRequestDto;
 import ga.backend.customer.entity.Customer;
+import ga.backend.customer.entity.Gender;
 import ga.backend.customer.repository.CustomerRepository;
 import ga.backend.customerType.entity.CustomerType;
 import ga.backend.customerType.entity.DataType;
@@ -690,6 +691,13 @@ public class CustomerService {
         Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
         Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
+        Optional.ofNullable(customer.getEmail()).ifPresent(findCustomer::setEmail);
+        Optional.ofNullable(customer.getWork()).ifPresent(findCustomer::setWork);
+        Optional.ofNullable(customer.getWorry()).ifPresent(findCustomer::setWorry);
+        if(customer.getSalary() != 0) findCustomer.setSalary(customer.getSalary());
+        Optional.ofNullable(customer.getWorkTime()).ifPresent(findCustomer::setWorkTime);
+        Optional.ofNullable(customer.getGender()).ifPresent(findCustomer::setGender);
+
         // 상담현황 변경할 때, 상담현황 수정일자도 변경
         Optional.ofNullable(customer.getConsultationStatus()).ifPresent(consultationStatus -> {
             // 날짜 변경
