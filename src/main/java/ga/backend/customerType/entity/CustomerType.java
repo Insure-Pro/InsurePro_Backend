@@ -18,6 +18,9 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Table(name = "customer_type", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"name", "company_pk"}) // 중복된 name이어도, 회사가 다르면 생성될 수 있도록 함
+})
 public class CustomerType extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,7 +43,7 @@ public class CustomerType extends Auditable {
     @Column
     private Long employeePk; // 관여한 사람
 
-    @Column(unique = true)
+    @Column
     private String name; // 고객유형 이름
 
     @Column

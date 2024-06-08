@@ -19,8 +19,10 @@ import ga.backend.metro2.entity.Metro2;
 import ga.backend.metro2.service.Metro2Service;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.customer.entity.ConsultationStatus;
+import ga.backend.util.CalculateAge;
 import ga.backend.util.FindCoordinateByKakaoMap;
 import ga.backend.util.FindEmployee;
+import ga.backend.util.InitialCustomerTypeNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,7 +48,7 @@ public class CustomerService {
     private final FindCoordinateByKakaoMap findCoordinateByKakaoMap;
 
     // CREATE
-    public Customer createCustomer(Customer customer, CustomerRequestDto.MetroGuDong metroGuDong, Long customerTypePk) {
+    public Customer createCustomer(Customer customer, CustomerRequestDto.MetroGuDong metroGuDong) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         customer.setEmployee(employee);
 
@@ -62,10 +65,14 @@ public class CustomerService {
         makeDongString(metroGuDong, customer);
 
         // customerType 설정
+        long customerTypePk = customer.getCustomerType().getPk();
         CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
         if(customerType.getCompany() != employee.getCompany()) // 다른 회사의 customertype을 사용하는지 확인
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH);
         customer.setCustomerType(customerType);
+
+        // 만나이 계산
+        if(customer.getBirth() != null) customer.setAge(CalculateAge.getAge(customer.getBirth()));
 
         return customerRepository.save(customer);
     }
@@ -74,7 +81,11 @@ public class CustomerService {
     @Transactional
     public List<Customer> createCustomers(List<Customer> customers) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByEmployee(employee); // 고객의 customerType
+        List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee); // 고객의 customerType
+
+        // NULL 유형의 고객유형
+        CustomerType nullCustomerType = customerTypes.stream().filter(c -> c.getName().equals("000")).findFirst().orElse(null);
+        if(nullCustomerType == null) nullCustomerType = customerTypeService.createNULLCustomerType(employee);
 
         for (int i = 0; i < customers.size(); i++) {
             Customer customer = customers.get(i);
@@ -89,13 +100,30 @@ public class CustomerService {
 
             // customerType 설정
             String customerTypeName = customer.getCustomerType().getName();
-            CustomerType customerType = customerTypes.stream()
-                    .filter(c -> c.getName().equals(customerTypeName))
-                    .findFirst().orElse(null);
-            if(customerType == null) {
-                throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH, "customerType is null { customer's name : " + customer.getName() + " }");
+            CustomerType customerType;
+            if(customerTypeName == null) customerType = nullCustomerType;
+            else {
+                customerType = customerTypes.stream()
+                        .filter(c -> c.getName().equals(customerTypeName))
+                        .findFirst().orElse(null);
+                if(customerType == null) { // 없는 고객유형인 경우
+//                throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH, "customerType is null { customer's name : " + customer.getName() + " }");
+                    if(Pattern.matches("^[a-zA-Z0-9가-힣]{1,10}$", customerTypeName)) { // 생성가능한 이름인 경우
+                        // 새로운 고객유형 생성하기
+                        CustomerType newCustomerType = new CustomerType();
+                        newCustomerType.setName(customerTypeName);
+                        newCustomerType.setDataType(DataType.DB);
+                        customerType = customerTypeService.createCustomerType(newCustomerType);
+                    } else {
+                        // 새로운 고객유형 생성하기 실패하면 default 고객유형으로 하기
+                        customerType = nullCustomerType;
+                    }
+                }
             }
             customer.setCustomerType(customerType);
+
+            // 만나이 계산
+            if(customer.getBirth() != null) customer.setAge(CalculateAge.getAge(customer.getBirth()));
 
             customerRepository.save(customer);
         }
@@ -262,12 +290,13 @@ public class CustomerService {
         return start;
     }
 
-    // 나이별 정렬(10, 20, 30, 40, 50, 60, 70, 80)
+    // 나이별 정렬(1020, 3040, 5060, 7080)
     public List<Customer> findCustomerByAge(String age, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         List<Customer> customers;
-        int start = returnAge(age);
-        int end = start + 9;
+        int start = Integer.parseInt(age)/100;
+        int end = start + 19;
+        System.out.println("!! start: " + start + ", end: " + end);
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
             customers = customerRepository.findByEmployeeAndAgeBetweenAndDelYnFalseOrderByAge(
@@ -284,12 +313,12 @@ public class CustomerService {
         return customers;
     }
 
-    // 월별 나이별 정렬(10, 20, 30, 40, 50, 60, 70, 80)
+    // 월별 나이별 정렬(1020, 3040, 5060, 7080)
     public List<Customer> findCustomerByAge(String age, LocalDate date, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         List<Customer> customers = new ArrayList<>();
-        int ageStart = returnAge(age);
-        int ageEnd = ageStart + 9;
+        int ageStart = Integer.parseInt(age)/100;
+        int ageEnd = ageStart + 19;
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
             List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
@@ -478,12 +507,12 @@ public class CustomerService {
         return customers;
     }
 
-    // 계약여부 정렬(나이대별)
+    // 계약여부 정렬(나이대별) - 1020, 3040, 5060, 7080
     public List<Customer> findCustomerByContractYnByLatest(boolean contractYn, String age, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         List<Customer> customers;
-        int ageStart = returnAge(age);
-        int ageEnd = ageStart + 9;
+        int ageStart = Integer.parseInt(age)/100;
+        int ageEnd = ageStart + 19;
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
             customers = customerRepository.findByEmployeeAndContractYnAndAgeBetweenAndDelYnFalseOrderByAge(
@@ -682,8 +711,12 @@ public class CustomerService {
         if (customerTypePk != null) findCustomer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
 
         Optional.ofNullable(customer.getName()).ifPresent(findCustomer::setName);
-        Optional.ofNullable(customer.getBirth()).ifPresent(findCustomer::setBirth);
         if (customer.getAge() != 0) findCustomer.setAge(customer.getAge());
+        Optional.ofNullable(customer.getBirth()).ifPresent(birth -> {
+            // 만나이 계산
+            findCustomer.setAge(CalculateAge.getAge(birth));
+            findCustomer.setBirth(birth);
+        });
         Optional.ofNullable(customer.getAddress()).ifPresent(findCustomer::setAddress);
         Optional.ofNullable(customer.getPhone()).ifPresent(findCustomer::setPhone);
         Optional.ofNullable(customer.getMemo()).ifPresent(findCustomer::setMemo);
