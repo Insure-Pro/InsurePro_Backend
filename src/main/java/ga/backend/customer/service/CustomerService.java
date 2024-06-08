@@ -19,6 +19,7 @@ import ga.backend.metro2.entity.Metro2;
 import ga.backend.metro2.service.Metro2Service;
 import ga.backend.schedule.entity.Schedule;
 import ga.backend.customer.entity.ConsultationStatus;
+import ga.backend.util.CalculateAge;
 import ga.backend.util.FindCoordinateByKakaoMap;
 import ga.backend.util.FindEmployee;
 import ga.backend.util.InitialCustomerTypeNull;
@@ -70,6 +71,9 @@ public class CustomerService {
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH);
         customer.setCustomerType(customerType);
 
+        // 만나이 계산
+        if(customer.getBirth() != null) customer.setAge(CalculateAge.getAge(customer.getBirth()));
+
         return customerRepository.save(customer);
     }
 
@@ -113,6 +117,9 @@ public class CustomerService {
                 }
             }
             customer.setCustomerType(customerType);
+
+            // 만나이 계산
+            if(customer.getBirth() != null) customer.setAge(CalculateAge.getAge(customer.getBirth()));
 
             customerRepository.save(customer);
         }
@@ -699,8 +706,12 @@ public class CustomerService {
         if (customerTypePk != null) findCustomer.setCustomerType(customerTypeService.findCustomerType(customerTypePk));
 
         Optional.ofNullable(customer.getName()).ifPresent(findCustomer::setName);
-        Optional.ofNullable(customer.getBirth()).ifPresent(findCustomer::setBirth);
         if (customer.getAge() != 0) findCustomer.setAge(customer.getAge());
+        Optional.ofNullable(customer.getBirth()).ifPresent(birth -> {
+            // 만나이 계산
+            findCustomer.setAge(CalculateAge.getAge(birth));
+            findCustomer.setBirth(birth);
+        });
         Optional.ofNullable(customer.getAddress()).ifPresent(findCustomer::setAddress);
         Optional.ofNullable(customer.getPhone()).ifPresent(findCustomer::setPhone);
         Optional.ofNullable(customer.getMemo()).ifPresent(findCustomer::setMemo);
