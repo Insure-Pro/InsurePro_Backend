@@ -13,7 +13,7 @@ public class CustomerTypeRequestDto {
     @Getter
     public static class Post {
         private Long pk;
-        @Pattern(regexp = "^[a-zA-Z0-9]{1,10}$",
+        @Pattern(regexp = "^[a-zA-Z0-9가-힣]{1,10}$",
                 message = "영문자, 숫자로 설정 가능하며, 길이는 '최소 1자에서 최대 160'까지 허용")
         private String name; // 고객유형 이름
         private String color; // 색상
@@ -27,7 +27,7 @@ public class CustomerTypeRequestDto {
     @Getter
     public static class Patch {
         private Long pk;
-        @Pattern(regexp = "^[a-zA-Z0-9]{1,10}$",
+        @Pattern(regexp = "^[a-zA-Z0-9가-힣]{1,10}$",
                 message = "영문자, 숫자로 설정 가능하며, 길이는 '최소 1자에서 최대 160'까지 허용")
         private String name; // 고객유형 이름
         private String color; // 색상
