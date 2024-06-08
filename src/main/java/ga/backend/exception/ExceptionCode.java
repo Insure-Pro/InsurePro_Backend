@@ -40,6 +40,7 @@ public enum ExceptionCode {
     FAIL_SEND_EMAIL(500, "Fail send email"),
 
     IMAGE_UPLOAD_FAIL(400, "이미지 업로드를 실패하였습니다."),
+    CUSTOMER_TYPE_NAME_NULL(403, "CustomerType's name can't NULL"),
     NOT_MATCH_AUTHNUM(400, "Not Match authNum");
 
 

@@ -46,6 +46,11 @@ public class CustomerTypeService {
     public CustomerType createCustomerType(CustomerType customerType) {
         customerType.setName(customerType.getName().toUpperCase()); // 고객유형 이름은 무조건 대문자만 허용
 
+        // NULL 이름의 default customerType 생성 불가능
+        if(customerType.getName().equals("NULL")) {
+            throw new BusinessLogicException(ExceptionCode.CUSTOMER_TYPE_NAME_NULL);
+        }
+
         Employee employee = findEmployee.getLoginEmployeeByToken();
         customerType.setEmployeePk(employee.getPk());
         customerType.setCompany(employee.getCompany());
@@ -89,20 +94,6 @@ public class CustomerTypeService {
     public List<CustomerType> findCustomerTypeByEmployee() {
         Employee employee = findEmployee.getLoginEmployeeByToken();
 
-        // "회사 && delYn=false"인 고객유형 조회
-        List<CustomerType> customerTypes = findCustomerTypeByCompanyFromEmployee(employee);
-
-        // hide에 있는 customerType -> 조회에 제외되어야 하는 것
-        List<CustomerType> hideCustomer = findCustomerTypeByHide(employee);
-
-        // hide에서 조회된 customerType 제외
-        customerTypes.removeAll(hideCustomer);
-
-        return customerTypes;
-    }
-
-    // 고객별 고객유형 조회
-    public List<CustomerType> findCustomerTypeByEmployee(Employee employee) {
         // "회사 && delYn=false"인 고객유형 조회
         List<CustomerType> customerTypes = findCustomerTypeByCompanyFromEmployee(employee);
 
