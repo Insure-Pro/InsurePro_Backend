@@ -290,12 +290,13 @@ public class CustomerService {
         return start;
     }
 
-    // 나이별 정렬(10, 20, 30, 40, 50, 60, 70, 80)
+    // 나이별 정렬(1020, 3040, 5060, 7080)
     public List<Customer> findCustomerByAge(String age, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         List<Customer> customers;
-        int start = returnAge(age);
-        int end = start + 9;
+        int start = Integer.parseInt(age)/100;
+        int end = start + 19;
+        System.out.println("!! start: " + start + ", end: " + end);
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
             customers = customerRepository.findByEmployeeAndAgeBetweenAndDelYnFalseOrderByAge(
@@ -312,12 +313,12 @@ public class CustomerService {
         return customers;
     }
 
-    // 월별 나이별 정렬(10, 20, 30, 40, 50, 60, 70, 80)
+    // 월별 나이별 정렬(1020, 3040, 5060, 7080)
     public List<Customer> findCustomerByAge(String age, LocalDate date, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         List<Customer> customers = new ArrayList<>();
-        int ageStart = returnAge(age);
-        int ageEnd = ageStart + 9;
+        int ageStart = Integer.parseInt(age)/100;
+        int ageEnd = ageStart + 19;
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
             List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee);
@@ -506,12 +507,12 @@ public class CustomerService {
         return customers;
     }
 
-    // 계약여부 정렬(나이대별)
+    // 계약여부 정렬(나이대별) - 1020, 3040, 5060, 7080
     public List<Customer> findCustomerByContractYnByLatest(boolean contractYn, String age, long customerTypePk) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         List<Customer> customers;
-        int ageStart = returnAge(age);
-        int ageEnd = ageStart + 9;
+        int ageStart = Integer.parseInt(age)/100;
+        int ageEnd = ageStart + 19;
 
         if (customerTypePk == 0) { // 모든 고객유형 조회
             customers = customerRepository.findByEmployeeAndContractYnAndAgeBetweenAndDelYnFalseOrderByAge(
