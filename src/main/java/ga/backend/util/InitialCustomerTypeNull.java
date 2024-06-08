@@ -9,7 +9,7 @@ public class InitialCustomerTypeNull {
         CustomerType customerType = new CustomerType();
         customerType.setCompany(employee.getCompany());
         customerType.setEmployeePk(employee.getPk());
-        customerType.setName("NULL");
+        customerType.setName("000");
         customerType.setDetail("customerType을 지정하지 않을 경우 사용하는 default값");
         customerType.setDataType(DataType.ETC);
         customerType.setColor("#000000");
