@@ -21,6 +21,7 @@ import ga.backend.schedule.entity.Schedule;
 import ga.backend.customer.entity.ConsultationStatus;
 import ga.backend.util.FindCoordinateByKakaoMap;
 import ga.backend.util.FindEmployee;
+import ga.backend.util.InitialCustomerTypeNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,7 +47,7 @@ public class CustomerService {
     private final FindCoordinateByKakaoMap findCoordinateByKakaoMap;
 
     // CREATE
-    public Customer createCustomer(Customer customer, CustomerRequestDto.MetroGuDong metroGuDong, Long customerTypePk) {
+    public Customer createCustomer(Customer customer, CustomerRequestDto.MetroGuDong metroGuDong) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
         customer.setEmployee(employee);
 
@@ -62,6 +64,7 @@ public class CustomerService {
         makeDongString(metroGuDong, customer);
 
         // customerType 설정
+        long customerTypePk = customer.getCustomerType().getPk();
         CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
         if(customerType.getCompany() != employee.getCompany()) // 다른 회사의 customertype을 사용하는지 확인
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH);
@@ -74,7 +77,11 @@ public class CustomerService {
     @Transactional
     public List<Customer> createCustomers(List<Customer> customers) {
         Employee employee = findEmployee.getLoginEmployeeByToken();
-        List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByEmployee(employee); // 고객의 customerType
+        List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee); // 고객의 customerType
+
+        // NULL 유형의 고객유형
+        CustomerType nullCustomerType = customerTypes.stream().filter(c -> c.getName().equals("NULL")).findFirst().orElse(null);
+        if(nullCustomerType == null) nullCustomerType = customerTypeService.createNULLCustomerType(employee);
 
         for (int i = 0; i < customers.size(); i++) {
             Customer customer = customers.get(i);
@@ -92,8 +99,18 @@ public class CustomerService {
             CustomerType customerType = customerTypes.stream()
                     .filter(c -> c.getName().equals(customerTypeName))
                     .findFirst().orElse(null);
-            if(customerType == null) {
-                throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH, "customerType is null { customer's name : " + customer.getName() + " }");
+            if(customerType == null) { // 없는 고객유형인 경우
+//                throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH, "customerType is null { customer's name : " + customer.getName() + " }");
+                if(Pattern.matches("^[a-zA-Z0-9가-힣]{1,10}$", customerTypeName)) { // 생성가능한 이름인 경우
+                    // 새로운 고객유형 생성하기
+                    CustomerType newCustomerType = new CustomerType();
+                    newCustomerType.setName(customerTypeName);
+                    newCustomerType.setDataType(DataType.DB);
+                    customerType = customerTypeService.createCustomerType(newCustomerType);
+                } else {
+                    // 새로운 고객유형 생성하기 실패하면 default 고객유형으로 하기
+                    customerType = nullCustomerType;
+                }
             }
             customer.setCustomerType(customerType);
 

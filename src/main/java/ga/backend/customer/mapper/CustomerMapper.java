@@ -8,6 +8,7 @@ import ga.backend.dong2.entity.Dong2;
 import ga.backend.gu2.entity.Gu2;
 import ga.backend.metro2.entity.Metro2;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
+    @Mapping(target = "customerType.pk", source = "customerTypePk")
     Customer customerPostDtoToCustomer(CustomerRequestDto.Post post);
 
     default List<Customer> customersPostDtoToCustomers(List<CustomerRequestDto.Post> posts) {

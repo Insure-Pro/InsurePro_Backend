@@ -11,6 +11,7 @@ import ga.backend.exception.ExceptionCode;
 import ga.backend.hide.entity.Hide;
 import ga.backend.hide.repository.HideRepository;
 import ga.backend.util.FindEmployee;
+import ga.backend.util.InitialCustomerTypeNull;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -67,6 +68,11 @@ public class CustomerTypeService {
             else customerType.setColor(CustomerTypeColors.get(index+1));
         }
 
+        return customerTypeRepository.save(customerType);
+    }
+
+    public CustomerType createNULLCustomerType(Employee employee) {
+        CustomerType customerType = InitialCustomerTypeNull.makeCustomerType(employee);
         return customerTypeRepository.save(customerType);
     }
 
