@@ -48,7 +48,7 @@ public class CustomerTypeService {
         customerType.setName(customerType.getName().toUpperCase()); // 고객유형 이름은 무조건 대문자만 허용
 
         // NULL 이름의 default customerType 생성 불가능
-        if(customerType.getName().equals("NULL")) {
+        if(customerType.getName().equals(InitialCustomerTypeNull.NULL_NAME)) {
             throw new BusinessLogicException(ExceptionCode.CUSTOMER_TYPE_NAME_NULL);
         }
 
