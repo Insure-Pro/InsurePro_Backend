@@ -148,7 +148,7 @@ public class CustomerController {
     public ResponseEntity findCustomersByContractYnByLatest(@PathVariable("contractYn") boolean contractYn,
                                                             @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByContractYnByLatest(contractYn, customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }
@@ -159,7 +159,7 @@ public class CustomerController {
                                                          @PathVariable("age") String age,
                                                          @RequestParam("customerTypePk") long customerTypePk) {
         List<Customer> customers = customerService.findCustomerByContractYnByLatest(contractYn, age, customerTypePk);
-        List<CustomerResponseDto.Response> responses = customerMapper.customersToCustomersResponseDto(customers);
+        List<CustomerResponseDto.MetroGuDongResponse> responses = customerMapper.customersToCustomerResponseMetroGuDongDto(customers);
 
         return new ResponseEntity<>(responses, HttpStatus.OK);
     }

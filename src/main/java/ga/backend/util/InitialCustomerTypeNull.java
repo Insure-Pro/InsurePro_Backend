@@ -5,6 +5,7 @@ import ga.backend.customerType.entity.DataType;
 import ga.backend.employee.entity.Employee;
 
 public class InitialCustomerTypeNull {
+    static public String NULL_NAME = "000";
     static public CustomerType makeCustomerType(Employee employee) {
         CustomerType customerType = new CustomerType();
         customerType.setCompany(employee.getCompany());

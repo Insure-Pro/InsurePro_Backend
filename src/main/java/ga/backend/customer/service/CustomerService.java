@@ -84,7 +84,7 @@ public class CustomerService {
         List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee); // 고객의 customerType
 
         // NULL 유형의 고객유형
-        CustomerType nullCustomerType = customerTypes.stream().filter(c -> c.getName().equals("000")).findFirst().orElse(null);
+        CustomerType nullCustomerType = customerTypes.stream().filter(c -> c.getName().equals(InitialCustomerTypeNull.NULL_NAME)).findFirst().orElse(null);
         if(nullCustomerType == null) nullCustomerType = customerTypeService.createNULLCustomerType(employee);
 
         for (int i = 0; i < customers.size(); i++) {
