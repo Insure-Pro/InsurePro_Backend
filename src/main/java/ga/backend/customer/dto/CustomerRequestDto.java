@@ -38,7 +38,7 @@ public class CustomerRequestDto {
         private String worry; // 돈관련가장큰고민
         private Integer salary; // 평균 세전 월소득액(만)
         private String workTime; // 통화가능한 시간
-        private Gender gender; // 성별
+        private String gender; // 성별
     }
 
     @AllArgsConstructor

@@ -3,10 +3,8 @@ package ga.backend.customer.mapper;
 import ga.backend.customer.dto.CustomerRequestDto;
 import ga.backend.customer.dto.CustomerResponseDto;
 import ga.backend.customer.entity.Customer;
+import ga.backend.customer.entity.Gender;
 import ga.backend.customerType.entity.CustomerType;
-import ga.backend.dong2.entity.Dong2;
-import ga.backend.gu2.entity.Gu2;
-import ga.backend.metro2.entity.Metro2;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -15,9 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static ga.backend.customer.entity.Gender.OTHER;
+
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
     @Mapping(target = "customerType.pk", source = "customerTypePk")
+    @Mapping(target = "gender", source = "gender", defaultValue = "OTHER")
     Customer customerPostDtoToCustomer(CustomerRequestDto.Post post);
 
     default List<Customer> customersPostDtoToCustomers(List<CustomerRequestDto.Post> posts) {
