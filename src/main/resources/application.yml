@@ -6,6 +6,11 @@ server:
     whitelabel:
       enabled: true             # 서버 오류 발생시 브라우저에 보여줄 기본 페이지 생성 여부
 
+# logging setting
+logging:
+  pattern:
+    dateformat: yyyy-MM-dd HH:mm:ss.SSS, Asia/Seoul
+
 spring:
   servlet:
     multipart:
@@ -38,7 +43,9 @@ spring:
       timeout: 25000
       starttls.enable: true
     protocol: smtp
-
+  output: # log color
+    ansi:
+      enabled: always
 
 mail:
   address:
