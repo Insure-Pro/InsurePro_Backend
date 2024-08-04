@@ -4,6 +4,7 @@ import ga.backend.employee.service.EmployeeService;
 import ga.backend.oauth2.filter.JwtAuthenticationFilter;
 import ga.backend.oauth2.filter.JwtVerificationFilter;
 import ga.backend.oauth2.handler.*;
+import ga.backend.oauth2.jwt.JwtDelegate;
 import ga.backend.oauth2.jwt.JwtTokenizer;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @AllArgsConstructor
 @EnableWebSecurity(debug = true)
 public class SecurityConfiguration {
-    private final JwtTokenizer jwtTokenizer;
+    private final JwtDelegate jwtDelegate;
     private final EmployeeService employeeService;
     private final JwtVerificationFilter jwtVerificationFilter;
     private final MemberLogoutSuccessHandler memberLogoutSuccessHandler;
@@ -79,7 +80,7 @@ public class SecurityConfiguration {
             // 로그인
             AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
 
-            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtTokenizer, employeeService);
+            JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManager, jwtDelegate, employeeService);
             jwtAuthenticationFilter.setFilterProcessesUrl(Version.currentUrl + "/login");          // login url
 
             jwtAuthenticationFilter.setAuthenticationSuccessHandler(new MemberAuthenticationSuccessHandler());

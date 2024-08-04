@@ -3,6 +3,7 @@ package ga.backend.oauth2.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.service.EmployeeService;
+import ga.backend.oauth2.jwt.JwtDelegate;
 import ga.backend.oauth2.jwt.JwtTokenizer;
 import ga.backend.oauth2.utils.LoginDto;
 import lombok.AllArgsConstructor;
@@ -28,7 +29,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {  // (1)
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenizer jwtTokenizer;
+    private final JwtDelegate jwtDelegate;
     private final EmployeeService employeeService;
 
     @SneakyThrows
@@ -120,8 +121,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             Authentication authResult) throws ServletException, IOException  {
         Employee employee = (Employee) authResult.getPrincipal();
 
-        String accessToken = "Bearer " + delegateAccessToken(employee);
-        String refreshToken = delegateRefreshToken(employee);
+        String accessToken = "Bearer " + jwtDelegate.delegateAccessToken(employee);
+        String refreshToken = jwtDelegate.delegateRefreshToken(employee);
 
         response.setHeader("Authorization", accessToken);
         response.setHeader("Refresh", refreshToken);
@@ -158,29 +159,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         ObjectMapper mapper = new ObjectMapper();
         String result = mapper.writeValueAsString(userResponse);
         response.getWriter().write(result);
-    }
-
-    // access token 발급
-    private String delegateAccessToken(Employee employee) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", employee.getId()); // 사번
-        claims.put("roles", employee.getRoles()); // 권한
-
-        String subject = employee.getEmail(); // 이메일
-        Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
-
-        String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
-
-        return jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey); // access token
-    }
-
-    // refresh token 발급
-    private String delegateRefreshToken(Employee employee) {
-        String subject = employee.getEmail();
-        Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getRefreshTokenExpirationMinutes());
-        String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
-
-        return jwtTokenizer.generateRefreshToken(subject, expiration, base64EncodedSecretKey); // refresh token
     }
 
     @AllArgsConstructor

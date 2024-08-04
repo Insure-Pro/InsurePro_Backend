@@ -33,8 +33,8 @@ public class MemberLogoutSuccessHandler implements LogoutSuccessHandler {
         System.out.println("!! success logout");
 
         // 세션에 토큰 저장
-        Map<String, Object> claims = jwtVerificationFilter.verifyAuthorizationJws(request);
-        jwtVerificationFilter.setAuthenticationToContext(claims);
+//        Map<String, Object> claims = jwtVerificationFilter.verifyAuthorizationJws(request);
+//        jwtVerificationFilter.setAuthenticationToContext(claims);
 
         // 토큰값 초기화
         Employee employee = findEmployee.getLoginEmployeeByToken();
