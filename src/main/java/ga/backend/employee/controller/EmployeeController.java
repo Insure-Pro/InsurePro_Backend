@@ -71,7 +71,8 @@ public class EmployeeController {
     // access-token으로 refresh-token 재발행
     @PatchMapping("/authorization")
     public ResponseEntity patchToken(HttpServletRequest request, HttpServletResponse response) {
-        jwtVerificationFilter.assignAccessToken(request, response);
+//        jwtVerificationFilter.assignAccessToken(request, response);
+        jwtVerificationFilter.verifyRefreshToken(request, response);
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -2,7 +2,9 @@ package ga.backend.oauth2.filter;
 
 import ga.backend.employee.entity.Employee;
 import ga.backend.employee.service.EmployeeService;
-import ga.backend.exception.*;
+import ga.backend.exception.BusinessLogicException;
+import ga.backend.exception.ExceptionCode;
+import ga.backend.oauth2.jwt.JwtDelegate;
 import ga.backend.oauth2.jwt.JwtTokenizer;
 import ga.backend.oauth2.utils.CustomAuthorityUtils;
 import ga.backend.util.CustomCookie;
@@ -15,14 +17,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
+import java.net.URI;
+import java.net.http.HttpRequest;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +33,7 @@ import java.util.Map;
 @AllArgsConstructor
 public class JwtVerificationFilter extends OncePerRequestFilter {
     private final JwtTokenizer jwtTokenizer;
+    private final JwtDelegate jwtDelegate;
     private final CustomAuthorityUtils authorityUtils;
     private final EmployeeService employeeService;
     private final CustomCookie cookie;
@@ -40,19 +44,13 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         System.out.println("# JwtVerificationFilter");
         cookie.createCookie(request, response);
 
-//        check(request);
+        // access token 유효성 검증
         try {
-            System.out.println("!! what1");
             Map<String, Object> claims = verifyAuthorizationJws(request);
-            System.out.println("!! keySet : " + claims.keySet());
-            System.out.println("!! what2");
             setAuthenticationToContext(claims);
-            System.out.println("!! what3");
         } catch (SignatureException se) { // signature 에러
-            System.out.println("!! error 1");
             request.setAttribute("exception", se);
         } catch (ExpiredJwtException ee) { // 기간 만료
-            System.out.println("!! error 2");
             request.setAttribute("exception", ee);
 
             /*
@@ -64,7 +62,6 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
             verifyRefreshToken(request, response);
 
         } catch (Exception e) { // 그 외의 에러
-            System.out.println("!! error 3");
             System.out.println("error : " + e.getMessage());
             System.out.println("eeror : " + e.getCause());
             request.setAttribute("exception", e);
@@ -74,29 +71,37 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     }
 
     // refresh 토큰 유효성 검사
-    protected void verifyRefreshToken(HttpServletRequest request, HttpServletResponse response) {
+    public void verifyRefreshToken(HttpServletRequest request, HttpServletResponse response) {
+        System.out.println("##!!  " + request.getHeader("Referer")); // original URL
+
         try {
             // refresh 토큰 유효성 검사
             Map<String, Object> refreshClaims = verifyRefreshJws(request);
             Employee employee = verifyClaims(refreshClaims);
 
             // 새로운 AccessToken 발생 및 전달
-//            String accessToken = delegateAccessTokenByRefreshToken(refreshClaims, token);
-//            response.setHeader("Authorization", accessToken);
-        } catch (SignatureException se) {
+            String accessToken = delegateAccessTokenByRefreshToken(refreshClaims, employee);
+            response.setHeader("Authorization", accessToken);
+        } catch (SignatureException se) { // signature 에러
             request.setAttribute("exception", se);
             System.out.println("!! RefreshToken의 signiture와 payload가 불일치하면 동작");
-        } catch (ExpiredJwtException eee) {
+        } catch (ExpiredJwtException eee) { // 기간 만료
             request.setAttribute("exception", eee);
             System.out.println("!! RefreshToken 유효기간 종료");
-        } catch (Exception e) {
+
+            // 로그인 페이지로 리다이렉트
+//            createURI(request, response);
+        } catch (Exception e) { // 그 외의 에러
             request.setAttribute("exception", e);
             System.out.println("## " + e.getMessage());
             System.out.println("!! RefreshToken의 header 불일치하면 동작");
+
+            // 로그인 페이지로 리다이렉트
+//            createURI(request, response);
         }
     }
 
-    // access token 재발급 API를 위한 메서드
+    // access token 재발급 API를 위한 메서드(refresh 토큰 유효성 검사 포함)
     public void assignAccessToken(HttpServletRequest request, HttpServletResponse response) {
         // refresh 토큰 유효성 검사
         Map<String, Object> refreshClaims = verifyRefreshJws(request);
@@ -110,34 +115,13 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
     // refresh-Token을 이용한 access-Token 재발행
     private String delegateAccessTokenByRefreshToken(Map<String, Object> refreshClaims, Employee employee) {
         // 새로운 Access 토큰 발행
-        String subject = (String) refreshClaims.get("sub");
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", employee.getId());
-        claims.put("roles", employee.getRoles());
-
-        Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
-        String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
-        String accessToken = "Bearer " + jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey);
+        String accessToken = "Bearer " + jwtDelegate.delegateAccessToken(employee);
 
         // 새로 발행된 access-Token 업데이트
         employee.setAccessToken(accessToken);
         employeeService.patchEmployeeToken(employee);
 
         return accessToken;
-    }
-
-    // access token 발행
-    public String delegateAccessToken(Employee employee) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", employee.getId()); // 사번
-        claims.put("roles", employee.getRoles()); // 권한
-
-        String subject = employee.getEmail(); // 이메일
-        Date expiration = jwtTokenizer.getTokenExpiration(jwtTokenizer.getAccessTokenExpirationMinutes());
-
-        String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
-
-        return "Bearer " + jwtTokenizer.generateAccessToken(claims, subject, expiration, base64EncodedSecretKey); // access token
     }
 
     @Override
@@ -149,13 +133,9 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
 
     // access token 유효성 검증
     public Map<String, Object> verifyAuthorizationJws(HttpServletRequest request) {
-        System.out.println("#");
         String jws = request.getHeader("Authorization").replace("Bearer ", "");
-        System.out.println("##");
         String base64EncodedSecretKey = jwtTokenizer.encodeBase64SecretKey(jwtTokenizer.getSecretKey());
-        System.out.println("###");
         Map<String, Object> claims = jwtTokenizer.getClaims(jws, base64EncodedSecretKey).getBody();
-        System.out.println("####");
 
         verifyClaims(claims);
         return claims;
@@ -176,14 +156,10 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
         String subject = (String) claims.get("sub"); // 이메일
         Employee employee = employeeService.verifiedEmployeeByEmail(subject);
 
-        System.out.println("!! ###");
-
         // token의 id 유효성 검사
 //        String id = (String) claims.get("id"); // 사번
 //        Employee employeeById = employeeService.verifiedEmployeeById(id);
 //        if(!employeeById.equals(employeeById)) throw new BusinessLogicException(ExceptionCode.TAMPERED_TOKEN);
-
-        System.out.println("!! ####");
 
         // token의 roles 유효성 검사
         if(claims.get("roles") != null) {
@@ -192,18 +168,26 @@ public class JwtVerificationFilter extends OncePerRequestFilter {
             if (!roles.containsAll(claimsRoles)) throw new BusinessLogicException(ExceptionCode.TAMPERED_TOKEN);
         }
 
-        System.out.println("!! ####");
-
-
         return employee;
     }
 
     // contextholder에 세션 저장
     public void setAuthenticationToContext(Map<String, Object> claims) {
-        System.out.println("!! 저장하기");
         List<GrantedAuthority> authorities = authorityUtils.createAuthorities((List) claims.get("roles"));
         Authentication authentication = new UsernamePasswordAuthenticationToken(claims.get("sub"), null, authorities);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    // 리다이렉트 URL 생성
+    private void createURI(HttpServletRequest request, HttpServletResponse response) {
+        String url = request.getHeader("Referer"); // original URL
+        String redirectUrl = url + "login"; // 로그인 페이지로 전환
+        try {
+//            response.setHeader("Access-Control-Allow-Origin", url);
+            response.sendRedirect(redirectUrl);
+        } catch (IOException ioe) {
+            System.out.println("Redirection failed: " + ioe.getMessage());
+        }
     }
 
     // access-Token을 이용해서 user 정보 조회하기
