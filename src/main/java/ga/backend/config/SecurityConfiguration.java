@@ -5,7 +5,6 @@ import ga.backend.oauth2.filter.JwtAuthenticationFilter;
 import ga.backend.oauth2.filter.JwtVerificationFilter;
 import ga.backend.oauth2.handler.*;
 import ga.backend.oauth2.jwt.JwtDelegate;
-import ga.backend.oauth2.jwt.JwtTokenizer;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
