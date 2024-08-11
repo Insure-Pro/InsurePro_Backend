@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 로그 색상변경 참고 사이트 : https://breakcoding.tistory.com/400 -->
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+
+    <!--    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS, Asia/Seoul} %-5level %logger{36} - %msg%n"/>-->
+    <property name="CONSOLE_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS}  %clr(%-5level) --- [%thread] %cyan(%logger{36}) : %msg%n"/>
+    <property name="FILE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level --- [%thread] %logger{36} : %msg%n"/>
+
+    <!-- 콘솔 로그 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!--  파일 로그  -->
+    <appender name="LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!--        <append>true</append>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 로그 파일 이름 형식 -->
+            <fileNamePattern>logs/%d{yyyy-MM-dd, Asia/Seoul}.%i.log</fileNamePattern>
+            <maxFileSize>100MB</maxFileSize>
+            <!-- 최대 보관 기간 (로그 파일을 10일간 보관) -->
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 문의사항 로그 -->
+    <appender name="QUESTION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>logs/questions/question-%d{yyyy-MM-dd HH-mm, Asia/Seoul}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- 시간에 따른 에러 로그 -->
+    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!--        <append>true</append>-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 로그 파일 이름 형식 -->
+            <fileNamePattern>logs/errors/errors-%d{yyyy-MM-dd HH-mm, Asia/Seoul}.log</fileNamePattern>
+            <!-- 최대 보관 기간 (로그 파일을 10일간 보관) -->
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${FILE_PATTERN}</pattern>
+        </encoder>
+        <!-- 필터 추가 -->
+        <filter class="ga.backend.log.ExceptionFilter"/>
+    </appender>
+
+    <!-- Spring Security Debugger 로그를 별도 파일에 기록 -->
+    <logger name="Spring Security Debugger" level="INFO">
+        <appender-ref ref="ERROR_FILE"/>
+    </logger>
+
+    <!-- Logger for BusinessLogicException -->
+    <logger name="ga.backend.exception.BusinessLogicException" level="ERROR" additivity="false">
+        <appender-ref ref="ERROR_FILE"/>
+    </logger>
+
+    <!-- Logger for GlobalExceptionHandler -->
+    <logger name="ga.backend.exception.GlobalExceptionHandler" level="ERROR">
+        <appender-ref ref="ERROR_FILE"/>
+    </logger>
+
+    <logger name="ga.backend.question.controller.QuestionController" level="INFO" additivity="false">
+        <appender-ref ref="QUESTION_FILE"/>
+    </logger>
+
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="LOG_FILE"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>

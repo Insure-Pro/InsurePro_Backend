@@ -23,4 +23,13 @@ public class EmployeeResponseDto {
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
     }
+
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class SlackResponse {
+        private Long pk;
+        private String email;
+        private String name; // 이름
+    }
 }
