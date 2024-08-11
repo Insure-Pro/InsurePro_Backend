@@ -35,8 +35,9 @@ public class QuestionService {
 
         // 이미지 업로드
         if (photo != null) {
+            System.out.println("!! photo : " + photo);
             question.setImageUrl(imageService.updateImage(photo, "photo", "imageUrl"));
-        }
+        } else System.out.println("!! photo : " + photo);
 
         return questionRespository.save(question);
     }
