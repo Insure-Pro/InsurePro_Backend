@@ -67,7 +67,7 @@ public class ExceptionFilter extends Filter<ILoggingEvent> {
             }
 
             // 파일에 로그 메시지를 기록
-            writeLogToFile(message);
+            writeLogToFile(formatLogMessage(event, message));
         }
 
         return FilterReply.DENY;
@@ -83,9 +83,28 @@ public class ExceptionFilter extends Filter<ILoggingEvent> {
         }
     }
 
+    // 로그 메시지 포맷팅
+    private String formatLogMessage(ILoggingEvent event, String message) {
+        // 로그 타임스탬프
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(event.getTimeStamp()));
+
+        // 로그 레벨
+        String level = event.getLevel().toString();
+
+        // 스레드 이름
+        String threadName = event.getThreadName();
+
+        // 로거 이름
+        String loggerName = event.getLoggerName();
+
+        // 포맷된 로그 메시지
+        return String.format("%s  %-5s --- [%s] %s : %s", timestamp, level, threadName, loggerName, message);
+    }
+
+
     // 파일명 설정
     private String getFormattedFileName() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));  // 시간대를 Asia/Seoul로 설정
         String dateTime = sdf.format(new Date());
         return String.format(fileNamePattern, dateTime);
