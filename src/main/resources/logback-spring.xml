@@ -5,6 +5,8 @@
     <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
 
     <!--    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS, Asia/Seoul} %-5level %logger{36} - %msg%n"/>-->
+    <property name="LOG_FILE_NAME" value="%d{yyyy-MM-dd, Asia/Seoul}" />
+    <property name="FILE_NAME" value="%d{yyyy-MM-dd_HH-mm, Asia/Seoul}" />
     <property name="CONSOLE_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS}  %clr(%-5level) --- [%thread] %cyan(%logger{36}) : %msg%n"/>
     <property name="FILE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS}  %-5level --- [%thread] %logger{36} : %msg%n"/>
@@ -21,7 +23,7 @@
         <!--        <append>true</append>-->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- 로그 파일 이름 형식 -->
-            <fileNamePattern>logs/%d{yyyy-MM-dd, Asia/Seoul}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/${LOG_FILE_NAME}.%i.log</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <!-- 최대 보관 기간 (로그 파일을 10일간 보관) -->
             <maxHistory>10</maxHistory>
@@ -34,7 +36,7 @@
     <!-- 문의사항 로그 -->
     <appender name="QUESTION_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/questions/question-%d{yyyy-MM-dd HH-mm, Asia/Seoul}.log</fileNamePattern>
+            <fileNamePattern>logs/questions/question-${FILE_NAME}.log</fileNamePattern>
             <maxHistory>10</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -47,7 +49,7 @@
 <!--        <append>true</append>-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 로그 파일 이름 형식 -->
-            <fileNamePattern>logs/errors/errors-%d{yyyy-MM-dd HH-mm, Asia/Seoul}.log</fileNamePattern>
+            <fileNamePattern>logs/errors/errors-${FILE_NAME}.log</fileNamePattern>
             <!-- 최대 보관 기간 (로그 파일을 10일간 보관) -->
             <maxHistory>10</maxHistory>
         </rollingPolicy>
