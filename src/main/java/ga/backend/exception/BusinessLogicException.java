@@ -28,7 +28,7 @@ public class BusinessLogicException extends RuntimeException {
     }
 
     private void logError() {
-        logger.error("Business logic exception occurred: {}, Message: {}", this.exceptionCode, this.message);
+        logger.error("Business logic exception occurred: " + this.exceptionCode + ", Message: " + this.message);
         // Optionally, log additional details or stack trace
     }
 }
