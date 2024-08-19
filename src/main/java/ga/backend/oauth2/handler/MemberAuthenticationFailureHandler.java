@@ -22,7 +22,7 @@ public class MemberAuthenticationFailureHandler implements AuthenticationFailure
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
 
-        log.error("# Authentication failed: {}", exception.getMessage());
+        log.error("# Authentication failed: " + exception.getMessage());
 
         // 이메일 불일치
         if(exception.getMessage().equals("Employee not found")) sendErrorResponse(response, ExceptionCode.INVALID_EMAIL);
