@@ -60,20 +60,20 @@
         <filter class="ga.backend.log.ExceptionFilter"/>
     </appender>
 
-    <!-- Spring Security Debugger 로그를 별도 파일에 기록 -->
-    <logger name="Spring Security Debugger" level="INFO">
-        <appender-ref ref="ERROR_FILE"/>
-    </logger>
+<!--    &lt;!&ndash; Spring Security Debugger 로그를 별도 파일에 기록 &ndash;&gt;-->
+<!--    <logger name="Spring Security Debugger" level="INFO">-->
+<!--        <appender-ref ref="ERROR_FILE"/>-->
+<!--    </logger>-->
 
-    <!-- Logger for BusinessLogicException -->
-    <logger name="ga.backend.exception.BusinessLogicException" level="ERROR" additivity="false">
-        <appender-ref ref="ERROR_FILE"/>
-    </logger>
+<!--    &lt;!&ndash; Logger for BusinessLogicException &ndash;&gt;-->
+<!--    <logger name="ga.backend.exception.BusinessLogicException" level="ERROR" additivity="false">-->
+<!--        <appender-ref ref="ERROR_FILE"/>-->
+<!--    </logger>-->
 
-    <!-- Logger for GlobalExceptionHandler -->
-    <logger name="ga.backend.exception.GlobalExceptionHandler" level="ERROR">
-        <appender-ref ref="ERROR_FILE"/>
-    </logger>
+<!--    &lt;!&ndash; Logger for GlobalExceptionHandler &ndash;&gt;-->
+<!--    <logger name="ga.backend.exception.GlobalExceptionHandler" level="ERROR">-->
+<!--        <appender-ref ref="ERROR_FILE"/>-->
+<!--    </logger>-->
 
     <logger name="ga.backend.question.controller.QuestionController" level="INFO" additivity="false">
         <appender-ref ref="QUESTION_FILE"/>
@@ -81,6 +81,7 @@
 
     <!-- Root logger -->
     <root level="INFO">
+        <appender-ref ref="ERROR_FILE"/>
         <appender-ref ref="LOG_FILE"/>
         <appender-ref ref="CONSOLE"/>
     </root>
