@@ -17,6 +17,7 @@ public class EmployeeResponseDto {
         private String id;
         private String email;
         private String name; // 이름
+        private Long year; // 연차
         private TeamResponseDto.Response teamResponseDto;
         private boolean regiYn;
         private boolean delYn;
