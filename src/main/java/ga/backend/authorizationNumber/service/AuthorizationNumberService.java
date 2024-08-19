@@ -58,7 +58,7 @@ public class AuthorizationNumberService {
     //이메일 보낼 양식 설정하기
     public int sendEmail(String email) {
         int authNum = generateAuthNum.randomNumberExtend(); // 랜덤 번호
-        String fromMail = System.getenv("EMAIL_USERNAME"); // email-config에 설정한 자신의 이메일 주소를 입력
+        String fromMail = System.getenv("DX_MAIL_NAME"); // email-config에 설정한 자신의 이메일 주소를 입력
         String toMail = email;
         String title = "회원 가입 인증 이메일입니다."; // 이메일 제목
         String content = // html 형식으로 작성하기
