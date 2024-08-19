@@ -30,8 +30,11 @@ public class Employee extends Auditable {
     @Column(name = "employee_pk")
     private Long pk;
 
-    @Column
+    @Column(nullable = false)
     private String id; // 사번
+
+    @Column
+    private Long year; // 연차
 
     @Column(unique = true)
     @Email

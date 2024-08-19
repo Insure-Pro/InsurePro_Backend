@@ -16,6 +16,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -82,9 +83,11 @@ public class EmployeeService {
     public Employee patchEmployee(Employee employee) {
         Employee findEmployee = findEmployeeByToken();
         Optional.ofNullable(employee.getId()).ifPresent(findEmployee::setId);
+        Optional.ofNullable(employee.getYear()).ifPresent(findEmployee::setYear);
         Optional.ofNullable(employee.getEmail()).ifPresent(findEmployee::setEmail);
         Optional.ofNullable(employee.getName()).ifPresent(findEmployee::setName);
         Optional.ofNullable(employee.getDelYn()).ifPresent(findEmployee::setDelYn);
+        Optional.ofNullable(employee.getRegiYn()).ifPresent(findEmployee::setRegiYn);
         Optional.ofNullable(employee.getRegiYn()).ifPresent(findEmployee::setRegiYn);
 
         return employeeRespository.save(findEmployee);
@@ -130,7 +133,8 @@ public class EmployeeService {
 
     // 검증 - 사번
     public Employee verifiedEmployeeById(String id) {
-        Optional<Employee> employee = employeeRespository.findByIdAndDelYnFalse(id);
-        return employee.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
+        List<Employee> employee = employeeRespository.findFistByIdAndDelYnFalse(id);
+        if(employee.isEmpty()) throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND);
+        return employee.get(0);
     }
 }

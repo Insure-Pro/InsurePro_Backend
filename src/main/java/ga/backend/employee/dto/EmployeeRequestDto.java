@@ -61,6 +61,8 @@ public class EmployeeRequestDto {
         private long teamPk; // 팀 식별자
 
         private int authNum; // 이메일 인증 번호
+
+        private Long year; // 연차
     }
 
     @AllArgsConstructor
