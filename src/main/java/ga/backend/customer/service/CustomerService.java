@@ -65,11 +65,24 @@ public class CustomerService {
         makeDongString(metroGuDong, customer);
 
         // customerType 설정
-        long customerTypePk = customer.getCustomerType().getPk();
-        CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
-        if(customerType.getCompany() != employee.getCompany()) // 다른 회사의 customertype을 사용하는지 확인
-            throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH);
+        Long customerTypePk = customer.getCustomerType().getPk();
+        System.out.println("!! customerTypePk : " + customerTypePk);
+        CustomerType customerType = null;
+        if(customerTypePk == null) { // customerType이 없는 경우
+            // NULL 유형의 고객유형
+            customerType = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee)
+                    .stream()
+                    .filter(c -> c.getName().equals(InitialCustomerTypeNull.NULL_NAME))
+                    .findFirst()
+                    .orElse(null);
+            if(customerType == null) customerType = customerTypeService.createNULLCustomerType(employee);
+        } else {
+            customerType = customerTypeService.findCustomerType(customerTypePk);
+            if(customerType.getCompany() != employee.getCompany()) // 다른 회사의 customertype을 사용하는지 확인
+                throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH);
+        }
         customer.setCustomerType(customerType);
+        System.out.println("!! customerTypeName : " + customerType.getName());
 
         // registerDate가 null이고, customerType이 DB인 경우 -> regiterDate 자동 설정
         if(customer.getRegisterDate() == null && customerType.getDataType() == DataType.DB) customer.setRegisterDate(LocalDate.now());
