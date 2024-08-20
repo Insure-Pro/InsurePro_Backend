@@ -71,6 +71,9 @@ public class CustomerService {
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH);
         customer.setCustomerType(customerType);
 
+        // registerDate가 null이고, customerType이 DB인 경우 -> regiterDate 자동 설정
+        if(customer.getRegisterDate() == null && customerType.getDataType() == DataType.DB) customer.setRegisterDate(LocalDate.now());
+
         // 만나이 계산
         if(customer.getBirth() != null) customer.setAge(CalculateAge.getAge(customer.getBirth()));
 
@@ -121,6 +124,9 @@ public class CustomerService {
                 }
             }
             customer.setCustomerType(customerType);
+
+            // registerDate가 null이고, customerType이 DB인 경우 -> regiterDate 자동 설정
+            if(customer.getRegisterDate() == null && customerType.getDataType() == DataType.DB) customer.setRegisterDate(LocalDate.now());
 
             // 만나이 계산
             if(customer.getBirth() != null) customer.setAge(CalculateAge.getAge(customer.getBirth()));
