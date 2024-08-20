@@ -60,15 +60,17 @@ public class CustomerTypeService {
         if(customerType.getColor() == null) {
             Company company = employee.getCompany();
             List<CustomerType> customerTypes = customerTypeRepository.findByCompanyAndDelYnFalse(company);
+
             // 처음 고객유형 추가한 경우
             if(customerTypes.isEmpty()) customerType.setColor(CustomerTypeFirstColor);
+            else {
+                String lastColor = customerTypes.get(customerTypes.size()-1).getColor(); // 마지막에 설정한 색상
+                int index = CustomerTypeColors.indexOf(lastColor); // 지정한 컬러의 index 확인
 
-            String lastColor = customerTypes.get(customerTypes.size()-1).getColor(); // 마지막에 설정한 색상
-            int index = CustomerTypeColors.indexOf(lastColor); // 지정한 컬러의 index 확인
-
-            // 지정된 컬러 이외의 색상일 경우 or 마지막 컬러인 경우
-            if(index == -1 || index == CustomerTypeColorSize-1) customerType.setColor(CustomerTypeFirstColor);
-            else customerType.setColor(CustomerTypeColors.get(index+1));
+                // 지정된 컬러 이외의 색상일 경우 or 마지막 컬러인 경우
+                if(index == -1 || index == CustomerTypeColorSize-1) customerType.setColor(CustomerTypeFirstColor);
+                else customerType.setColor(CustomerTypeColors.get(index+1));
+            }
         }
 
         return customerTypeRepository.save(customerType);
