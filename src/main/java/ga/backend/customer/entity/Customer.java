@@ -115,7 +115,7 @@ public class Customer extends Auditable {
     private String worry; // 돈관련가장큰고민
 
     @Column
-    private int salary; // 평균 세전 월소득액(만)
+    private String salary; // 평균 세전 월소득액(만)
 
     @Column
     private String workTime; // 통화가능한 시간
