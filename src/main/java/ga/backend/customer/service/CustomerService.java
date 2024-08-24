@@ -746,7 +746,7 @@ public class CustomerService {
         Optional.ofNullable(customer.getEmail()).ifPresent(findCustomer::setEmail);
         Optional.ofNullable(customer.getWork()).ifPresent(findCustomer::setWork);
         Optional.ofNullable(customer.getWorry()).ifPresent(findCustomer::setWorry);
-        if(customer.getSalary() != 0) findCustomer.setSalary(customer.getSalary());
+        Optional.ofNullable(customer.getSalary()).ifPresent(findCustomer::setSalary);
         Optional.ofNullable(customer.getWorkTime()).ifPresent(findCustomer::setWorkTime);
         Optional.ofNullable(customer.getGender()).ifPresent(findCustomer::setGender);
 
