@@ -99,6 +99,7 @@ public class CustomerResponseDto {
         private Gender gender; // 성별
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
+        private MetroGuDong metroGuDong; // metro, gu, dong에 대한 이름
         private Coordinate coordinate; // 좌표 설정
     }
 
