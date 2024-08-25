@@ -102,8 +102,7 @@ public class AnalysisService {
         boolean check = true;
         LocalDate now = LocalDate.now();
 
-        if (now.getMonthValue() != date.getMonthValue()) check = false;
-        else if (now.getYear() != date.getYear()) check = false;
+        if (now.getMonthValue() != date.getMonthValue() || now.getYear() != date.getYear()) check = false;
         return check;
     }
 
@@ -156,29 +155,38 @@ public class AnalysisService {
                 customerType
         );
         double allCustomerCount = allCustomersByConsultationStatusModifiedAt.size();
-        int beforeConsultationCount = 0;
-        int pendingConsultationCount = 0;
-        int productProposalCount = 0;
-        int medicalHistoryWaitingCount = 0;
-        int subscriptionRejectionCount = 0;
-        int consultationRejectionCount = 0;
-        int asTargetCount = 0;
-        for (Customer customer : allCustomersByConsultationStatusModifiedAt) {
-            if (customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION) beforeConsultationCount++;
-            else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION) pendingConsultationCount++;
-            else if (customer.getConsultationStatus() == ConsultationStatus.PRODUCT_PROPOSAL) productProposalCount++;
-            else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING) medicalHistoryWaitingCount++;
-            else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION) subscriptionRejectionCount++;
-            else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION) consultationRejectionCount++;
-            else if (customer.getConsultationStatus() == ConsultationStatus.AS_TARGET) asTargetCount++;
+        if(allCustomerCount == 0) { // NaN 방지
+            analysis.setBeforeConsultationRatio(0.0);
+            analysis.setPendingCounsultationRatio(0.0);
+            analysis.setProductProposalRatio(0.0);
+            analysis.setMedicalHistoryWaitingRatio(0.0);
+            analysis.setSubscriptionRejectionRatio(0.0);
+            analysis.setConsultationRejectionRatio(0.0);
+        } else {
+            int beforeConsultationCount = 0;
+            int pendingConsultationCount = 0;
+            int productProposalCount = 0;
+            int medicalHistoryWaitingCount = 0;
+            int subscriptionRejectionCount = 0;
+            int consultationRejectionCount = 0;
+            int asTargetCount = 0;
+            for (Customer customer : allCustomersByConsultationStatusModifiedAt) {
+                if (customer.getConsultationStatus() == ConsultationStatus.BEFORE_CONSULTATION) beforeConsultationCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.PENDING_CONSULTATION) pendingConsultationCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.PRODUCT_PROPOSAL) productProposalCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.MEDICAL_HISTORY_WAITING) medicalHistoryWaitingCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.SUBSCRIPTION_REJECTION) subscriptionRejectionCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION) consultationRejectionCount++;
+                else if (customer.getConsultationStatus() == ConsultationStatus.AS_TARGET) asTargetCount++;
+            }
+            analysis.setBeforeConsultationRatio(beforeConsultationCount / allCustomerCount);
+            analysis.setPendingCounsultationRatio(pendingConsultationCount / allCustomerCount);
+            analysis.setProductProposalRatio(productProposalCount / allCustomerCount);
+            analysis.setMedicalHistoryWaitingRatio(medicalHistoryWaitingCount / allCustomerCount);
+            analysis.setSubscriptionRejectionRatio(subscriptionRejectionCount / allCustomerCount);
+            analysis.setConsultationRejectionRatio(consultationRejectionCount / allCustomerCount);
+            analysis.setAsTargetCount(asTargetCount); // Customer의 상담현황 = AS_TARGET인 Customer 개수
         }
-        analysis.setBeforeConsultationRatio(beforeConsultationCount / allCustomerCount);
-        analysis.setPendingCounsultationRatio(pendingConsultationCount / allCustomerCount);
-        analysis.setProductProposalRatio(productProposalCount / allCustomerCount);
-        analysis.setMedicalHistoryWaitingRatio(medicalHistoryWaitingCount / allCustomerCount);
-        analysis.setSubscriptionRejectionRatio(subscriptionRejectionCount / allCustomerCount);
-        analysis.setConsultationRejectionRatio(consultationRejectionCount / allCustomerCount);
-        analysis.setAsTargetCount(asTargetCount); // Customer의 상담현황 = AS_TARGET인 Customer 개수
     }
 
     // TA의 Customer 개수
