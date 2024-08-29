@@ -29,15 +29,16 @@ public class CustomerTypeService {
     private final HideRepository hideRepository;
     private final FindEmployee findEmployee;
     private final List<String> CustomerTypeColors = new ArrayList<>(List.of(
-            "#e70000",
-            "#fa7533",
-            "#21a549",
-            "#1060ff",
-            "#7543ff",
-            "#bb5abb",
+            "#ffb0b0",
+            "#fdcab0",
+            "#bbe8c9",
+            "#b5ceff",
+            "#d4c5ff",
             "#ff8a8a",
             "#e5ba00",
-            "#91b6ff"
+            "#91b6ff",
+            "#7543ff",
+            "#bb5abb"
     ));
     private final String CustomerTypeFirstColor = CustomerTypeColors.get(0);
     private final int CustomerTypeColorSize = CustomerTypeColors.size();
