@@ -219,19 +219,14 @@ public class AnalysisService {
         analysis.setPromiseCount(promiseCount);
     }
 
-    // Schedule의 Progress(진척도)의 Customer 개수
+    // Schedule의 Progress(진척도)의 개수
     public void scheduleCustomerCount(Analysis analysis, Employee employee, LocalDate startDate, LocalDate finishDate, CustomerType customerType) {
-        List<Schedule> schedules = new ArrayList<>(scheduleRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescPkDesc(
+        List<Schedule> schedules = scheduleRepository.findByEmployeeAndDateBetweenAndDelYnFalseAndCustomerCustomerTypeOrderByDateDescPkDesc(
                         employee,
                         startDate,
                         finishDate,
                         customerType
-                ).stream()
-                .collect(Collectors.toMap(
-                        Schedule::getCustomer,
-                        schedule -> schedule,
-                        (existing, replacement) -> existing
-                )).values());
+                );
         int apCount = 0;
         int icCount = 0;
         int pcCount = 0;
