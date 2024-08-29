@@ -97,8 +97,8 @@ public class CustomerResponseDto {
         private String salary; // 평균 세전 월소득액(만)
         private String workTime; // 통화가능한 시간
         private Gender gender; // 성별
-        private LocalDateTime createdAt;
-        private LocalDateTime modifiedAt;
+        private LocalDateTime createdAt; // 생성일
+        private LocalDateTime modifiedAt; // 수정일
         private MetroGuDong metroGuDong; // metro, gu, dong에 대한 이름
         private Coordinate coordinate; // 좌표 설정
     }
