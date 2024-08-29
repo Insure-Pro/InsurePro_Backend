@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -18,6 +19,7 @@ public class AnalysisResponseDto {
         private int etcCustomerCount; // 이번달에 추가된 customer 개수 - ETC 고객유형
         private CustomerConsultationRatio customerConsultationRatio; // customer의 상담현황 확률
         private int contractCount; // Contract의 계약 체결한 Contract 개수
+        private int contractYnCount; // 이번달에 계약을 체결한 Customer 개수
         private int asTargetCount; // Customer의 상담현황 = AS_TARGET인 Customer 개수
         private TACustomerCount taCustomerCount; // TA의 Customer 개수
         private ScheduleCount scheduleCount; // Schedule의 Progress(진척도)의 개수
