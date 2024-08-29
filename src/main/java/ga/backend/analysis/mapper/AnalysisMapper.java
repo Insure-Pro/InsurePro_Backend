@@ -2,6 +2,7 @@ package ga.backend.analysis.mapper;
 
 import ga.backend.analysis.dto.AnalysisResponseDto;
 import ga.backend.analysis.entity.Analysis;
+import ga.backend.customerType.entity.CustomerType;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

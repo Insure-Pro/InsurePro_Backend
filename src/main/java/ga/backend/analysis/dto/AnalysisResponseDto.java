@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -22,6 +21,8 @@ public class AnalysisResponseDto {
         private int asTargetCount; // Customer의 상담현황 = AS_TARGET인 Customer 개수
         private TACustomerCount taCustomerCount; // TA의 Customer 개수
         private ScheduleCustomerCount scheduleCustomerCount; // Schedule의 Progress(진척도)의 Customer 개수
+        private LocalDateTime createdAt; // 생성일
+        private LocalDateTime modifiedAt; // 수정일
     }
 
     // customer의 상담현황 확률
