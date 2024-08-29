@@ -89,6 +89,9 @@ public class Customer extends Auditable {
     private Boolean contractYn = false; // 계약 체결 여부
 
     @Column
+    private LocalDateTime contractYnDate; // 계약 체결 날짜
+
+    @Column
     private Boolean delYn = false; // 고객 삭제 여부
 
     @Column

@@ -139,6 +139,14 @@ public class AnalysisService {
                 customerType
         ));
 
+        // 이번달에 계약을 체결한 Customer 개수
+        analysis.setContractYnCount((int) customerRepository.countByEmployeeAndContractYnDateBetweenAndDelYnFalseAndCustomerTypeAndContractYnTrue(
+                employee,
+                start,
+                finish,
+                customerType
+        ));
+
         // TA의 Customer 개수
         taCustomerCount(analysis, employee, startDate, finishDate, customerType);
 

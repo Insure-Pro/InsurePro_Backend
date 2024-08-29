@@ -90,6 +90,9 @@ public class CustomerService {
         // 만나이 계산
         if(customer.getBirth() != null) customer.setAge(CalculateAge.getAge(customer.getBirth()));
 
+        // contractYn = true인 경우 contractYnDate 날짜 지정
+        if(Boolean.TRUE.equals(customer.getContractYn())) customer.setContractYnDate(LocalDateTime.now());
+
         return customerRepository.save(customer);
     }
 
@@ -143,6 +146,9 @@ public class CustomerService {
 
             // 만나이 계산
             if(customer.getBirth() != null) customer.setAge(CalculateAge.getAge(customer.getBirth()));
+
+            // contractYn = true인 경우 contractYnDate 날짜 지정
+            if(Boolean.TRUE.equals(customer.getContractYn())) customer.setContractYnDate(LocalDateTime.now());
 
             customerRepository.save(customer);
         }
@@ -740,7 +746,13 @@ public class CustomerService {
         Optional.ofNullable(customer.getPhone()).ifPresent(findCustomer::setPhone);
         Optional.ofNullable(customer.getMemo()).ifPresent(findCustomer::setMemo);
         Optional.ofNullable(customer.getState()).ifPresent(findCustomer::setState);
-        Optional.ofNullable(customer.getContractYn()).ifPresent(findCustomer::setContractYn);
+
+        // contractYn = true인 경우 contractYnDate 날짜 지정, false인 경우에는 contractYnDate = null
+        Optional.ofNullable(customer.getContractYn()).ifPresent(contractYnDate -> {
+            findCustomer.setContractYn(contractYnDate);
+            if(Boolean.TRUE.equals(contractYnDate)) findCustomer.setContractYnDate(LocalDateTime.now());
+            else findCustomer.setContractYnDate(null);
+        });
         Optional.ofNullable(customer.getRegisterDate()).ifPresent(findCustomer::setRegisterDate);
         Optional.ofNullable(customer.getDelYn()).ifPresent(findCustomer::setDelYn);
         Optional.ofNullable(customer.getEmail()).ifPresent(findCustomer::setEmail);

@@ -61,6 +61,10 @@ public class Analysis extends Auditable { // 성과분석
     @Column
     private int contractCount;
 
+    // 이번달에 계약을 체결한 Customer 개수
+    @Column
+    private int contractYnCount;
+
     // Customer의 상담현황 = AS_TARGET인 Customer 개수
     @Column
     private int asTargetCount;
