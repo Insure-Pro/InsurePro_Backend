@@ -57,6 +57,15 @@ dependencies {
 
 	// logger
 	implementation 'javax.annotation:javax.annotation-api:1.3.2'
+
+	// actuator
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// Micrometer (for metrics)
+	implementation 'io.micrometer:micrometer-core'
+
+	// prometheus
+	implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 tasks.named('test') {

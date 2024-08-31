@@ -1,5 +1,6 @@
 package ga.backend.config;
 
+import ga.backend.actuator.ApiUsageFilter;
 import ga.backend.employee.service.EmployeeService;
 import ga.backend.oauth2.filter.JwtAuthenticationFilter;
 import ga.backend.oauth2.filter.JwtVerificationFilter;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * JWT 검증 기능 추가
@@ -27,9 +29,12 @@ public class SecurityConfiguration {
     private final EmployeeService employeeService;
     private final JwtVerificationFilter jwtVerificationFilter;
     private final MemberLogoutSuccessHandler memberLogoutSuccessHandler;
+    private final ApiUsageFilter apiUsageFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        System.out.println("!! test");
+
         http
                 .headers().frameOptions().sameOrigin()
                 .and()
@@ -57,7 +62,9 @@ public class SecurityConfiguration {
 //                                .antMatchers(HttpMethod.GET, "/*/coffees/**").hasAnyRole("USER", "ADMIN")
 //                                .antMatchers(HttpMethod.GET, "/*/coffees").permitAll()
                                 .anyRequest().permitAll()
-                );
+                ).addFilterBefore(apiUsageFilter, UsernamePasswordAuthenticationFilter.class) // 커스텀 필터 추가
+
+        ;
 
         return http.build();
     }
