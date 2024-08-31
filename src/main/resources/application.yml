@@ -73,3 +73,14 @@ cloud:
 
 kakao:
   key: ${DX_KAKAO_KEY}
+
+# micrometer
+management:
+  server:
+    port: 9292
+  endpoints:
+    prometheus:
+      enabled: true
+    web:
+      exposure:
+        include: "*"
