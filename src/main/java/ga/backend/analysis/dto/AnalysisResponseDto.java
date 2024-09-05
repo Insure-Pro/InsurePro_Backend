@@ -18,6 +18,7 @@ public class AnalysisResponseDto {
         private int dbCustomerCount; // 이번달에 추가된 customer 개수 - DB 고객유형
         private int etcCustomerCount; // 이번달에 추가된 customer 개수 - ETC 고객유형
         private CustomerConsultationRatio customerConsultationRatio; // customer의 상담현황 확률
+        private CustomerConsultationCount customerConsultationCount; // customer의 상담현황 개수
         private int contractCount; // Contract의 계약 체결한 Contract 개수
         private int contractYnCount; // 이번달에 계약을 체결한 Customer 개수
         private int asTargetCount; // Customer의 상담현황 = AS_TARGET인 Customer 개수
@@ -38,6 +39,19 @@ public class AnalysisResponseDto {
         private double medicalHistoryWaitingRatio; // 병력대기
         private double subscriptionRejectionRatio; // 청약거절
         private double consultationRejectionRatio; // 상담거절
+    }
+
+    // customer의 상담현황 개수
+    @AllArgsConstructor
+    @Setter
+    @Getter
+    public static class CustomerConsultationCount {
+        private int beforeConsultationCount; // 상담전
+        private int pendingCounsultationCount; // 상담보류중
+        private int productProposalCount; // 상품제안중
+        private int medicalHistoryWaitingCount; // 병력대기
+        private int subscriptionRejectionCount; // 청약거절
+        private int consultationRejectionCount; // 상담거절
     }
 
     // TA의 Customer 개수
