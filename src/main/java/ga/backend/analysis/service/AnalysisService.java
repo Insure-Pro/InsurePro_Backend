@@ -123,8 +123,8 @@ public class AnalysisService {
                             employee, startDate, finishDate, customerType
                     ));
         else // ETC 고객유형
-            analysis.setEtcCustomerCount((
-                    int) customerRepository.countByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(
+            analysis.setEtcCustomerCount(
+                    (int) customerRepository.countByEmployeeAndCreatedAtBetweenAndDelYnFalseAndCustomerType(
                     employee, start, finish, customerType
             ));
 
@@ -154,7 +154,7 @@ public class AnalysisService {
         scheduleCustomerCount(analysis, employee, startDate, finishDate, customerType);
     }
 
-    // customer의 상담현황 확률
+    // customer의 상담현황 확률 & 개수
     public void consultationStatusRatio(Analysis analysis, Employee employee, LocalDateTime start, LocalDateTime finish, CustomerType customerType) {
         List<Customer> allCustomersByConsultationStatusModifiedAt = customerRepository.findByEmployeeAndConsultationStatusModifiedAtBetweenAndCustomerTypeAndDelYnFalse(
                 employee,
@@ -187,13 +187,25 @@ public class AnalysisService {
                 else if (customer.getConsultationStatus() == ConsultationStatus.CONSULTATION_REJECTION) consultationRejectionCount++;
                 else if (customer.getConsultationStatus() == ConsultationStatus.AS_TARGET) asTargetCount++;
             }
+
+            // customer의 상담현황 확률
             analysis.setBeforeConsultationRatio(beforeConsultationCount / allCustomerCount);
             analysis.setPendingCounsultationRatio(pendingConsultationCount / allCustomerCount);
             analysis.setProductProposalRatio(productProposalCount / allCustomerCount);
             analysis.setMedicalHistoryWaitingRatio(medicalHistoryWaitingCount / allCustomerCount);
             analysis.setSubscriptionRejectionRatio(subscriptionRejectionCount / allCustomerCount);
             analysis.setConsultationRejectionRatio(consultationRejectionCount / allCustomerCount);
-            analysis.setAsTargetCount(asTargetCount); // Customer의 상담현황 = AS_TARGET인 Customer 개수
+
+            // customer의 상담현황 개수
+            analysis.setBeforeConsultationCount(beforeConsultationCount);
+            analysis.setPendingCounsultationCount(pendingConsultationCount);
+            analysis.setProductProposalCount(productProposalCount);
+            analysis.setMedicalHistoryWaitingCount(medicalHistoryWaitingCount);
+            analysis.setSubscriptionRejectionCount(subscriptionRejectionCount);
+            analysis.setConsultationRejectionCount(consultationRejectionCount);
+
+            // Customer의 상담현황 = AS_TARGET인 Customer 개수
+            analysis.setAsTargetCount(asTargetCount);
         }
     }
 

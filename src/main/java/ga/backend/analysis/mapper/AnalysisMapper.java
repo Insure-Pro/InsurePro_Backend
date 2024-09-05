@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface AnalysisMapper {
     @Mapping(source = "analysis", target = "customerConsultationRatio")
+    @Mapping(source = "analysis", target = "customerConsultationCount")
     @Mapping(source = "analysis", target = "taCustomerCount")
     @Mapping(source = "analysis", target = "scheduleCount")
     AnalysisResponseDto.Response analysisToAnalysisResponseDto(Analysis analysis);

@@ -41,21 +41,31 @@ public class EmployeeService {
         // 팀 연관관계 설정
         if(teamPk != 0) employee.setTeam(teamService.verifiedTeam(teamPk));
 
+//        System.out.println("@@companyName : " + companyName);
+//        System.out.println("@@companyName : " + companyName.equals(""));
+//        System.out.println("@@companyName : " + !companyName.equals(""));
+
         // 회사 연관관계 설정
         if(companyPk != null) employee.setCompany(companyService.verifiedCompany(companyPk));
-        else if(companyName != null) { // 사용자 설정으로 새로운 회사 생성하기
-            // 새로 회사를 생성
-            Company company = new Company();
-            company.setName(companyName);
-            company = companyService.createCompany(company);
-            employee.setCompany(company);
-        } else { // 회사PK와 회사이름이 없으면 자동으로 이름 생성
+        else if(companyName == null || companyName.equals("")) { // 회사PK와 회사이름이 없으면 자동으로 이름 생성
+            System.out.println("!!!!");
+
             // 새로 회사를 생성
             Company company = new Company();
             String autoCompanyName = "GA_" + employee.getEmail().split("@")[0];
             company.setName(autoCompanyName);
             company = companyService.createCompany(company);
             employee.setCompany(company);
+        } else { // 사용자 설정으로 새로운 회사 생성하기
+            // 기존에 같은 회사가 있는지 탐색
+            Optional<Company> findCompany = companyService.findCompanyByName(companyName);
+            if(findCompany.isPresent()) employee.setCompany(findCompany.get());
+            else { // 새로 회사를 생성
+                Company company = new Company();
+                company.setName(companyName);
+                company = companyService.createCompany(company);
+                employee.setCompany(company);
+            }
         }
 
         return employeeRespository.save(employee);

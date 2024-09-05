@@ -57,6 +57,25 @@ public class Analysis extends Auditable { // 성과분석
     @Column
     private double consultationRejectionRatio; // 상담거절
 
+    // customer의 상담현황 개수
+    @Column
+    private int beforeConsultationCount; // 상담전
+
+    @Column
+    private int pendingCounsultationCount; // 상담보류중
+
+    @Column
+    private int productProposalCount; // 상품제안중
+
+    @Column
+    private int medicalHistoryWaitingCount; // 병력대기
+
+    @Column
+    private int subscriptionRejectionCount; // 청약거절
+
+    @Column
+    private int consultationRejectionCount; // 상담거절
+
     // Contract의 계약 체결한 Contract 개수
     @Column
     private int contractCount;
