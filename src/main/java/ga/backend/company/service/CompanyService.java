@@ -63,4 +63,9 @@ public class CompanyService {
         Optional<Company> company = companyRespository.findByDelYnFalseAndPk(companyPk);
         return company.orElseThrow(() -> new BusinessLogicException(ExceptionCode.COMPANY_NOT_FOUND));
     }
+
+    // 이름으로 회사 찾기
+    public Optional<Company> findCompanyByName(String name) {
+        return companyRespository.findFirstByDelYnFalseAndName(name);
+    }
 }

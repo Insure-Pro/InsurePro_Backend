@@ -17,4 +17,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     List<Company> findAllByDelYnAndPkAndName(boolean delYn, Long pk, String name);
     Optional<Company> findByDelYnFalseAndPk(long companyPk);
 
+    Optional<Company> findFirstByDelYnFalseAndName(String name);
+
 }

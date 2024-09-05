@@ -17,6 +17,7 @@ public class CustomerResponseDto {
     public static class Response {
         private Long pk;
         private CustomerType customerType; // 고객 유형
+        private long customerCount; // 고객 개수
         private String name; // 이름
         private LocalDate birth; // 생년월일
         private int age; // 나이
@@ -47,6 +48,7 @@ public class CustomerResponseDto {
     public static class MetroGuDongResponse {
         private Long pk;
         private CustomerType customerType; // 고객 유형
+        private long customerCount; // 고객 개수
         private String name; // 이름
         private LocalDate birth; // 생년월일
         private Integer age; // 나이
@@ -78,6 +80,7 @@ public class CustomerResponseDto {
     public static class CoordinateResponse {
         private Long pk;
         private CustomerType customerType; // 고객 유형
+        private long customerCount; // 고객 개수
         private String name; // 이름
         private LocalDate birth; // 생년월일
         private int age; // 나이
