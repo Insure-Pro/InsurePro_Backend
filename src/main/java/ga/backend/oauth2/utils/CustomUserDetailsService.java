@@ -30,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             findEmployee = optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
             isSocialLogin = false;
         } else { // 소셜 로그인 - kakaoId & email
-            Optional<Employee> optionalMember = employeeRepository.findByKakaoIdAndDelYnFalse(Integer.parseInt(username));
+            Optional<Employee> optionalMember = employeeRepository.findByKakaoIdAndDelYnFalse(Long.parseLong(username));
             findEmployee = optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
         }
 
