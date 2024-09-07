@@ -25,6 +25,7 @@ public enum ExceptionCode {
     ANALYSIS_NOT_FOUND(404, "Ananlysis not found"),
     AUTHORIZATION_NUMBER_NOT_FOUND(404, "Authorization Number not found"),
     CUSTOMER_AGE_FILTER_NOT_FOUND(404, "requet age is not found"),
+    KAKAO_ID_NOT_FOUND(404, "Kakao Id not found"),
     PASSWORD_AND_REPASSWORD_NOT_SAME(400, "password and rePassword are not same"),
     INVALID_EMAIL(401, "Invalid Email"),
     WRONG_PASSWORD(401, "Wrong Password"),
@@ -35,6 +36,7 @@ public enum ExceptionCode {
     EMPLOYEE_AND_CUSTOMERTYPE_NOT_MATCH(403, "Employee can't use this CustomerType"),
     EMPOYEE_AND_COMPANY_NOT_MATCH(403, "Employee can't use this Company"),
     CUSTOMERTYP_IS_USED(403, "CustomerType is used"),
+    DUPLICATE_KAKAO_ID(409, "Already exists Kakao Id"),
     HIDE_ALREADY_EXITS(409, "Hide already exits"),
     TAMPERED_TOKEN(1004, "Tampered Token"), // 변조된 토큰
     FAIL_SEND_EMAIL(500, "Fail send email"),

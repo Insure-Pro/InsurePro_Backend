@@ -4,6 +4,7 @@ import ga.backend.employee.entity.Employee;
 import ga.backend.employee.repository.EmployeeRepository;
 import ga.backend.exception.*;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,33 +15,43 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Component
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
     private final EmployeeRepository employeeRepository;
     private final CustomAuthorityUtils authorityUtils;
+    private boolean isSocialLogin = true;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<Employee> optionalMember = employeeRepository.findByEmailAndDelYnFalse(email);
-        Employee findEmployee = optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Employee findEmployee;
+
+        if(username.contains("@")) { // 로그인 - email & password
+            Optional<Employee> optionalMember = employeeRepository.findByEmailAndDelYnFalse(username);
+            findEmployee = optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
+            isSocialLogin = false;
+        } else { // 소셜 로그인 - kakaoId & email
+            Optional<Employee> optionalMember = employeeRepository.findByKakaoIdAndDelYnFalse(Integer.parseInt(username));
+            findEmployee = optionalMember.orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_FOUND));
+        }
 
         return new CustomUserDetails(findEmployee);
     }
 
-
     private final class CustomUserDetails extends Employee implements UserDetails {
+        private final Employee employee;
+
         CustomUserDetails(Employee employee) {
+            this.employee = employee;
             setPk(employee.getPk());
             setId(employee.getId());
+            setKakaoId(employee.getKakaoId());
             setEmail(employee.getEmail());
             setPassword(employee.getPassword());
-            setRegiYn(employee.getRegiYn());
+            setKakaoPw(employee.getKakaoPw());
             setDelYn(employee.getDelYn());
             setAccessToken(employee.getAccessToken());
             setRefreshToken(employee.getRefreshToken());
             setRoles(employee.getRoles());
-            setCompany(employee.getCompany());
-            setPerformances(employee.getPerformances());
         }
 
         @Override
@@ -51,6 +62,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         @Override
         public String getUsername() {
             return getEmail();
+        }
+
+        @Override
+        public String getPassword() {
+            if(isSocialLogin) return getKakaoPw();
+            return employee.getPassword();
         }
 
         @Override
@@ -70,7 +87,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         @Override
         public boolean isEnabled() {
-            return true;
+            return !getDelYn();
         }
     }
 }

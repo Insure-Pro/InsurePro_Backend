@@ -120,6 +120,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                                             FilterChain chain,
                                             Authentication authResult) throws ServletException, IOException  {
         Employee employee = (Employee) authResult.getPrincipal();
+        System.out.println("!! success employee : " + employee.getName());
+        System.out.println("!! success employee : " + employee.getId());
 
         String accessToken = "Bearer " + jwtDelegate.delegateAccessToken(employee);
         String refreshToken = jwtDelegate.delegateRefreshToken(employee);
@@ -142,8 +144,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     private void saveResponseBody(HttpServletResponse response,
                                   Employee employee)  throws IOException {
-        System.out.println("!! saveResponseBody");
-
         // response.body 설정
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");

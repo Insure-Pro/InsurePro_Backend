@@ -3,6 +3,7 @@ package ga.backend.config;
 import ga.backend.actuator.ApiUsageFilter;
 import ga.backend.employee.service.EmployeeService;
 import ga.backend.oauth2.filter.JwtAuthenticationFilter;
+import ga.backend.oauth2.filter.JwtAuthenticationKakaoFilter;
 import ga.backend.oauth2.filter.JwtVerificationFilter;
 import ga.backend.oauth2.handler.*;
 import ga.backend.oauth2.jwt.JwtDelegate;
@@ -50,6 +51,8 @@ public class SecurityConfiguration {
                 .and()
                 .apply(new CustomFilterConfigurer())
                 .and()
+                .apply(new KakaoLoginFilterConfigurer())
+                .and()
                 .logout()
                 .logoutUrl(Version.currentUrl + "/logout") // 로그아웃 처리 URL(기본값)
                 .invalidateHttpSession(true) // 로그아웃 성공 시 세션 제거
@@ -94,7 +97,26 @@ public class SecurityConfiguration {
 
             builder
                     .addFilter(jwtAuthenticationFilter) // 로그인
-                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class); // google OAuth2
+                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class); // 검증
+        }
+    }
+
+    // 추가
+    public class KakaoLoginFilterConfigurer extends AbstractHttpConfigurer<CustomFilterConfigurer, HttpSecurity> {
+        @Override
+        public void configure(HttpSecurity builder) throws Exception {
+            // 로그인
+            AuthenticationManager authenticationManager = builder.getSharedObject(AuthenticationManager.class);
+
+            JwtAuthenticationKakaoFilter jwtAuthenticationFilter = new JwtAuthenticationKakaoFilter(authenticationManager, jwtDelegate, employeeService);
+            jwtAuthenticationFilter.setFilterProcessesUrl(Version.currentUrl + "/kakao-login");          // login url
+
+            jwtAuthenticationFilter.setAuthenticationSuccessHandler(new MemberAuthenticationSuccessHandler());
+            jwtAuthenticationFilter.setAuthenticationFailureHandler(new MemberAuthenticationFailureHandler());
+
+            builder
+                    .addFilter(jwtAuthenticationFilter) // 로그인
+                    .addFilterAfter(jwtVerificationFilter, JwtAuthenticationFilter.class); // 검증
         }
     }
 }
