@@ -36,20 +36,50 @@ public class EmployeeService {
         authorizationNumberService.checkAuthNum(employee.getEmail(), authNum); // 인증번호와 이메일 확인
         employee.setRoles(authorityUtils.createRoles(employee.getEmail())); // 권한 설정
         employee.setPassword(passwordEncoder.encode(employee.getPassword())); // 비밀번호 인코딩
-        publisher.publishEvent(new UserRegistrationApplicationEvent(employee)); //  사용자 등록 이벤트를 발생시키는 코드입
+        publisher.publishEvent(new UserRegistrationApplicationEvent(employee)); //  사용자 등록 이벤트를 발생시키는 코드
 
         // 팀 연관관계 설정
-        if(teamPk != 0) employee.setTeam(teamService.verifiedTeam(teamPk));
+        setTeamAndCompany(employee, companyPk, companyName, teamPk);
 
-//        System.out.println("@@companyName : " + companyName);
-//        System.out.println("@@companyName : " + companyName.equals(""));
-//        System.out.println("@@companyName : " + !companyName.equals(""));
+        return employeeRespository.save(employee);
+    }
+
+    // CREATE - 카카오 소셜
+    public Employee createKakaoEmployee(Employee employee, Long companyPk, String companyName, long teamPk) {
+        // 카카오톡 ID 필수값
+        if(employee.getKakaoId() == null) throw new BusinessLogicException(ExceptionCode.KAKAO_ID_NOT_FOUND);
+
+        // 이미 가입된 회원인지 확인
+        Optional<Employee> findEmployee = employeeRespository.findByKakaoIdAndDelYnFalse(employee.getKakaoId());
+        if(findEmployee.isPresent()) throw new BusinessLogicException(ExceptionCode.DUPLICATE_KAKAO_ID);
+
+        // 같은 이메일로 가입된 회원이 있는 경우 -> 카카오톡 로그인 추가하기
+        Optional<Employee> findEmailEmployeeOptional = employeeRespository.findByEmailAndDelYnFalse(employee.getEmail());
+        if(findEmailEmployeeOptional.isPresent() && findEmailEmployeeOptional.get().getKakaoId() == null) {
+            Employee findEmailEmployee = findEmailEmployeeOptional.get();
+            findEmailEmployee.setKakaoId(employee.getKakaoId());
+            findEmailEmployee.setKakaoPw(passwordEncoder.encode(String.valueOf(employee.getKakaoId()))); // 카카오톡 ID를 이용해서 비밀번호 인코딩
+            return employeeRespository.save(findEmailEmployee);
+        }
+
+        employee.setRoles(authorityUtils.createRoles(employee.getEmail())); // 권한 설정
+        employee.setKakaoPw(passwordEncoder.encode(String.valueOf(employee.getKakaoId()))); // 카카오톡 ID를 이용해서 비밀번호 인코딩
+        publisher.publishEvent(new UserRegistrationApplicationEvent(employee)); //  사용자 등록 이벤트를 발생시키는 코드
+
+        // 팀 연관관계 설정
+        setTeamAndCompany(employee, companyPk, companyName, teamPk);
+
+        return employeeRespository.save(employee);
+    }
+
+    // 회사와 팀 연관관계 형성
+    public void setTeamAndCompany(Employee employee, Long companyPk, String companyName, long teamPk) {
+        // 팀 연관관계 설정
+        if(teamPk != 0) employee.setTeam(teamService.verifiedTeam(teamPk));
 
         // 회사 연관관계 설정
         if(companyPk != null) employee.setCompany(companyService.verifiedCompany(companyPk));
         else if(companyName == null || companyName.equals("")) { // 회사PK와 회사이름이 없으면 자동으로 이름 생성
-            System.out.println("!!!!");
-
             // 새로 회사를 생성
             Company company = new Company();
             String autoCompanyName = "GA_" + employee.getEmail().split("@")[0];
@@ -67,8 +97,6 @@ public class EmployeeService {
                 employee.setCompany(company);
             }
         }
-
-        return employeeRespository.save(employee);
     }
 
     // 비밀번호 확인

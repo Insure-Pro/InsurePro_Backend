@@ -47,6 +47,9 @@ public class Employee extends Auditable {
     private String password; // 비밀번호
 
     @Column
+    private String kakaoPw; // 카카오톡 비밀번호
+
+    @Column
     private Boolean regiYn = false; // 가입 승인 여부
 
     @Column
@@ -57,6 +60,9 @@ public class Employee extends Auditable {
 
     @Column
     private String refreshToken = ""; // refresh 토큰
+
+    @Column(unique = true)
+    private Long kakaoId; // 카카오톡 ID
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> roles = new ArrayList<>(); // 권한

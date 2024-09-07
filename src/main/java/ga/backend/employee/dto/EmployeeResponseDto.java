@@ -14,7 +14,8 @@ public class EmployeeResponseDto {
     @Getter
     public static class Response {
         private Long pk;
-        private String id;
+        private String id; // 사번
+        private Long KakaoId; // 카카오톡 ID
         private String email;
         private String name; // 이름
         private Long year; // 연차

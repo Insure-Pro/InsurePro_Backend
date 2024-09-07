@@ -47,6 +47,20 @@ public class EmployeeController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    // CREATE - 카카오 소셜 회원가입
+    @PostMapping("/kakao-signin")
+    public ResponseEntity postKakaoEmployee(@Valid @RequestBody EmployeeRequestDto.KakaoSignin signin) {
+        Employee employee = employeeService.createKakaoEmployee(
+                employeeMapper.employeeSigninDtoToEmployee(signin),
+                signin.getCompanyPk(),
+                signin.getCompanyName(),
+                signin.getTeamPk()
+        );
+        EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
     // READ
     @GetMapping("/{employee-pk}")
     public ResponseEntity getEmployee(@Positive @PathVariable("employee-pk") long employeePk) {

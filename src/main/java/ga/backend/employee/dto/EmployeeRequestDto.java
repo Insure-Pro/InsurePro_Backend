@@ -68,6 +68,28 @@ public class EmployeeRequestDto {
     @AllArgsConstructor
     @Setter
     @Getter
+    public static class KakaoSignin {
+        @Email
+        private String email;
+
+        private String id; // 사번
+
+        private long KakaoId; // 카카오톡 ID
+
+        private String name; // 이름
+
+        private Long companyPk; // 회사 식별자
+
+        private String companyName; // 회사 이름
+
+        private long teamPk; // 팀 식별자
+
+        private Long year; // 연차
+    }
+
+    @AllArgsConstructor
+    @Setter
+    @Getter
     public static class ChangePassword {
         @Email
         private String email;
