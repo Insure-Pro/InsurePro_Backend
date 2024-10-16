@@ -1,6 +1,5 @@
 package ga.backend.employee.entity;
 
-//import ga.backend.analysis.entity.Analysis;
 import ga.backend.analysis.entity.Analysis;
 import ga.backend.auditable.Auditable;
 import ga.backend.company.entity.Company;
@@ -24,6 +23,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Cacheable
 public class Employee extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -71,7 +71,7 @@ public class Employee extends Auditable {
     @JoinColumn(name = "company_pk")
     private Company company;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_pk")
     private Team team;
 

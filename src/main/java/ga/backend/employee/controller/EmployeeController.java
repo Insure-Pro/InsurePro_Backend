@@ -11,6 +11,9 @@ import ga.backend.team.mapper.TeamMapper;
 import ga.backend.team.repository.TeamRepository;
 import ga.backend.util.Version;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -73,11 +76,17 @@ public class EmployeeController {
 
     // 토큰으로 employee 정보 조회하기
     @GetMapping
+//    @Cacheable(value = "employeeCache")
     public ResponseEntity getEmployee() {
         Employee employee = employeeService.findEmployeeByToken();
-        EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeResponseDto(employee);
-        TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam(), employee.getCompany().getPk());
-        response.setTeamResponseDto(teamResponse);
+        EmployeeResponseDto.SimpleResponse response = employeeMapper.employeeToEmployeeSimpleResponseDto(employee);
+
+        // ResponseDto.Response 반환
+//        EmployeeResponseDto.Response response = employeeMapper.employeeToEmployeeSimpleResponseDto(employee);
+//        if(employee.getTeam() != null) {
+//            TeamResponseDto.Response teamResponse = teamMapper.teamToTeamResponseDto(employee.getTeam(), employee.getCompany().getPk());
+//            response.setTeamResponseDto(teamResponse);
+//        }
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
