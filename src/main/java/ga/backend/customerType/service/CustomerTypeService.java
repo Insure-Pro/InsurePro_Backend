@@ -13,6 +13,8 @@ import ga.backend.hide.repository.HideRepository;
 import ga.backend.util.FindEmployee;
 import ga.backend.util.InitialCustomerTypeNull;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,6 +30,8 @@ public class CustomerTypeService {
     private final CompanyService companyService;
     private final HideRepository hideRepository;
     private final FindEmployee findEmployee;
+    private final CacheManager cacheManager;
+
     private final List<String> CustomerTypeColors = new ArrayList<>(List.of(
             "#ffb0b0",
             "#fdcab0",
@@ -60,6 +64,8 @@ public class CustomerTypeService {
         // 색상 자동추가 -> 색상값이 없는 경우
         if(customerType.getColor() == null) {
             Company company = employee.getCompany();
+            // 캐시 항목 삭제
+            cacheManager.getCache("customerTypes").evict(company.getPk());
             List<CustomerType> customerTypes = customerTypeRepository.findByCompanyAndDelYnFalse(company);
 
             // 처음 고객유형 추가한 경우
@@ -77,6 +83,7 @@ public class CustomerTypeService {
         return customerTypeRepository.save(customerType);
     }
 
+    @CacheEvict(value = "customerTypes", key = "#employee.company.pk")
     public CustomerType createNULLCustomerType(Employee employee) {
         CustomerType customerType = InitialCustomerTypeNull.makeCustomerType(employee);
         return customerTypeRepository.save(customerType);
@@ -108,12 +115,15 @@ public class CustomerTypeService {
 
         // "회사 && delYn=false"인 고객유형 조회
         List<CustomerType> customerTypes = findCustomerTypeByCompanyFromEmployee(employee);
+        customerTypes.forEach(customerType -> System.out.println("!! customerType : " + customerType.getPk()));
 
         // hide에 있는 customerType -> 조회에 제외되어야 하는 것
         List<CustomerType> hideCustomer = findCustomerTypeByHide(employee);
+        hideCustomer.forEach(customerType -> System.out.println("!! hide customerType : " + customerType.getPk()));
 
         // hide에서 조회된 customerType 제외
         customerTypes.removeAll(hideCustomer);
+        customerTypes.forEach(customerType -> System.out.println("!! remove  customerType : " + customerType.getPk()));
 
         return customerTypes;
     }
@@ -140,6 +150,9 @@ public class CustomerTypeService {
         CustomerType findCustomerType = verifiedCustomerType(customerType.getPk());
 
         Employee employee = findEmployee.getLoginEmployeeByToken();
+        // 캐시 항목 삭제
+        cacheManager.getCache("customerTypes").evict(employee.getCompany().getPk());
+        cacheManager.getCache("hides").evict(employee.getPk());
         findCustomerType.setEmployeePk(employee.getPk());
         findCustomerType.setCompany(employee.getCompany());
 
@@ -156,6 +169,9 @@ public class CustomerTypeService {
     public void deleteCustomerType(long customerTypePk) {
         CustomerType customerType = verifiedCustomerType(customerTypePk);
         Employee employee = findEmployee.getLoginEmployeeByToken();
+        // 캐시 항목 삭제
+        cacheManager.getCache("customerTypes").evict(employee.getCompany().getPk());
+        cacheManager.getCache("hides").evict(employee.getPk());
 
         if(customerType.getCustomers().isEmpty()) // customerType을 사용하는 customer가 없는 경우
             customerTypeRepository.delete(customerType); // 완전 삭제
