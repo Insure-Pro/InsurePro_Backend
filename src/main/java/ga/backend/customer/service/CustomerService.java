@@ -24,6 +24,8 @@ import ga.backend.util.FindCoordinateByKakaoMap;
 import ga.backend.util.FindEmployee;
 import ga.backend.util.InitialCustomerTypeNull;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -46,10 +48,13 @@ public class CustomerService {
 
     private final FindEmployee findEmployee;
     private final FindCoordinateByKakaoMap findCoordinateByKakaoMap;
+    private final CacheManager cacheManager;
 
     // CREATE
     public Customer createCustomer(Customer customer, CustomerRequestDto.MetroGuDong metroGuDong) {
+        // 캐시 항목 삭제
         Employee employee = findEmployee.getLoginEmployeeByToken();
+        cacheManager.getCache("customers").evict(employee.getPk());
         customer.setEmployee(employee);
 
         // liPk를 이용한 dongString 자동 설정
@@ -97,7 +102,10 @@ public class CustomerService {
     // 여러 명의 custemer 생성
     @Transactional
     public List<Customer> createCustomers(List<Customer> customers) {
+        // 캐시 항목 삭제
         Employee employee = findEmployee.getLoginEmployeeByToken();
+        cacheManager.getCache("customers").evict(employee.getPk());
+
         List<CustomerType> customerTypes = customerTypeService.findCustomerTypeByCompanyFromEmployee(employee); // 고객의 customerType
 
         // NULL 유형의 고객유형
@@ -714,9 +722,12 @@ public class CustomerService {
 
     // UPDATE
     public Customer patchCustomer(Customer customer, CustomerRequestDto.MetroGuDong metroGuDong, Long customerTypePk) {
-        Customer findCustomer = verifiedCustomer(customer.getPk());
+        // 캐시 항목 삭제
         Employee employee = findEmployee.getLoginEmployeeByToken();
+        cacheManager.getCache("customers").evict(employee.getPk());
+
         // 직원 유효성 검사
+        Customer findCustomer = verifiedCustomer(customer.getPk());
         if (findCustomer.getEmployee().getPk() != employee.getPk())
             throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_CONTAIN_CUSTOMER);
 
@@ -786,7 +797,16 @@ public class CustomerService {
 
     // delYn=true 변경 후 customer과 관련된 schedule.delYn=true로 변경
     public void deleteCustomer(long customerPk) {
+        // 캐시 항목 삭제
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        cacheManager.getCache("customers").evict(employee.getPk());
+
         Customer customer = verifiedCustomer(customerPk);
+
+        // 직원 유효성 검사
+        if(customer.getEmployee().getPk() != employee.getPk())
+            throw new BusinessLogicException(ExceptionCode.EMPLOYEE_NOT_CONTAIN_CUSTOMER);
+
         customer.setDelYn(true);
         changeSchduleDelYnTrue(customer);
         customerRepository.save(customer);

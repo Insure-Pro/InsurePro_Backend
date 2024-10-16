@@ -4,7 +4,9 @@ import ga.backend.customer.entity.Customer;
 import ga.backend.customerType.entity.CustomerType;
 import ga.backend.employee.entity.Employee;
 import ga.backend.customer.entity.ConsultationStatus;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -20,6 +22,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     Optional<Customer> findByPkAndDelYnFalse(long customerPk);
 
     // 최신순
+    @Cacheable(value = "customers", key = "#employee.pk")
+    @EntityGraph(attributePaths = {"customerType", "li", "dong2", "gu2", "metro2"})
     List<Customer> findByEmployeeAndDelYnFalse(Employee employee, Sort sort);
     List<Customer> findByEmployeeAndCustomerTypeAndDelYnFalse(Employee employee, CustomerType customerType, Sort sort);
     List<Customer> findAllByEmployeeAndRegisterDateBetweenAndCustomerTypeInAndDelYnFalse(Employee employee, Sort sort, LocalDate start, LocalDate finish, List<CustomerType> customerTypes);
