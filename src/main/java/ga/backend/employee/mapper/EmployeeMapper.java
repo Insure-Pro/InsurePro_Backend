@@ -17,6 +17,7 @@ public interface EmployeeMapper {
     Employee employeePatchDtoToEmployee(EmployeeRequestDto.Patch patch);
     Employee employeeChangePasswordToEmployee(EmployeeRequestDto.ChangePassword changePassword);
     EmployeeResponseDto.Response employeeToEmployeeResponseDto(Employee employee);
+    EmployeeResponseDto.SimpleResponse employeeToEmployeeSimpleResponseDto(Employee employee);
 
     List<EmployeeResponseDto.Response> employeeToEmployeeListResponseDto(List<Employee> employees);
 }

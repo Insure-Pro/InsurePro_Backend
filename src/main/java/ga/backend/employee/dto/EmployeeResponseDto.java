@@ -29,6 +29,19 @@ public class EmployeeResponseDto {
     @AllArgsConstructor
     @Setter
     @Getter
+    public static class SimpleResponse {
+        private Long pk;
+        private String id; // 사번
+        private Long KakaoId; // 카카오톡 ID
+        private String email;
+        private String name; // 이름
+        private Long year; // 연차
+        private boolean regiYn;
+    }
+
+    @AllArgsConstructor
+    @Setter
+    @Getter
     public static class SlackResponse {
         private Long pk;
         private String email;

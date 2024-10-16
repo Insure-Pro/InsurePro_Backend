@@ -46,6 +46,8 @@ spring:
   output: # log color
     ansi:
       enabled: always
+  cache:
+    type: simple # local spring cache
 
 mail:
   address:

@@ -18,16 +18,17 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Cacheable
 @Table(name = "customer_type", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"name", "company_pk"}) // 중복된 name이어도, 회사가 다르면 생성될 수 있도록 함
-})
+}, indexes = {@Index(name = "idx_customer_type_company", columnList = "company_pk")})
 public class CustomerType extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "customer_type_pk")
     private Long pk;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_pk")
     private Company company;
 

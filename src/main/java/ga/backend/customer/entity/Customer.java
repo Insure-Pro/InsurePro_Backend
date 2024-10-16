@@ -22,6 +22,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Cacheable
 public class Customer extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +45,7 @@ public class Customer extends Auditable {
     @JoinColumn(name = "dong2_pk")
     private Dong2 dong2;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_pk")
     private Employee employee;
 

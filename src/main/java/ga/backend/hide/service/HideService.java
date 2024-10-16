@@ -9,29 +9,37 @@ import ga.backend.hide.entity.Hide;
 import ga.backend.hide.repository.HideRepository;
 import ga.backend.util.FindEmployee;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class HideService {
     private final HideRepository hideRepository;
-    private final FindEmployee findCompany;
+    private final FindEmployee findEmployee;
     private final CustomerTypeService customerTypeService;
+    private final CacheManager cacheManager;
+
 
     // CREATE
     public Hide createHide(Hide hide) {
-        hide.setEmployee(findCompany.getLoginEmployeeByToken());
+        // 캐시 항목 삭제
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        cacheManager.getCache("customerTypes").evict(employee.getCompany().getPk());
+        cacheManager.getCache("hides").evict(employee.getPk());
+
+        hide.setEmployee(employee);
         return hideRepository.save(hide);
     }
 
     public Hide createHide(Long customerTypePk) {
-        Employee employee = findCompany.getLoginEmployeeByToken();
+        // 캐시 항목 삭제
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        cacheManager.getCache("customerTypes").evict(employee.getCompany().getPk());
+        cacheManager.getCache("hides").evict(employee.getPk());
         CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
 
         // customerType이 employee's company에 속하는지 확인
@@ -56,7 +64,10 @@ public class HideService {
 
     // DELETE
     public void deleteHide(long customerTypePk) {
-        Employee employee = findCompany.getLoginEmployeeByToken();
+        // 캐시 항목 삭제
+        Employee employee = findEmployee.getLoginEmployeeByToken();
+        cacheManager.getCache("customerTypes").evict(employee.getCompany().getPk());
+        cacheManager.getCache("hides").evict(employee.getPk());
         CustomerType customerType = customerTypeService.findCustomerType(customerTypePk);
 
         // 숨기기 되어 있는지 확인
