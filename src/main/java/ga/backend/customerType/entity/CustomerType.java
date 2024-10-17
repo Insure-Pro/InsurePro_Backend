@@ -62,4 +62,12 @@ public class CustomerType extends Auditable {
 
     @Column
     private Integer asSetting; // AS 가능한 TA 횟수
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        CustomerType that = (CustomerType) obj;
+        return this.pk == that.pk;
+    }
 }

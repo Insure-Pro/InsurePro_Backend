@@ -15,6 +15,7 @@ import ga.backend.util.InitialCustomerTypeNull;
 import lombok.AllArgsConstructor;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -115,15 +116,12 @@ public class CustomerTypeService {
 
         // "회사 && delYn=false"인 고객유형 조회
         List<CustomerType> customerTypes = findCustomerTypeByCompanyFromEmployee(employee);
-        customerTypes.forEach(customerType -> System.out.println("!! customerType : " + customerType.getPk()));
 
         // hide에 있는 customerType -> 조회에 제외되어야 하는 것
         List<CustomerType> hideCustomer = findCustomerTypeByHide(employee);
-        hideCustomer.forEach(customerType -> System.out.println("!! hide customerType : " + customerType.getPk()));
 
         // hide에서 조회된 customerType 제외
         customerTypes.removeAll(hideCustomer);
-        customerTypes.forEach(customerType -> System.out.println("!! remove  customerType : " + customerType.getPk()));
 
         return customerTypes;
     }
