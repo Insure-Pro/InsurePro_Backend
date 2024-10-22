@@ -1,4 +1,4 @@
-# 법인 보험 대리점 업무 프로세스 InsurePRo
+# 법인 보험 대리점 업무 프로세스 InsurePro
 ![image](https://github.com/Insure-Pro/InsurePro_Backend/assets/82714785/617a8e41-5e47-432c-9afe-82c15a592c3d)
 
 [1️⃣ 서비스 바로가기👈](https://insurepro-delta.vercel.app/)
@@ -16,38 +16,43 @@
 **위 서비스에서 제공하는 핵심기능 3가지 입니다.**
 
 1. 고객 연령층, 최신순 등 다양한 정렬 기능
-2. 월별 고객 관리
+2. 사용자 맞춤형 고객유형 관리
 3. 실적 대시보드
 
 ## Skils
-언어 및 프레임워크: ![Static Badge](https://img.shields.io/badge/Java-17-Green) ![Static Badge](https://img.shields.io/badge/Spring_boot-REST-Green)<br/>
-데이터베이스 및 테스트: ![Static Badge](https://img.shields.io/badge/MySQL-8-blue) ![Static Badge](https://img.shields.io/badge/JUnit-Green) <br/>
-배포 : ![Static Badge](https://img.shields.io/badge/LINUX-039BC6) ![Static Badge](https://img.shields.io/badge/AWS-Orange) <br/>
-
-## Installation
-1. InsurePro 어플리케이션 백엔드 build
-    ```bash
-    ./gradlew bootjar
-    ./gradlew bootrun
-    ```
-
-## Running Tests
-InsurePro 어플리케이션 백엔드 Test(미구현)
-```bash
-  ./gradlew test
-```
-> Coverage ScreenShot ![Static Badge](https://img.shields.io/badge/Test_Passed-7/7-green)<br/>
+Language 및 Framework : 
+![Static Badge](https://img.shields.io/badge/Java-11-Green)
+![Static Badge](https://img.shields.io/badge/SpringBoot-2.7.14-Green)
+![Static Badge](https://img.shields.io/badge/JPA-gray)
+![Static Badge](https://img.shields.io/badge/JWT-gray)
+![Static Badge](https://img.shields.io/badge/OAuth2-gray)
+<br/>
+Database : 
+![Static Badge](https://img.shields.io/badge/MySQL-8.0.35-blue) 
+<br/>
+DevOps : 
+![Static Badge](https://img.shields.io/badge/LINUX-orange)
+![Static Badge](https://img.shields.io/badge/AWS_EC2-orange)
+![Static Badge](https://img.shields.io/badge/AWS_S3-orange)
+![Static Badge](https://img.shields.io/badge/AWS_Lightsail_DB-orange)
+<br/>
+Tool :
+![Static Badge](https://img.shields.io/badge/JMeter-yellow)
+![Static Badge](https://img.shields.io/badge/Promethus-yellow)
+![Static Badge](https://img.shields.io/badge/Grafana-yellow)
+<br/>
 
 ## 백엔드 API 문서
 ![image](https://github.com/Insure-Pro/InsurePro_Backend/assets/82714785/7e7fe683-3a92-4c32-bba8-75e7cc029d70)
-[InsurePro 백엔드 API 문서 바로가기👈](https://www.ticats.r-e.kr/swagger-ui/)
+[InsurePro 백엔드 API 문서 바로가기👈](https://trapezoidal-calf-f67.notion.site/API-0bb789808e404d00b14792dc381488c0?pvs=4)
 
 ## 프로젝트 진행 및 이슈 관리
 [![Github Project](https://img.shields.io/badge/Github-%23000000.svg?style=for-the-badge&logo=Github&logoColor=white)](https://github.com/Insure-Pro/InsurePro_Backend/issues)
 
 ## E-R Diargram
-![ERD Cloud](https://github.com/potenday-23/tickets_backend/assets/82714785/5b4e207d-35ef-4153-8ce5-a25844bc17cf)
+
+![ERD Cloud]
 
 ## Architecture
-![image](https://github.com/Insure-Pro/InsurePro_Backend/assets/82714785/8ac1de28-7b69-48a7-b15f-5b5c19a3cabb)
+![image]
 
