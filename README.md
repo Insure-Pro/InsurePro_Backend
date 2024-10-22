@@ -1,5 +1,6 @@
 # 법인 보험 대리점 업무 프로세스 InsurePro
-![image](https://github.com/Insure-Pro/InsurePro_Backend/assets/82714785/617a8e41-5e47-432c-9afe-82c15a592c3d)
+![image](https://github.com/user-attachments/assets/208b578c-b153-4067-b99b-94f86f8e042d)
+
 
 [1️⃣ 서비스 바로가기👈](https://insurepro-delta.vercel.app/)
 
@@ -51,8 +52,10 @@ Tool :
 
 ## E-R Diargram
 
-![ERD Cloud]
+![ERD Cloud](https://github.com/user-attachments/assets/b8a0a39d-512e-479c-b912-21b9b5d057f4)
+
 
 ## Architecture
-![image]
+![insruePro 서버아키텍처](https://github.com/user-attachments/assets/fcc950b1-ddfc-4cae-a6a3-eb5addbbf1e0)
+
 
